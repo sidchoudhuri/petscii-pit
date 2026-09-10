@@ -2,6 +2,6 @@
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
 A C64 BASIC roguelike
 
-PETSCIIPIT.BAS
+[PETSCIIPIT.BAS](petsciipit.bas) - C64 BASIC V2 source code
 
-PETSCIIPIT.PRG
+[PETSCIIPIT.PRG](petsciipit.prg) - BASIC executable
