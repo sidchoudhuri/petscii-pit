@@ -2,9 +2,9 @@
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
 A C64 BASIC roguelike
 
-[ROADMAP](roadmap.md) - Development Road Map
+[Road map](roadmap.md)
 
-[DEV LOG](devlog.md) - Development Log
+[Development log](devlog.md)
 
 [PETSCIIPIT.BAS](petsciipit.bas) - C64 BASIC V2 source code
 
