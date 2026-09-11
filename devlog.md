@@ -49,6 +49,18 @@
 - Fixed a bug where potions could sometimes render as the wrong symbol
 - Fixed a rare display glitch on the instructions screen
 
+## Monster Variety Update
+- 6 distinct monster types, each with its own glyph, color, and difficulty on top of the existing per-level scaling: Leech, Goblin, Imp, Guard, Cultist, Golem
+- Tougher types unlock gradually with depth — early levels only spawn the easier ones, with the full roster available by level 16
+- XP and coin rewards now scale by monster type instead of being flat across all monsters
+- Combat messages now name which monster you fought and the actual reward, e.g. "KILLED CULTIST +18XP +9GP -TOOK 5DMG"
+- Each monster type has its own hit/death sound pitch
+
+## Screen & Performance Improvements
+- Room placement now uses nearly the entire available screen instead of leaving several columns and rows unused around the edges
+- The instructions screen (I key) now only redraws the portion of the dungeon you've actually explored, instead of always rescanning the whole map
+- Several other under-the-hood speed fixes to dungeon generation and screen clearing
+
 ## Weapons Update
 - Weapons now appear in the dungeon starting at level 2, once you've reached the Alley Rat title
 - Five weapon types, each with its own attack bonus and perk: Dagger (small dodge chance), Sword (straightforward extra damage), Blade (bonus damage on your first hit), Mace (reduces counter-damage), Flail (bigger dodge chance)
