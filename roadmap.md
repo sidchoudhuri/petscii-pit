@@ -14,14 +14,20 @@ this is a planning reference for when we're ready to build each piece.
 - 6 monster types, all sharing the same chase/bump-attack behavior as
   before, differing in glyph, color, and difficulty (HP/damage bonus
   stacked on top of the existing per-level scaling):
-  - Heart (green) — baseline difficulty
-  - Club (yellow)
-  - Diamond (orange)
-  - X-in-box (light red)
-  - Cross (red)
-  - Solid Block (purple) — toughest
-- Monster type is chosen randomly (uniform across all 6) each time a
-  monster spawns, including ambush spawns during rest.
+  - Leech (green) — baseline difficulty
+  - Goblin (yellow)
+  - Imp (orange)
+  - Guard (light red)
+  - Cultist (red)
+  - Golem (purple) — toughest
+- Spawns are depth-weighted rather than uniform: early levels (1-3) only
+  spawn Leech and Goblin, with tougher types unlocking gradually until
+  the full roster is available by level 16.
+- XP and coin rewards scale by type (Leech still gives the original
+  10XP/1-5GP; Golem gives up to 22XP/11GP).
+- Combat messages name the monster type you fought, e.g.
+  `KILLED CULTIST +18XP +9GP -TOOK 5DMG`.
+- Each type has its own hit/death sound pitch.
 - Still to come later: monster types with genuinely different behavior
   (e.g. a stationary wall-mimic, a ranged elemental) — these need their
   own AI branching rather than sharing `@MONSTERSTEP`, and were
@@ -29,8 +35,9 @@ this is a planning reference for when we're ready to build each piece.
 
 ## Weapon Pickups — IMPLEMENTED
 - Starting at dungeon level 2, and only once the player has reached Alley
-  Rat, monster kills have a flat 8% chance to drop a weapon on the tile
-  where the monster died.
+  Rat, monster kills have a 20% chance to drop a weapon on the tile
+  where the monster died (raised from an initial 8% to shorten the wait
+  for a first weapon).
 - 5 weapon types (Dagger, Sword, Blade, Mace, Flail), each with its own
   glyph, color, attack bonus, and one extra effect (dodge chance, bonus
   sneak-attack damage, or reduced counter-damage).
