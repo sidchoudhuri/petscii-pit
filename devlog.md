@@ -92,4 +92,10 @@
 - The room name, title badge, and turn-summary message line all redraw substantially faster than before
 - Movement should feel noticeably snappier — fixed the room name/title corner being recalculated on every single step instead of only when you actually changed rooms
 - Fixed a deeper issue causing "press any key" screens (title screen, and general keypress handling) to respond unexpectedly slowly as the game grew larger — this should also make ordinary movement input feel more responsive
+- Fixed the same underlying issue for the main gameplay loop itself, which is re-entered after literally every turn — this was the single biggest remaining source of that kind of slowdown
 - Fixed a rare bug where certain room names could cause the screen to scroll and throw off the whole layout
+
+## Additional Performance & Bug Fixes
+- Fixed a real crash: finding a second weapon while already carrying one could throw a syntax error and stop the game — a variable name happened to collide with a reserved BASIC keyword. If you ever hit an error picking up a weapon, this was it.
+- Cleaned up redundant calculations in monster movement and the corridor/hallway-detection check so each value is computed once per use instead of repeatedly
+- Several more of the game's most frequently-used internal routines repositioned for faster lookup, extending the same fix used for the message line and HUD in the update above
