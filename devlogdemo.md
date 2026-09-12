@@ -35,6 +35,8 @@ details differ.
 - Fixed: before continuing toward its exploration target, the AI now
   checks whether the room it's currently standing in has a known,
   uncollected potion or treasure, and grabs it first if so.
+- Later extended to also cover weapons, which weren't part of the
+  original fix (see below).
 
 ## Anti-Oscillation Fix (first pass)
 - Found and fixed a real bug where the AI would bounce back and forth
@@ -94,3 +96,14 @@ details differ.
   than the original buffer could catch.
 - Verified again with Python simulations, plus the corrected full
   variable-safety sweep, before shipping.
+
+## Weapon-Seeking Added
+- The item-seeking fix above only ever checked for potions and
+  treasure, since that's what was originally reported — weapons use a
+  different tile range and were never included. The AI would only pick
+  one up by coincidence, if it happened to sit directly on the path
+  toward wherever it was already headed; otherwise it walked past
+  without detouring, which could look like active avoidance from the
+  outside even though nothing was specifically steering away from it.
+- Fixed by extending the same current-room item check to also include
+  weapon tiles, with the same priority as potions and treasure.
