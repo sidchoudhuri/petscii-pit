@@ -78,3 +78,18 @@
 - Weapon drop chance more than doubled (8% → 20% per eligible kill) — you shouldn't have to wait nearly as long for your first one
 - Bumping into a wall before you've earned Keen Eyes now says "CRASH! IT'S TOO DARK TO SEE!" instead of "CRASH! YOU BUMPED INTO A WALL"
 - Resting now just says "RESTING..." instead of "RESTING FOR 10 TURNS..." — same duration and healing as before, just a shorter message
+
+## Room Names Update
+- Certain rooms now display a name in the bottom-left corner, mirroring your title badge in the bottom-right
+- The room you start in each level is named "LEVEL X ENTRYWAY"; the room with the stairs down is "STAIRS TO LEVEL X"
+- Other rooms are named after what's inside, by priority: a room with treasure is "[MONSTER] TREASURY", a room with only potions and no treasure is "[MONSTER] APOTHECARY", otherwise just "[MONSTER] ROOM"
+- Once you defeat that room's monster, its name gains a "(CLEARED)" tag
+- Two separate corridors that happen to run right alongside each other are now called out as a "GRAND HALLWAY" while you're standing in one
+- The "DESCENDING TO LEVEL X, PLEASE WAIT..." screen is now a clean, blank loading screen matching the style of the death screen, rather than showing stray leftover text
+
+## Performance Improvements
+- Fixed a real bug where the game got progressively slower the longer you played in one sitting — a fresh memory cleanup now runs on every level transition instead of letting it build up all session
+- The room name, title badge, and turn-summary message line all redraw substantially faster than before
+- Movement should feel noticeably snappier — fixed the room name/title corner being recalculated on every single step instead of only when you actually changed rooms
+- Fixed a deeper issue causing "press any key" screens (title screen, and general keypress handling) to respond unexpectedly slowly as the game grew larger — this should also make ordinary movement input feel more responsive
+- Fixed a rare bug where certain room names could cause the screen to scroll and throw off the whole layout
