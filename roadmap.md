@@ -98,18 +98,26 @@ this is a planning reference for when we're ready to build each piece.
   rested, similar to the existing 4-second SPACE pause)? Does the
   ambush check happen once, or does risk escalate the longer you rest?
 
-## Room Names
+## Room Names — IMPLEMENTED
 - Certain rooms get a name, displayed bottom-left (mirroring the
-  existing title badge, which sits bottom-right).
-- Normal rooms have no name.
-- The stairs room is named "STAIRS LEVEL X" (X = the current dungeon
-  level).
-- A corridor that's 2 spaces wide is called "GRAND HALLWAY".
-- More named room types still to be decided.
-- Dependency to note for later: dungeon generation currently only ever
-  produces 1-cell-wide corridors, so the "GRAND HALLWAY" naming implies
-  variable-width corridors need to exist first (or at least occasionally
-  be generated) before this name would ever actually appear.
+  existing title badge's position, drawn together as one combined line
+  that only redraws when the text actually changes, not every turn).
+- Normal (empty, or not covered by a rule below) rooms have no name.
+- The first room you land in — at the start of the game, or arriving
+  from the previous level — is named "LEVEL X ENTRYWAY" (X = current
+  dungeon level). The last room is named "STAIRS TO LEVEL X" (X = the
+  level you're about to descend to). If a level ever has so few rooms
+  that the first and last room are the same one, STAIRS TO LEVEL X
+  takes priority over ENTRYWAY — though every level always generates
+  at least 5 rooms today, so this case can't currently occur.
+- Every middle room always contains exactly one monster by generation
+  design, so its name always includes that monster: a room that also
+  has treasure is "[MONSTER] TREASURY" (treasure takes priority even if
+  potions are also present); a room with only potions and no treasure
+  is "[MONSTER] APOTHECARY"; otherwise it's just "[MONSTER] ROOM".
+- Once that room's monster is defeated, its name gains a "(CLEARED)"
+  suffix. There is no separate "looted" state — clearing the monster is
+  the only status the name reflects.
 
 ## Monsters Chasing Through Corridors
 - Currently, monsters are confined to their home room — one is
@@ -129,3 +137,22 @@ this is a planning reference for when we're ready to build each piece.
   you.
 - All of the above are open design questions to think through when we
   actually build this, not decided specifics yet.
+
+## Grand Hallway — IMPLEMENTED
+- Corrected understanding from the original Room Names entry: this is
+  not about generating a deliberately wide corridor. Dungeon generation
+  already occasionally produces two separate, genuinely 1-cell-wide
+  corridors that happen to run parallel and land directly adjacent to
+  each other, purely by coincidence of room placement — nothing needed
+  to change about corridor generation itself.
+- While standing in a corridor cell, if there's a genuinely separate
+  corridor running parallel and directly adjacent to it, the bottom-left
+  name shows "GRAND HALLWAY".
+- Detection is based purely on the surrounding cell layout, not which
+  direction you're currently moving. It specifically excludes a plain
+  corridor bend (only one side continues, so it's a turn, not a second
+  corridor), a genuine 4-way crossing where two corridors intersect at
+  a single point, and a T-junction (a different corridor's dead end
+  touching a straight run at one point) — none of these are a real
+  "two hallways running side by side," which is the only case that
+  should count.
