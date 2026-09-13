@@ -99,3 +99,8 @@
 - Fixed a real crash: finding a second weapon while already carrying one could throw a syntax error and stop the game — a variable name happened to collide with a reserved BASIC keyword. If you ever hit an error picking up a weapon, this was it.
 - Cleaned up redundant calculations in monster movement and the corridor/hallway-detection check so each value is computed once per use instead of repeatedly
 - Several more of the game's most frequently-used internal routines repositioned for faster lookup, extending the same fix used for the message line and HUD in the update above
+- Fixed the same kind of slowdown for the "press a key" waiting routine, which is used constantly across stairs, the quit prompt, and weapon pickups — should feel noticeably snappier at those points now
+
+## New Feature: Softer Death at Level 5+
+- Dying at dungeon level 5 or deeper, after having reached at least the Alley Rat title, now offers a new option on the death screen: press S to resume one level below where you died, keeping your current XP and weapon
+- This option always shows on the death screen, every time you die — it's only greyed out and unselectable until you've met both requirements at once (reached level 5, and reached Alley Rat), so you always know it's there and what it takes to unlock it, no matter how far along you are
