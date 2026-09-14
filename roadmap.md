@@ -223,6 +223,90 @@ each piece.
   generic reminder of the requirement rather than dynamically showing
   which level you'd actually resume at.
 
+## Healing & Ambush Rebalance — IMPLEMENTED
+- Discovered while investigating Combat Difficulty / Balance above:
+  player max HP grows completely uncapped (+5 for every 50 XP earned,
+  forever), and the old level-transition heal (33-50% of max HP, random)
+  scaled directly off of that ever-growing number. Simulating an actual
+  playthrough showed the compounding effect clearly — HP remaining
+  after a level's worth of combat climbed steadily from near-zero
+  around level 5 to 85+ by level 25, meaning the game was getting safer
+  over time instead of more dangerous, independent of any weapon or
+  monster-scaling issues.
+- Level-transition healing changed from 33-50% of max HP (random) to a
+  flat 10% of max HP, every time.
+- Rest and potion healing (previously a flat 3-5 HP each, which had
+  become trivial against a large, uncapped max HP pool) now share a
+  tiered formula: still flat 3-5 HP while max HP is under 30, then a
+  random 10-20% of max HP once past that threshold.
+- Resting is capped at 3 uses per level before risk kicks in. The base
+  ambush chance during rest also increased, from LV*0.75 (capped at
+  15%) to LV*1.5 (capped at 25%).
+- Every rest beyond the 3rd per level now shows a warning — "RESTING
+  AGAIN IS RISKY! REST ANYWAY? Y/N" — and requires confirmation, with
+  ambush chance escalating steeply beyond that point (+35 percentage
+  points per additional rest, capped at 90%), replacing an earlier,
+  simpler version of this idea that just hard-blocked a 4th rest
+  outright.
+- Shadow Hand's ambush immunity changed from true immunity to a flat
+  3-5% chance instead — meaningfully safer than earlier titles, but no
+  longer risk-free. The character screen description was updated to
+  match ("RARELY AMBUSHED" instead of "IMMUNE TO AMBUSHES"). Fixing
+  this surfaced a real bug: the ambush check had a separate `XP<600`
+  gate that was the actual mechanism behind the old immunity — just
+  changing the percentage without removing that gate would have left
+  Shadow Hand silently immune regardless of the new number.
+
+## Split Keen Eyes Into Two Levels — IMPLEMENTED
+- Keen Eyes is now two separate, named tiers instead of one skill
+  granted all at once.
+  - "Keen Eyes (1)" — granted at Alley Rat (XP 50, as before) — just
+    the base 6-square ring around you, no forward extension.
+  - "Keen Eyes (2)" — granted at Basic Burglar (XP 150), alongside that
+    title's existing Nimble Fingers skill, not replacing it — adds
+    seeing 2 tiles ahead in your direction of travel instead of 1,
+    while keeping the same 6-square ring from tier 1.
+- Character screen updated to list both as separate, named skills.
+
+## Corridor Wall Decoration — IMPLEMENTED
+- Corridors now have actual wall tiles flanking them instead of blank
+  void, via a generation-time pass: after corridors are carved, every
+  corridor cell's void neighbors (orthogonal and diagonal) become
+  walls. Checking diagonals too was an addition beyond the original
+  plan — without it, L-shaped bends left a gap at the outer corner,
+  since the corner cell is only ever diagonally adjacent to the turn
+  point, never a direct neighbor of any corridor cell.
+- Found and fixed a real bug during this: walls were being placed
+  correctly in the data, but the game's existing reveal logic only
+  ever marks the single cell the player is standing on as "seen" —
+  neighboring wall cells never got their own turn to be revealed or
+  drawn, so they existed but stayed invisible. Fixed by adding wall
+  reveals to both the normal per-step reveal and Keen Eyes' wider
+  extended-vision reveal (16 separate reveal points there needed the
+  same fix).
+- Caught and fixed a bounds-checking bug in that same fix before it
+  shipped: the first version could have read past the map array's
+  bounds for a corridor cell sitting at the map's bottom or side edge,
+  which would have thrown a real BAD SUBSCRIPT ERROR on hardware.
+- Room walls and corridor walls are now visually distinct once earned,
+  which required giving corridor walls their own separate tile value
+  (rather than sharing the room-wall value) and updating every
+  existing wall-blocking check (player movement, monster movement) to
+  recognize both values as impassable:
+  - Before reaching Alley Rat, both wall types render dark grey and
+    look identical.
+  - After Alley Rat, room walls become light grey while corridor walls
+    stay dark grey.
+  - The instant XP first crosses into Alley Rat, every already-
+    revealed room wall on the current screen is immediately recolored
+    light grey, not just ones discovered from that point forward.
+- Confirmed this doesn't add to per-turn redraw cost, which mattered
+  given how much of this session focused on cutting that down — the
+  one-time generation pass and the one-time recolor-on-title-change
+  are both bounded, rare events, not new per-turn work. Also confirmed
+  this doesn't interfere with the existing Grand Hallway text-detection
+  logic, which only ever looks at corridor floor cells and never at
+  void or wall cells.
 ## Win Condition
 - Reaching Shadow Hand is required to win the game.
 - A specific dungeon level (not yet decided which) requires the player to
@@ -318,10 +402,19 @@ each piece.
   not yet scoped: could mean toning down early weapon attack bonuses,
   making monsters hit harder or more often at this stage, or something
   else — needs more thought before deciding an approach.
-- A confirmed contributing cause: monster HP and damage scaling with
-  dungeon depth has effectively been left flat — it needs to definitely
-  scale as you go deeper, not just nominally. This is part of why the
-  game gets too easy, alongside the weapon-strength issue above.
+- A confirmed contributing cause, still open: monster HP and damage
+  scaling with dungeon depth has effectively been left flat — it needs
+  to definitely scale as you go deeper, not just nominally. This is
+  part of why the game gets too easy, alongside the weapon-strength
+  issue above. Neither the weapon-strength nor the monster-scaling
+  side of this has been addressed yet.
+- A second contributing cause, now addressed: see "Healing & Ambush
+  Rebalance" below. Simulating actual play uncovered that player max
+  HP grows completely uncapped, and healing sources scaled off of it
+  in ways that compounded into the game getting *safer* over time
+  instead of harder — a separate mechanism from the weapon/monster
+  scaling issue above, and the first piece of this overall balance
+  problem to actually get fixed.
 
 ## Dungeon Density
 - Maps should feel slightly more dense than they currently do — more
@@ -354,19 +447,6 @@ each piece.
   else)? Does this replace the existing plain potions, or exist
   alongside them as a separate, riskier pickup?
 
-## Split Keen Eyes Into Two Levels
-- Currently Keen Eyes is a single skill, granted all at once at Alley
-  Rat: the base 6-square ring around you, plus seeing 1 extra tile
-  straight ahead in your direction of travel.
-- Planned change: split this into two tiers.
-  - "Keen Eyes (Level 1)" — granted at Alley Rat (as now, XP 50) — just
-    the base 6 squares around you, no forward extension.
-  - "Keen Eyes (Level 2)" — granted at Basic Burglar (XP 150), in
-    addition to that title's existing Nimble Fingers skill, not
-    replacing it — adds seeing 2 tiles ahead in your direction of
-    travel instead of 1, while keeping the same 6-square ring from
-    Level 1.
-
 ## Weapons With Variable Stat Rolls
 - Currently each weapon type has fixed stats (e.g. Mace is always
   exactly +6 ATK, -1 counter damage). Planned change: each stat rolls
@@ -381,40 +461,3 @@ each piece.
   the specific rolled values for the weapon you're holding, not just
   a generic per-type description like they do now.
 
-## Corridor Wall Decoration
-- Currently corridors are a single-width path of plain floor tiles
-  through empty void — nothing visually marks them as a corridor
-  rather than open space; the "walls" on either side are really just
-  blank void.
-- Planned approach: after a level's corridors are carved, one generic
-  pass over every corridor cell converts any of its four direct
-  neighbors that are still void into a wall tile. This one simple rule
-  should also correctly handle grand hallways as a side effect, without
-  needing separate logic for them: in a grand hallway the two parallel
-  lanes sit directly next to each other, so the cell between them is
-  already corridor floor rather than void, and the rule leaves it
-  alone — only the outer top-and-bottom (or left-and-right) neighbors
-  of the combined two-lane width are still void, which is exactly where
-  the walls should land. Corners should work out the same way, simply
-  by having more void neighbors than a straight segment.
-- Open question, not yet resolved: how this looks right at the point
-  where a corridor connects into a room (the doorway). That neighbor is
-  room floor, not void, so no wall gets placed there, which is correct,
-  but whether the geometry looks right immediately around that specific
-  junction is genuinely unknown until this is built and tested against
-  real generated dungeons.
-- Checked and confirmed this doesn't add to per-turn redraw cost, which
-  matters given how much of this session focused on cutting that down.
-  During normal play, reveal/draw logic (fog-of-war and Keen Eyes)
-  already draws a fixed set of surrounding cells every step regardless
-  of their content — it draws whatever is in each cell, whether void or
-  floor. After this change those same flanking cells would contain
-  walls instead of void, but the number of cells drawn per step doesn't
-  change, only what's drawn in some of them. The only real cost is a
-  one-time pass over corridor cells during level generation itself — a
-  small subset of the map, not all 1000 cells — which is a small
-  addition to a moment that's already a "please wait" pause between
-  levels, not a new per-turn expense. Also confirmed this doesn't
-  interfere with the existing Grand Hallway text-detection logic, which
-  only ever looks at corridor floor cells and never at void or wall
-  cells.
