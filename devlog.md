@@ -104,3 +104,19 @@
 ## New Feature: Softer Death at Level 5+
 - Dying at dungeon level 5 or deeper, after having reached at least the Alley Rat title, now offers a new option on the death screen: press S to resume one level below where you died, keeping your current XP and weapon
 - This option always shows on the death screen, every time you die — it's only greyed out and unselectable until you've met both requirements at once (reached level 5, and reached Alley Rat), so you always know it's there and what it takes to unlock it, no matter how far along you are
+
+## Healing & Ambush Rebalance
+- Found and fixed a real balance problem: your max HP grows without any limit as you earn XP, and healing between levels used to scale directly off that ever-growing number — the two together meant the game was quietly getting *safer* the longer you played, not more dangerous, regardless of how deep you went
+- Healing when you descend to a new level is now a flat 10% of your max HP instead of a random 33-50% chunk of it
+- Resting and drinking potions now heal a small flat 3-5 HP while your max HP is still low (under 30), then shift to a random 10-20% of your max HP once it grows past that
+- Resting more than 3 times on the same level now warns you it's risky and asks you to confirm before you can keep going, and the chance of getting ambushed while resting climbs steeply each time past that point
+- Reaching Shadow Hand no longer makes you fully immune to ambushes while resting — it now gives you a small 3-5% chance instead, so it's still much safer than earlier titles but no longer risk-free
+
+## Keen Eyes Split Into Two Tiers
+- Keen Eyes is no longer a single skill you get all at once — it's now two named tiers, matching the two titles you already earn along the way: Keen Eyes (1) at Alley Rat gives you the usual awareness of the 6 squares around you, and Keen Eyes (2) at Basic Burglar adds seeing 2 tiles ahead in the direction you're walking, instead of the 1 it used to give
+- The character screen now lists both as their own separate skills
+
+## Corridors Now Have Walls
+- Corridors used to be a bare path through empty black space with nothing marking their edges — they now have real walls on either side, including properly closed corners at bends
+- Fixed a real bug found while building this: the walls were being placed correctly, but the game's own reveal logic never actually showed them to you — only the exact tile you were standing on ever got revealed, so the walls next to you stayed invisible even though they existed. Fixed so walls now reveal properly as you walk, including through Keen Eyes' wider vision
+- Room walls and corridor walls now look different once you've earned it: before reaching Alley Rat, both are dark grey and you can't tell them apart; after Alley Rat, room walls turn light grey while corridor walls stay dark. The moment you reach Alley Rat, every wall you've already seen updates immediately, not just new ones you find afterward
