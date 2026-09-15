@@ -267,6 +267,21 @@ each piece.
     seeing 2 tiles ahead in your direction of travel instead of 1,
     while keeping the same 6-square ring from tier 1.
 - Character screen updated to list both as separate, named skills.
+- New follow-up idea, not yet built: a further perk specifically for
+  Keen Eyes (2) (Basic Burglar) — individual room types show as
+  different colors once revealed, rather than the single uniform
+  light grey rooms currently get once Alley Rat is reached:
+  - Treasure room: yellow
+  - Apothecary: green
+  - Monster room (no special trait): light red while its monster is
+    still alive, changing to red once that monster is defeated
+  - Stairs room and entryway: light blue
+- Open questions for when we build this: does this recolor just the
+  room's walls, or the floor too (floor currently stays permanently
+  dark grey regardless of title, by earlier explicit decision, so this
+  would need to be a deliberate exception for that case). Corridors
+  are unaffected either
+  way, since room type is a property of rooms, not corridors.
 
 ## Corridor Wall Decoration — IMPLEMENTED
 - Corridors now have actual wall tiles flanking them instead of blank
@@ -461,3 +476,68 @@ each piece.
   the specific rolled values for the weapon you're holding, not just
   a generic per-type description like they do now.
 
+## Custom Character Set for a Small Set of Glyphs
+- Goal: redefine only a handful of characters, not the whole 256-glyph
+  set — specifically the player (`@`, into a little-man shape per an
+  existing mockup), walls (`#`), floor (`.`), treasure (`$`), and the
+  monster symbols.
+- Real technical constraint found while scoping this: this program's
+  own tokenized code already spans from $0801 to roughly $51A6 — that's
+  the code alone, before counting any of its arrays or variables — which
+  already exceeds the entire 16K of VIC-II's default memory bank (bank
+  0, $0000-$3FFF) by over 4.5KB. There's no free 2K gap left anywhere in
+  that bank to hold a custom character set alongside the program.
+- The only place a custom character set could actually live is a
+  different VIC bank — specifically the always-free RAM at
+  $C000-$CFFF. But screen memory and character memory must live in the
+  same 16K bank as each other (a VIC-II hardware rule, not a design
+  choice), so this means relocating screen memory too, not just adding
+  a character set off to the side.
+- The real risk in that: screen memory isn't only where this game's own
+  POKE-based dungeon drawing writes to — it's also where every ordinary
+  PRINT statement writes to, via the C64's own separate, independent
+  bookkeeping of "where the screen currently is" (kernal zero-page
+  pointers). If screen memory moves without also correctly updating
+  that bookkeeping, every PRINT-based screen in the game — messages,
+  HUD text, instructions, the character sheet, every Y/N prompt — would
+  silently keep writing to a location the chip no longer displays,
+  while POKE-based dungeon drawing would keep working fine. That
+  mismatch is a real, plausible failure mode, not a hypothetical one.
+- Given that, this needs to be built and tested carefully as its own
+  piece of work, not rushed — a bank relocation touching both screen
+  and character memory is a meaningfully bigger and riskier change than
+  swapping a single glyph would have been.
+- Update: the hardest, riskiest part of this — the bank-3 relocation
+  itself — is now proven working on real hardware, not just reasoned
+  through. `rogue6.src` / `petsciipit6.bas`/`.prg` is a full, separate
+  copy of the game (main game files untouched) with the `@` character
+  successfully redefined into the little-man shape from the mockup,
+  confirmed working by the user. Keep these as the reference template
+  for when the remaining four glyphs (`#`, `.`, `$`, monster symbols)
+  get added — the relocation, interrupt-safe copy, and quit-path
+  restore logic in it are already correct and tested; extending it is
+  mainly a matter of overwriting a few more characters' worth of bytes
+  in the same already-relocated character set, not repeating the risky
+  part from scratch.
+- One real mistake worth remembering from getting here: an earlier,
+  simpler-looking approach (placing the character set within the
+  default bank at a fixed address like $3000, no relocation needed)
+  was verified working in an isolated test — but is a dead end for the
+  actual game specifically, since the game's own code already extends
+  well past that address. That simpler approach only works for small,
+  standalone test programs, not this game.
+
+## Everything Dark Before Alley Rat
+- Extends the same dark-grey theme already applied to walls, floor, and
+  the player character before reaching Alley Rat: monsters, potions,
+  and treasure should also render dark grey during that same period,
+  rather than their normal colors — the idea being that it's not that
+  those things look different before Alley Rat, it's that it's just
+  genuinely too dark to see any detail at all yet.
+- Throughout that whole pre-Alley-Rat stretch, the game should
+  intermittently show "IT'S SO DARK!" as a message, not just once. A
+  single instance of this (shown once at the very start of a new game,
+  before the player's first move) has already been implemented as a
+  first step — this item is about extending that to recur periodically
+  for as long as the player hasn't reached Alley Rat yet, not yet
+  scoped in terms of how often or what triggers it.
