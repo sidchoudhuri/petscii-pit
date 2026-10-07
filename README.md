@@ -13,3 +13,7 @@ A C64 BASIC roguelike
 [PETSCIIPITDEMO.BAS](petsciipitdemo.bas) - Self-playing demo source code
 
 [PETSCIIPITDEMO.PRG](petsciipitdemo.prg) - Self-playing demo BASIC executable
+
+[GLYPHSHOWCASE.BAS](glyphshowcase.bas) - Custom characters demo source code
+
+[GLYPHSHOWCASE.PRG](glyphshowcase.prg) - Custom characters demo BASIC executable
