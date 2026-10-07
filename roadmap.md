@@ -267,6 +267,21 @@ each piece.
     seeing 2 tiles ahead in your direction of travel instead of 1,
     while keeping the same 6-square ring from tier 1.
 - Character screen updated to list both as separate, named skills.
+- New follow-up idea, not yet built: a further perk specifically for
+  Keen Eyes (2) (Basic Burglar) — individual room types show as
+  different colors once revealed, rather than the single uniform
+  light grey rooms currently get once Alley Rat is reached:
+  - Treasure room: yellow
+  - Apothecary: green
+  - Monster room (no special trait): light red while its monster is
+    still alive, changing to red once that monster is defeated
+  - Stairs room and entryway: light blue
+- Open questions for when we build this: does this recolor just the
+  room's walls, or the floor too (floor currently stays permanently
+  dark grey regardless of title, by earlier explicit decision, so this
+  would need to be a deliberate exception for that case). Corridors
+  are unaffected either
+  way, since room type is a property of rooms, not corridors.
 
 ## Corridor Wall Decoration — IMPLEMENTED
 - Corridors now have actual wall tiles flanking them instead of blank
@@ -461,3 +476,288 @@ each piece.
   the specific rolled values for the weapon you're holding, not just
   a generic per-type description like they do now.
 
+## Custom Character Set for a Small Set of Glyphs
+- Goal: redefine only a handful of characters, not the whole 256-glyph
+  set — specifically the player (`@`, into a little-man shape per an
+  existing mockup), walls (`#`), floor (`.`), treasure (`$`), and the
+  monster symbols.
+- Real technical constraint found while scoping this: this program's
+  own tokenized code already spans from $0801 to roughly $51A6 — that's
+  the code alone, before counting any of its arrays or variables — which
+  already exceeds the entire 16K of VIC-II's default memory bank (bank
+  0, $0000-$3FFF) by over 4.5KB. There's no free 2K gap left anywhere in
+  that bank to hold a custom character set alongside the program.
+- The only place a custom character set could actually live is a
+  different VIC bank — specifically the always-free RAM at
+  $C000-$CFFF. But screen memory and character memory must live in the
+  same 16K bank as each other (a VIC-II hardware rule, not a design
+  choice), so this means relocating screen memory too, not just adding
+  a character set off to the side.
+- The real risk in that: screen memory isn't only where this game's own
+  POKE-based dungeon drawing writes to — it's also where every ordinary
+  PRINT statement writes to, via the C64's own separate, independent
+  bookkeeping of "where the screen currently is" (kernal zero-page
+  pointers). If screen memory moves without also correctly updating
+  that bookkeeping, every PRINT-based screen in the game — messages,
+  HUD text, instructions, the character sheet, every Y/N prompt — would
+  silently keep writing to a location the chip no longer displays,
+  while POKE-based dungeon drawing would keep working fine. That
+  mismatch is a real, plausible failure mode, not a hypothetical one.
+- Given that, this needs to be built and tested carefully as its own
+  piece of work, not rushed — a bank relocation touching both screen
+  and character memory is a meaningfully bigger and riskier change than
+  swapping a single glyph would have been.
+- Update: the hardest, riskiest part of this — the bank-3 relocation
+  itself — is now proven working on real hardware, not just reasoned
+  through. `rogue6.src` / `petsciipit6.bas`/`.prg` was originally a
+  separate test copy for this specific feature, but is now the current,
+  primary version of the game going forward — not a test branch. The
+  `@` character has been successfully redefined into the little-man
+  shape from the mockup, confirmed working by the user, alongside a
+  full pre-Alley-Rat darkness system (see below) and the color-scheme
+  fixes that came with it. Keep the relocation, interrupt-safe copy,
+  and quit-path restore logic as the reference template for when the
+  remaining four glyphs (`#`, `.`, `$`, monster symbols) get added —
+  that part is already correct and tested; extending it is mainly a
+  matter of overwriting a few more characters' worth of bytes in the
+  same already-relocated character set, not repeating the risky part
+  from scratch.
+- Update: in the end, the mainline `petsciipit.bas` didn't need the
+  bank-3 relocation described above at all — the "quick memcopy for the
+  font" merge (fast font copy update, see below) already lands the
+  whole ROM charset in the default bank's own redefinable character
+  memory ($C800-$CFFF / 51200-53247) via `SYS 41964`, with no screen-
+  memory relocation and no VIC bank switch required. Individual glyphs
+  are then overridden by just POKEing 8 bytes per character on top of
+  that copy. Custom bitmaps are now in for: player (`@`), floor (`.`),
+  potions, treasure/coins (`$`), and all six monster types (Leech,
+  Goblin, Imp, Guard, Cultist, Golem), plus the stairs down. The Golem
+  also moved off a shared glyph (it used to double up on the reverse-
+  video solid-block character) onto its own dedicated slot (screen code
+  65) so it no longer collides with anything else.
+- Remaining: walls (`#`, screen code 102) are still the only glyph in
+  this list using the stock ROM shape rather than a custom bitmap.
+- One real mistake worth remembering from getting here: an earlier,
+  simpler-looking approach (placing the character set within the
+  default bank at a fixed address like $3000, no relocation needed)
+  was verified working in an isolated test — but is a dead end for the
+  actual game specifically, since the game's own code already extends
+  well past that address. That simpler approach only works for small,
+  standalone test programs, not this game.
+
+## Everything Dark Before Alley Rat — IMPLEMENTED
+- Walls, floor, the player character, monsters, potions, treasure,
+  stairs, and weapons on the ground all render dark grey before
+  reaching Alley Rat, switching to their normal colors once earned —
+  every drawable tile type in the game is now covered.
+- "IT'S SO DARK!" recurs throughout that stretch: a 1-in-10 chance on
+  any turn where nothing else happened. Fighting a monster while still
+  in the dark has a separate 1-in-2 chance of showing "I COULD HARDLY
+  SEE THAT THING!" instead of the normal kill/hit message that turn.
+- The instructions screen now explains this up front so it reads as
+  intentional rather than a bug.
+- The moment Alley Rat is first reached, the game shows "MY EYES HAVE
+  ADJUSTED!", pauses a second, then recolors every already-revealed
+  wall. Reaching Basic Burglar similarly shows "I CAN PICK OUT MORE
+  DETAILS!" with the same pause, ahead of a future perk for that tier.
+- Along the way, corrected a color-scheme mistake: the C64 has three
+  distinct grey shades (light, medium, dark), not two. The player
+  character is now cyan after Alley Rat instead of reusing light grey,
+  and room walls are medium grey instead of light grey, so they're
+  visually distinct from the HUD text which also uses light grey.
+## Compilation Using MOSpeed — IN PROGRESS
+- Goal: compile both `petsciipit.prg` (the main game) and `petsciipitdemo.prg`
+  (the demo) from BASIC to native 6502 machine code using MOSpeed's web
+  edition, for a speed boost without a full assembly rewrite. Both are
+  hitting problems.
+- Same recommended settings apply to both files, worked out from MOSpeed's
+  actual documentation rather than guesswork:
+  - **Memory holes / locked regions**: add a hole from decimal 49152 to
+    53247 for both files. In the demo, this is the exact range the custom
+    screen ($C000), the raw `FG` array storage ($C400), and the custom
+    character set ($C800) all live in. In the main game, `FG` is still a
+    normal BASIC array (never moved to raw storage there), so only the two
+    ends of that range are actually used (screen and character set) — the
+    middle is genuinely empty, but reserving the same single contiguous
+    block is simpler and equally safe. Without this hole, MOSpeed doesn't
+    know that range is already spoken for and could place its own compiled
+    code, runtime, or variables on top of it. To add it: in the "Memory
+    holes / locked regions" section, type 49152 into the "start address
+    (decimal)" box, 53247 into "end address (decimal)", then click "Add
+    memory hole".
+  - **Use hidden RAM**: turn this OFF. Initial recommendation was to turn
+    it on, but the actual compile log revealed this is very likely the
+    real cause of the demo's black screen (see "Current status" below) —
+    it relocates part of the compiled program's own executing code to
+    $D000–$FFEB, which collides directly with a POKE already in the boot
+    sequence that temporarily banks character ROM into that exact address
+    range. The compiled program at ~22.7KB after compaction comfortably
+    fits in normal BASIC memory without this anyway, so there's no longer
+    a reason to enable it.
+  - **Compact level**: raise from Default (which actually disables size
+    optimization entirely) to 4 or 5, per MOSpeed's own docs — a 10–15%
+    size reduction for roughly 0.5–1% performance cost.
+  - **Loop handling ("Remove empty loops")**: recommended to turn OFF.
+    This optimization strips loops whose computed value isn't used
+    afterward — which describes every timing loop in this game (the
+    Keen Eyes pause, rest/stairs/title waits, all sound effects use
+    `FOR C9=-1 TO 0:C9=(TI<T2):NEXT C9`-style loops purely to burn time).
+    Risk of silently zeroing out all pacing and sound timing without a
+    compile error.
+  - **Forced integers "ALL!"**: flagged as the highest-risk setting.
+    Appears to force every variable to integer with no analysis, which
+    would truncate `RND(1)` (always fractional, 0–1) to 0 — silently
+    breaking every chance-based mechanic in the game (monster spawns,
+    damage variance, ambush chance, the darkness message chances) without
+    a visible error. Recommendation: try compiling without it first, using
+    only the memory hole + compact level (which carry no behavioral
+    risk), and only reach for forced integers if still short on
+    space — then test chance-based mechanics extensively afterward.
+- Current status: the demo compiled successfully with no reported errors
+  (MOSpeed's own log confirms this — 1714 commands compiled, extensive
+  optimization passes completed, final output written). The black screen
+  is a runtime issue, not a compile failure, and the actual compile log
+  points to a specific, traceable cause: with "Use hidden RAM" enabled,
+  MOSpeed relocated part of the compiled program's own code to
+  $D000–$FFEB. The boot sequence's character-ROM copy trick does
+  `POKE 1,PEEK(1) AND 251` right at the very start, before anything else
+  runs, which temporarily banks character ROM into that exact $D000–$DFFF
+  range so the next few lines can read bitmap data out of it. If part of
+  the compiled program's own executing code lives there too, that POKE
+  makes the CPU unable to see its own next instructions the instant it
+  executes — it starts trying to run character-ROM bitmap data as code
+  instead, which crashes or hangs immediately, matching the "solid black
+  screen, nothing ever prints" symptom exactly. Resolution: turn "Use
+  hidden RAM" off (see updated setting above) and recompile — the
+  program's size doesn't require it, and this removes the cause of the
+  collision rather than trying to work around it with a narrower memory
+  hole.
+- The main game is also reporting errors when compiled — not yet
+  established whether it's the same black-screen symptom. If so, the same
+  cause almost certainly applies here too, since the demo's boot sequence
+  (including the character-ROM copy trick and the $D000-colliding "hidden
+  RAM" relocation) was ported directly from this file — the same "hidden
+  RAM off" fix would apply. Still waiting on the specifics of what the
+  main game's error actually says to confirm.
+
+## Show HP as Current/Max
+- HUD currently shows "HP:X" (current health only). Change to "HP:X/Y"
+  format, showing current health over max health (PM), matching how XP
+  and level are already shown with more context.
+
+## Faster Screen Restore After Instructions/Character Screen — TRIED, DROPPED
+- Currently, pressing I or C clears the screen, shows instructions or
+  character info, waits for a key, then calls @REDRAW — which clears the
+  screen again and redraws every dungeon tile one at a time from scratch.
+  Two possible faster approaches instead of a full tile-by-tile redraw:
+  - Save a copy of the dungeon screen to scratch memory before showing
+    the instructions/character screen, then copy it straight back
+    afterward (the "copy mem trick") instead of regenerating it tile by
+    tile.
+  - Keep a second, pre-built screen page for instructions/character info
+    and just flip the VIC-II's screen memory pointer to it temporarily,
+    then flip back — no copying needed at all, just a bank switch.
+- Checked where either approach could safely store data: $C000–$CFFF is
+  already fully spoken for in both games, so a naive "just use $C000"
+  isn't available as-is:
+  - Screen lives at $C000–$C3FF (1024 bytes) in both games.
+  - Character set lives at $C800–$CFFF (2048 bytes) in both games.
+  - The gap in between, $C400–$C7FF (1024 bytes), is empty and free in
+    the main game — big enough to hold a saved copy of screen codes
+    alone (1000 bytes), but not both screen codes and color data.
+  - That same gap is NOT free in the demo — it's fully occupied by the
+    raw `FG` array storage (this session's out-of-memory fix), so the
+    demo would need a genuinely different location for either approach.
+  - Color RAM ($D800–$DBE7) is a separate, fixed memory area that
+    doesn't move with VIC bank switching — so the page-flip approach by
+    itself only covers screen codes (characters), not their colors.
+    Whichever approach is chosen, colors still need their own explicit
+    save/restore step, since they can't be paged the same way.
+- Open question for whoever picks this up: where a second copy should
+  actually live given the above, since $C000–$CFFF is out for both
+  games — needs a fresh, unused memory range worked out, not reused
+  from what's already claimed.
+- Built, tested, and ultimately reverted in the main game. Landed on
+  $0400–$07FF (the default screen memory, freed up once the active
+  screen moves to $C000) for a "copy mem" save/restore around the I and
+  C screens. Two real bugs surfaced in the process: the fast restore
+  only covered the narrow explored-tile range, leaving old instruction
+  text visible outside it; and the room-name/title-badge row has its
+  own redraw cache that needed an explicit reset to notice the screen
+  underneath had changed. Both got fixed, but the result was reported
+  as still visibly slower than the original @REDRAW it replaced —
+  confirmed by re-examining what @REDRAW actually did: `PRINT CHR$(147)`
+  is a hardware-fast screen clear, not a BASIC loop, so the replacement
+  ended up doing more total interpreted loop iterations (a full blank
+  pass plus a restore pass) than the original tile-by-tile approach it
+  was meant to beat.
+- Investigated whether color RAM could be paged/banked the same way
+  screen memory can, to make a page-flip approach fully instant rather
+  than needing a copy step for color. Confirmed, with direct technical
+  sourcing, that it can't: color RAM is a physically separate chip with
+  data pins wired directly to the VIC-II, entirely bypassing normal
+  address-bus routing — it stays fixed at $D800 regardless of which VIC
+  bank is active, on this hardware. No exception found for the Ultimate
+  64 specifically. (One unrelated third-party hobbyist project,
+  "UltiMem64" — a physical replacement chip, different product from a
+  different maker — does support switchable color RAM pages, but that's
+  not this hardware.) This means even a genuine page-flip implementation
+  would only make screen codes instant; color would still need an
+  explicit copy every time.
+- A hand-written 6502 machine-code copy routine (POKEd in and invoked
+  via SYS, the same pattern already used elsewhere in this game for the
+  fast level-clear trick) could plausibly hit the 2-3ms figures often
+  quoted for color RAM copies — but that figure specifically assumes
+  hand-assembled code, not a BASIC PEEK/POKE loop, which is what was
+  actually tried here. Not pursued this round: harder to verify without
+  hardware access, and a wrong byte in hand-assembled code fails
+  silently rather than with a catchable error, unlike BASIC. Left as a
+  legitimate option for later, if revisited by someone who can test
+  directly on hardware — correctly scoped from the start as "write real
+  assembly for the copy," not "optimize the BASIC loop further."
+- Reverted to the original @REDRAW for both I and C in the main game.
+  Not attempted in the demo at all, given the outcome here.
+
+- Fourth attempt: revisited using SYS 41964 (a BASIC ROM block-copy
+  routine) plus a "clear ram area" step copied from a public bouncing-
+  ball demo listing, after isolated testing seemed to confirm it worked.
+  Integrated into the main game, it actively corrupted the running
+  program — the "clear" step fills a fixed address range (~2000-9984)
+  that overlaps where this game's own BASIC code is stored, so pressing
+  I or C overwrote part of the program with blanks live. Reverted
+  immediately; this is worse than the earlier slow/buggy attempts, not
+  just another dead end.
+- Shelved. If ever revisited: lowering BASIC's own memsiz pointer
+  (POKE 55/56 + CLR, once at startup only, before any game state exists)
+  would give a genuinely reserved safe address range instead of a
+  hardcoded guess. But that only fixes where a copy could safely land,
+  not why SYS 41964 needed that clear step to avoid corrupting the
+  statement right after it — that mechanism is still not understood, and
+  is the harder, unresolved half of this idea.
+
+## Quick Memcopy for the Font, Integer Arrays, Safer Array Nulling — IMPLEMENTED
+- Merged in a contributed improvement: the font is now copied into
+  redefinable character memory with a single `SYS 41964` call (a BASIC
+  ROM fast block-copy routine) instead of a byte-by-byte `FOR...NEXT`
+  loop — same destination and result, much faster startup.
+- `MA`, `RM`, and `FG` (the three largest dungeon-tracking arrays)
+  switched from default floating-point to integer type (`MA%`, `RM%`,
+  `FG%`), freeing up meaningful memory.
+- Replaced the `SYS 45762`-based trick previously used to quickly null
+  those three arrays between levels with a plain `FOR...NEXT` loop — the
+  `SYS` version is known to break compiled builds, the loop version
+  doesn't.
+
+## Bug Fix: Monsters (and Stairs) Invisible in the Dark — FIXED
+- Found and fixed a real bug where monsters revealed by a room's
+  static/fog-of-war reveal logic never actually got drawn to the screen
+  while the dungeon was still dark (before reaching Alley Rat) — a
+  single-line `IF...THEN` in C64 BASIC had the actual `POKE` draw
+  statement nested inside an `IF XP>=50 THEN` color check, so it
+  silently never ran pre-Alley-Rat. Split into two lines (one sets the
+  color, one always draws) at both places this pattern occurred. Fog-of-
+  war gating itself (`ML`, `RM%`/`FG%` checks) was untouched and intact.
+- Stairs were not actually affected by this particular bug — their draw
+  routine was already correctly split. Any apparent stairs invisibility
+  pre-Alley-Rat is the existing, intentional one-tile-ahead lookahead
+  limit on Keen Eyes, not a bug.

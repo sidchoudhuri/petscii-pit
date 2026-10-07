@@ -120,3 +120,32 @@
 - Corridors used to be a bare path through empty black space with nothing marking their edges — they now have real walls on either side, including properly closed corners at bends
 - Fixed a real bug found while building this: the walls were being placed correctly, but the game's own reveal logic never actually showed them to you — only the exact tile you were standing on ever got revealed, so the walls next to you stayed invisible even though they existed. Fixed so walls now reveal properly as you walk, including through Keen Eyes' wider vision
 - Room walls and corridor walls now look different once you've earned it: before reaching Alley Rat, both are dark grey and you can't tell them apart; after Alley Rat, room walls turn light grey while corridor walls stay dark. The moment you reach Alley Rat, every wall you've already seen updates immediately, not just new ones you find afterward
+
+## New Feature: The Dungeon Starts Dark
+- Before reaching Alley Rat, the whole dungeon is now genuinely hard to see: floor, walls, monsters, potions, treasure, stairs, and weapons on the ground all render in a single dark grey instead of their normal colors, since your character hasn't yet learned to make out detail down there
+- A random ambient message, "IT'S SO DARK!", now has a small chance (1 in 10) of showing up on an otherwise quiet turn where nothing else happened, as a reminder of why everything looks the way it does
+- Fighting a monster while still in the dark has a good chance (1 in 2) of showing "I COULD HARDLY SEE THAT THING!" instead of the normal kill/hit message that turn
+- Added a line to the instructions screen explaining this up front, so it reads as an intentional mechanic rather than a bug: "DUNGEON IS DARK UNTIL KEEN EYES AT 50XP"
+- The first time you actually reach Alley Rat (Keen Eyes 1), the game now says "MY EYES HAVE ADJUSTED!", pauses for a second, and then all the room walls light up to their proper color
+- Reaching Basic Burglar (Keen Eyes 2) now says "I CAN PICK OUT MORE DETAILS!" with the same second-long pause, ahead of a future perk planned for that tier
+- Found and fixed a real oversight along the way: weapons sitting on the dungeon floor were still showing their normal color the whole time, regardless of how dark everything else was — these are now dark grey too until Alley Rat, matching everything else
+
+## Color Correction: Three Shades of Grey, Not Two
+- Realized partway through that the C64 actually has three distinct grey shades (light, medium, and dark), not two, and the earlier work had been treating "light grey" and "medium grey" as the same color
+- Your character is now cyan once you reach Alley Rat, instead of reusing the same light grey that was already being used elsewhere
+- Room walls now turn medium grey after Alley Rat rather than light grey, so they read as visually distinct from other light-grey elements like the HUD text
+- Confirmed the dungeon floor was already correctly dark grey both before and after Alley Rat, with no change needed there
+
+## Performance & Memory Update
+- With the help of Eyvind Ebsen, the font used for all on-screen characters now loads with a single fast block-copy instruction instead of copying it one character at a time — the game starts up noticeably quicker
+- The three big dungeon-tracking arrays switched to a more memory-efficient number type, freeing up space for future features
+- Replaced a risky trick used to quickly clear those arrays between levels (one that could break certain ways of packaging the game) with a safer approach that works everywhere
+
+## Bug Fix: Monsters Invisible in the Dark
+- Fixed a real bug where monsters (and in some cases the stairs) could fail to actually appear on screen while you were still exploring in the dark, before reaching Alley Rat — fog-of-war and the "it's dark" mechanic itself were both working as intended; the monster just never got drawn
+- This did not affect the normal full-vision view after Alley Rat, which was already working correctly
+
+## Custom Monster & Dungeon Art
+- With the help of Ricky Derocher, learned to create custom character sets.
+- Hand-drawn custom glyphs in place of the stock character shapes for: potions, treasure/coins, the Golem, the Leech, the Goblin, the Guard, the Imp, the Cultist, and the stairs down
+- The Golem now uses a dedicated character slot instead of sharing one with a generic solid block, so it has its own distinct look
