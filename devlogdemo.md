@@ -107,3 +107,33 @@ details differ.
   outside even though nothing was specifically steering away from it.
 - Fixed by extending the same current-room item check to also include
   weapon tiles, with the same priority as potions and treasure.
+
+## Engine Sync: Performance, Memory, and Art Carried Over From the Main Game
+- Brought the demo up to date with a batch of under-the-hood work done on
+  the real game, applied carefully rather than copy-pasted wholesale,
+  since the demo's engine has diverged slightly from the main game in a
+  couple of places (see below).
+- The font now loads with a single fast block-copy instruction instead
+  of a byte-by-byte loop, same as the main game.
+- The dungeon-tracking arrays switched to a more memory-efficient number
+  type, and the risky array-clearing trick the demo was also using
+  between levels was replaced with a safer plain loop — both matching
+  the main game's fix. Note: unlike the main game, the demo doesn't keep
+  a third tracking array for fog-of-war; it already stores that
+  information directly in memory instead of a BASIC array, so there was
+  nothing to convert there.
+- Fixed the same real bug the main game had: monsters (and in the
+  demo's case, two separate reveal routines) could fail to actually
+  draw on screen while still in the dark, before the AI "learns" Keen
+  Eyes — fog-of-war itself was working, the monster just never got
+  POKEd to the screen.
+- Added the same hand-drawn custom glyphs as the main game for: potions,
+  treasure/coins, the Golem (now on its own dedicated character slot
+  instead of sharing one with a generic solid block), the Leech,
+  Goblin, Guard, Imp, Cultist, and the stairs down.
+
+## Instructions Screen Overflow Fix
+- The instructions screen was scrolling one line too far and cutting
+  off its first line. A stray blank-line `PRINT` ahead of the "find the
+  stairs" line was pushing the whole screen past where it needed to be
+  — removed.
