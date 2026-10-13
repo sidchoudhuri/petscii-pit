@@ -201,3 +201,9 @@ details differ.
 - The "PLEASE WAIT ..." dots animate through white and the greys, left
   to right, while each level is built, and the startup message appears
   while the music is still loading.
+
+## Engine Sync: "Lamenting" and Music Moods
+- Same as the main game: Lamenting plays while it's still dark (before
+  Alley Rat) and when the character is near death (HP below a quarter of
+  max), and Dungeoneering the rest of the time, each picking up where it
+  left off.

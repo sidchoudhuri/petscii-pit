@@ -333,6 +333,8 @@ each piece.
 - The previously-discussed dynamic vision/darkness system (shelved for now),
   applied to certain parts of the dungeon rather than entire levels,
   starting at dungeon level 3.
+- When built, being in a dark area should also switch the music to
+  "Lamenting" (add the condition to the mood check, `QT=` at line 6470).
 
 ## Teleportation Circles
 - Deeper in the dungeon: rooms containing only "O" characters and nothing
@@ -883,3 +885,16 @@ each piece.
 ## Machine Type on the Instructions Screen — IMPLEMENTED
 - The instructions screen's last line now reads "PAL - PRESS ANY KEY TO
   CONTINUE" or "NTSC - PRESS ANY KEY TO CONTINUE", using `PEEK(678)`.
+
+## Music Mood: "Lamenting" — IMPLEMENTED
+- Third song, "Lamenting": slow, sparse, sad version of Dungeoneering's
+  opening phrase (Am - F - Dm - E), about 10 seconds, looping.
+- Plays when it's very dark (before Alley Rat, XP under 50) or near death
+  (HP below a quarter of max). Dungeoneering otherwise. Dark areas from
+  the Darkness Mechanic are to be added when that is built.
+- Dungeoneering and Lamenting each keep their own place and continue
+  where they left off. Fights switch to Assailing and return to the
+  current mood.
+- The music player moved down one page to $9700 to fit the new song
+  (POKE 56,151); every SYS/POKE address dropped by 256. New entry:
+  POKE 780,0 or 1 then SYS 38690 sets happy or sad.

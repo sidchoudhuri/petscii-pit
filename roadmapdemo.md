@@ -60,6 +60,11 @@
 - Instructions screen shows the machine type: "PAL - PRESS ANY KEY TO
   CONTINUE" or "NTSC - PRESS ANY KEY TO CONTINUE".
 
+## Main-Game Engine Sync: "Lamenting" Mood Music — IMPLEMENTED
+- Same mood rules as the main game: Lamenting before Alley Rat or below a
+  quarter of max HP, Dungeoneering otherwise, each continuing where it
+  left off. Music player now at $9700.
+
 ## AI Misses Doors — TO DO
 - On closer watching, the AI doesn't seem to find any doors at all, on
   any side of a room (first noticed as missing doors on the left side).
