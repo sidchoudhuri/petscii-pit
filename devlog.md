@@ -207,3 +207,14 @@
   straight away, while the music is still loading from disk.
 - The glyph showcase on the disk now plays both songs: SPACE switches
   tracks, Q quits, and it shows what's playing.
+
+## Third Song: "Lamenting"
+- New: "Lamenting", a slow, sad, sparse echo of Dungeoneering's opening
+  melody over long bass notes, with a single soft thud each bar.
+- The dungeon music now has a mood: Lamenting plays while the dungeon is
+  still dark (before Alley Rat) and whenever you're near death (HP below
+  a quarter of your max); Dungeoneering plays the rest of the time.
+- Each one remembers where it was, so switching moods picks the other
+  song back up where it left off. Fights still switch to "Assailing" and
+  return to whichever mood fits afterwards.
+- The glyph showcase now cycles through all three songs with SPACE.
