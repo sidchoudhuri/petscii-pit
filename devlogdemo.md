@@ -137,3 +137,56 @@ details differ.
   off its first line. A stray blank-line `PRINT` ahead of the "find the
   stairs" line was pushing the whole screen past where it needed to be
   — removed.
+
+## Music: "Dungeoneering"
+- The demo now has the same background music as the main game:
+  "Dungeoneering", an original 3-voice SID tune (drums, bouncing octave
+  bass, lead melody and arpeggio). It loads from disk automatically at
+  startup, so launching is still just LOAD"PETSCIIPITDEMO",8 and RUN.
+- It starts once the first level has been built and runs on its own
+  raster interrupt, so it keeps a steady tempo while the AI plays
+  without changing any of the demo's pacing.
+- Mixed quietly so sound effects stay easy to hear. Sound effects
+  borrow the music's first voice and hand it back afterwards.
+- M toggles the music and E toggles sound effects, same as the main
+  game. The instructions screen lists both.
+
+## Faster Level Generation
+- Same speed-ups as the main game: clearing the dungeon arrays between
+  levels is now done by a tiny machine-code helper bundled with the
+  music instead of a BASIC loop. Unlike the main game, the demo also
+  clears its fog-of-war memory this way, since it keeps fog-of-war in
+  raw memory rather than a BASIC array.
+- Corridor walls are placed while the corridors are dug, and treasure
+  rooms/apothecaries are recorded as their contents are placed, instead
+  of separate full-map scans afterwards.
+- Same dungeons as before, just built faster: the shortcuts were
+  checked against 5,000 sample dungeons and matched the old generator
+  every time.
+
+## Fight Music: "Assailing"
+- Same as the main game: the music was reorganized into reusable
+  patterns so two songs fit in less memory than one used to, and a
+  short, scary fight theme, "Assailing", was added.
+- It plays whenever a living monster is in the room with the character
+  or the character is fighting one, kicking in as the room is entered
+  or the first swing lands, before the monster acts.
+- When the monster dies or the character leaves the room,
+  "Dungeoneering" picks up exactly where it left off, and a new level
+  always brings the dungeon music back.
+
+## Engine Sync: Bug Fixes From the Main Game
+- Fixed the character vanishing while fighting from a doorway: attacking
+  into a room that hadn't been revealed yet redrew the whole room,
+  including the doorway the character was standing in, and it stayed
+  invisible until its next move.
+- When the character's eyes adjust at Alley Rat, everything already
+  revealed now lights up to its proper color (potions, treasure,
+  stairs, weapons, monsters, and the character itself), not just the
+  walls.
+- The keyboard buffer is now cleared when a kill finishes, matching the
+  main game.
+
+## Redrawn Characters: Chest, Golem, Goblin, Imp
+- Same new designs as the main game for the treasure chest, Golem,
+  Goblin, and Imp, so both programs keep matching character sets.
