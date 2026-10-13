@@ -190,3 +190,14 @@ details differ.
 ## Redrawn Characters: Chest, Golem, Goblin, Imp
 - Same new designs as the main game for the treasure chest, Golem,
   Goblin, and Imp, so both programs keep matching character sets.
+
+## Engine Sync: PAL/NTSC, Music Timing, Loading Animation, HUD
+- Same as the main game: PAL/NTSC detection picks the matching music,
+  and the instructions screen shows the machine type.
+- HP on the HUD shows current and max health.
+- Music starts while the first level is built, waits silently once a
+  level is ready, while resting, and after a fight, and comes back as
+  the character moves on.
+- The "PLEASE WAIT ..." dots animate through white and the greys, left
+  to right, while each level is built, and the startup message appears
+  while the music is still loading.
