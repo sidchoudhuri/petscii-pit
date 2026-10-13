@@ -149,3 +149,39 @@
 - With the help of Ricky Derocher, learned to create custom character sets.
 - Hand-drawn custom glyphs in place of the stock character shapes for: potions, treasure/coins, the Golem, the Leech, the Goblin, the Guard, the Imp, the Cultist, and the stairs down
 - The Golem now uses a dedicated character slot instead of sharing one with a generic solid block, so it has its own distinct look
+
+## Music: "Dungeoneering"
+- PETSCII Pit now has background music: "Dungeoneering", an original 3-voice SID tune written for the game, with drums, a bouncing octave bass, and a lead melody that switches to a shimmering arpeggio in its middle section
+- The music loads from disk automatically when the game starts, so launching is still just LOAD"PETSCIIPIT",8 and RUN
+- It starts once the first level has been built and plays on its own raster interrupt, so it keeps a steady tempo no matter what the game is doing, without changing the game's own timing
+- Mixed quietly underneath the game so sound effects stay easy to hear
+- Sound effects and music share the SID's first voice: the music steps aside while an effect plays and picks that voice back up on its next note
+- New keys: M now toggles the music, and E toggles sound effects (M used to be the sound mute). The instructions screen lists both
+- The music is stopped cleanly when you quit back to BASIC
+
+## Faster Level Generation
+- Clearing the dungeon between levels is now handled by a tiny machine-code helper bundled with the music, instead of a BASIC loop over thousands of cells, so it's practically instant
+- Corridor walls are now placed while the corridors are being dug, instead of in a separate full-screen scan afterwards
+- Treasure rooms and apothecaries are now recorded as their contents are placed, instead of rescanning every room tile by tile afterwards
+- The dungeons themselves are unchanged, just built faster: checked against 5,000 sample dungeons, and every one came out identical to the old generator
+
+## Fight Music: "Assailing"
+- The music data was reorganized into short reusable patterns, so two songs now fit in less memory than the single song used to take (2K instead of nearly 3K), giving 1K back to the game
+- New: a short, scary fight theme called "Assailing", with a heartbeat kick drum, a grinding bass, and an eerie sinking chord
+- It plays whenever a living monster is in the room with you, or while you're fighting one, even from a corridor or doorway
+- When that monster dies or you leave the room, "Dungeoneering" comes back exactly where it left off instead of starting over
+- The fight music kicks in as you step into the room or swing at a monster, before the monster gets to act
+- Descending to a new level always brings back the dungeon music
+- With the music off (M), switching songs happens silently; turning the music back on mid-fight starts the fight theme straight away
+
+## Bug Fixes
+- Hammering keys during a fight no longer sends you running off once the monster dies: the keyboard buffer is now cleared the moment a kill is finished, the same way it is when you bump into a wall
+- Fixed your character vanishing while fighting from a doorway: attacking into a room you hadn't seen yet redrew the whole room, including the doorway you were standing in, and you stayed invisible until you moved again
+- When your eyes adjust at Alley Rat, everything you've already seen now lights up to its proper color (potions, treasure, stairs, weapons on the floor, monsters, and your own character), not just the walls
+
+## Redrawn Characters: Chest, Golem, Goblin, Imp
+- New hand-drawn designs for four characters:
+  - **Treasure chest**: a fuller chest with a lid and a lock
+  - **Golem**: bulkier, with raised fists, and now facing left
+  - **Goblin**: now facing the other way, with a new arm pose
+  - **Imp**: horns up top and arms spread wide

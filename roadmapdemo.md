@@ -32,6 +32,17 @@
 - Also fixed a display bug specific to the demo: the instructions
   screen was scrolling one line too far, cutting off its first line.
 
+## Main-Game Engine Sync: Music, Speed-ups, Fixes, Glyphs — IMPLEMENTED
+- Background music ("Dungeoneering") and fight music ("Assailing"),
+  with the same fight trigger and resume-where-it-left-off behavior as
+  the main game. M toggles music, E toggles sound effects.
+- Faster level generation, including clearing the demo's raw-memory
+  fog-of-war map with the same machine-code helper.
+- Doorway disappearing fix, full recolor when the eyes adjust, and the
+  keyboard buffer cleared after a kill.
+- Redrawn treasure chest, Golem, Goblin, and Imp glyphs, matching the
+  main game.
+
 ## Everything Else
 - No other outstanding feature requests for the demo specifically at
   this time — it currently does what it was built for (explore, fight,

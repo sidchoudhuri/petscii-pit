@@ -565,6 +565,10 @@ each piece.
   character is now cyan after Alley Rat instead of reusing light grey,
   and room walls are medium grey instead of light grey, so they're
   visually distinct from the HUD text which also uses light grey.
+- Follow-up fix: the "MY EYES HAVE ADJUSTED!" recolor now covers every
+  already-revealed tile, not just walls: potions, treasure, stairs,
+  weapons, visible monsters, and the player all switch to their real
+  colors on the spot, in the same single screen pass.
 ## Compilation Using MOSpeed — IN PROGRESS
 - Goal: compile both `petsciipit.prg` (the main game) and `petsciipitdemo.prg`
   (the demo) from BASIC to native 6502 machine code using MOSpeed's web
@@ -632,6 +636,9 @@ each piece.
   program's size doesn't require it, and this removes the cause of the
   collision rather than trying to work around it with a narrower memory
   hole.
+- Test compile with the music build: MOSpeed's output came out at
+  roughly 48-62KB depending on settings, well over the ~37KB of BASIC
+  memory available below the music player, so it doesn't fit as-is.
 - The main game is also reporting errors when compiled — not yet
   established whether it's the same black-screen symptom. If so, the same
   cause almost certainly applies here too, since the demo's boot sequence
@@ -747,6 +754,10 @@ each piece.
   those three arrays between levels with a plain `FOR...NEXT` loop — the
   `SYS` version is known to break compiled builds, the loop version
   doesn't.
+- Since replaced again: array clearing is now done by a small machine
+  code routine in the music player (`POKE 780,n:SYS ...`), which zeroes
+  the array data in place. Practically instant, and avoids the old
+  `SYS 45762` trick entirely.
 
 ## Bug Fix: Monsters (and Stairs) Invisible in the Dark — FIXED
 - Found and fixed a real bug where monsters revealed by a room's
@@ -761,3 +772,68 @@ each piece.
   routine was already correctly split. Any apparent stairs invisibility
   pre-Alley-Rat is the existing, intentional one-tile-ahead lookahead
   limit on Keen Eyes, not a bug.
+
+## Background Music: "Dungeoneering" — IMPLEMENTED
+- Original 3-voice SID tune (drums, octave bass, lead and arpeggio)
+  played from a raster interrupt, so it holds tempo during gameplay
+  without touching the game's TI-based timing.
+- Loaded automatically from disk at startup by both the game and the
+  demo; top of BASIC is lowered (`POKE 55/56` + `CLR`) to make room.
+- Mixed quietly through the envelopes so sound effects stay audible.
+- Sound effects borrow voice 1 and hand it back afterwards; the music
+  resumes on that voice's next note.
+- Music is stopped cleanly when quitting to BASIC.
+
+## Separate Music and Sound Effect Toggles — IMPLEMENTED
+- M toggles music, E toggles sound effects (M used to be the sound
+  mute). Instructions screen updated in both the game and the demo.
+
+## Faster Level Generation — IMPLEMENTED
+- Array clearing between levels moved to machine code (game and demo;
+  the demo's fog map at $C400 too).
+- Corridor walls placed while digging corridors instead of a separate
+  full-map scan.
+- Room types (treasure room/apothecary) recorded when contents are
+  placed instead of rescanning every room tile by tile.
+- Verified identical dungeons to the old generator over 5,000 layouts.
+
+## Fight Music: "Assailing" — IMPLEMENTED
+- Music data converted to reusable patterns with transpose: both songs
+  now take 2KB, down from nearly 3KB for one, freeing 1KB for BASIC
+  (player now at $9800, state in the cassette buffer).
+- Short, scary fight loop: heartbeat kick, grinding bass, sinking
+  diminished chord.
+- Plays while a living monster is in the player's room or the player is
+  fighting one; switches in as you enter the room or attack, before the
+  monster acts.
+- Switches back when the monster dies or you leave the room, and
+  "Dungeoneering" resumes exactly where it paused.
+- A new level always returns to "Dungeoneering".
+
+## Bug Fixes: Key Buffer After Kills, Doorway Disappearing — FIXED
+- Keyboard buffer is cleared once a kill finishes (like bumping a wall),
+  so keys mashed during a fight no longer send the player running.
+- Attacking from a doorway into an unrevealed room redrew the doorway
+  over the player, leaving them invisible until their next move. The
+  room reveal now redraws the player.
+
+## Redrawn Glyphs: Chest, Golem, Goblin, Imp — IMPLEMENTED
+- New 8x8 designs for the treasure chest (screen code 36), Golem (65),
+  Goblin (88), and Imp (90), in both the game and the demo. Only the
+  POKE values changed (lines 156-159 and 166-169); character slots and
+  colors are unchanged.
+
+## Music Timing — TO DO
+- To fix:
+  1. When eyes adjust right after a fight, the fight music keeps playing
+     through the "MY EYES HAVE ADJUSTED!" pause and recolor. It should
+     switch to "Dungeoneering" as soon as the fight ends. (Cause: the
+     eyes-adjust step runs in the kill path before the music check.)
+- To change:
+  1. After a fight ends, the music stops, and "Dungeoneering" starts
+     again when the player moves.
+  2. Music stops while resting and starts again when the player starts
+     moving.
+  3. Music starts as soon as the first level starts being created
+     (descending to level 1). Currently there's no music while level 1
+     is built; it only begins after the game is drawn the first time.
