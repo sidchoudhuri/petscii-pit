@@ -185,3 +185,25 @@
   - **Golem**: bulkier, with raised fists, and now facing left
   - **Goblin**: now facing the other way, with a new arm pose
   - **Imp**: horns up top and arms spread wide
+
+## PAL and NTSC, Quieter Moments, and a Loading Animation
+- The game now detects whether it's running on a PAL or NTSC machine and
+  loads the matching music. On NTSC, both songs used to play too fast;
+  the NTSC version is retuned and re-timed so they sound the same as on PAL.
+- The instructions screen shows which machine type was detected, e.g.
+  "PAL - PRESS ANY KEY TO CONTINUE".
+- HP on the HUD now shows current and max health, e.g. HP:15/30.
+- Music now starts while the first level is being built, and plays on
+  every "PLEASE WAIT ..." screen.
+- Once a level is ready, the music waits silently until you take your
+  first step, then picks up where it left off.
+- Resting goes quiet too, and the music returns when you start moving.
+- When a fight ends, the fight music stops right away (even before
+  "MY EYES HAVE ADJUSTED!"), and the dungeon music comes back on your
+  next step.
+- The "PLEASE WAIT ..." dots now animate, cycling from white through the
+  greys, left to right, while each level is built.
+- The startup message "BUILDING THE DUNGEON, PLEASE WAIT ..." now appears
+  straight away, while the music is still loading from disk.
+- The glyph showcase on the disk now plays both songs: SPACE switches
+  tracks, Q quits, and it shows what's playing.

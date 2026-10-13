@@ -43,6 +43,27 @@
 - Redrawn treasure chest, Golem, Goblin, and Imp glyphs, matching the
   main game.
 
+## Level Loading Progress Bar — IMPLEMENTED
+- Same as the main game's roadmap: when descending to a new level, draw
+  a progress bar under the "DESCENDING TO LEVEL..." text while the
+  level is generated.
+- The bar is made of `.` characters, shaded from lightest to darkest:
+  white, then the C64's three greys (light grey, medium grey, dark grey).
+- Built the same way as the main game: three dots after "PLEASE WAIT ..."
+  cycling left to right through the four shades while the level is built.
+
+## Main-Game Engine Sync: PAL/NTSC, Music Timing, HUD — IMPLEMENTED
+- PAL/NTSC detection loads `musicpal` or `musicntsc`.
+- Music starts while the first level is built, pauses when a level is
+  ready, while resting, and after a fight, and continues on the next move.
+- HUD shows HP as current/max.
+- Instructions screen shows the machine type: "PAL - PRESS ANY KEY TO
+  CONTINUE" or "NTSC - PRESS ANY KEY TO CONTINUE".
+
+## AI Misses Doors — TO DO
+- On closer watching, the AI doesn't seem to find any doors at all, on
+  any side of a room (first noticed as missing doors on the left side).
+
 ## Everything Else
 - No other outstanding feature requests for the demo specifically at
   this time — it currently does what it was built for (explore, fight,
