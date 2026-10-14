@@ -898,3 +898,132 @@ each piece.
 - The music player moved down one page to $9700 to fit the new song
   (POKE 56,151); every SYS/POKE address dropped by 256. New entry:
   POKE 780,0 or 1 then SYS 38690 sets happy or sad.
+
+## BLITZ! Compilation — PLANNED
+- Goal: compile the game (and the demo) with the BLITZ! BASIC compiler.
+  Moving the music player out of BASIC memory to $C000-$CFFF comes
+  first, so the compiled program gets all of BASIC RAM and nothing
+  depends on BASIC's own memory layout.
+- BLITZ! memory layout:
+  - The runtime lives at $0801-$1F92.
+  - The compiled p-code lives at $1F93 onward.
+  - Variables and arrays are created dynamically in the RAM directly
+    after the end of the compiled program data; the runtime manages
+    variable storage itself.
+  - To keep as much RAM as possible for large programs, the runtime
+    takes space down from the top-of-BASIC pointer for its machine
+    language routines and variables.
+  - When necessary it swaps boundaries with the C64's own input buffers,
+    so its routines and compiled arrays don't collide with active system
+    memory.
+- Current use of $C000-$CFFF: screen at $C000-$C3FF, custom font at
+  $C800-$CFFF. $C400-$C7FF is free in the game but holds the fog map
+  (`PEEK(50176+IX)`) in the demo. The player is 2,269 bytes, so it does
+  not fit as things stand.
+- Making room:
+  - Move the custom font to $F000-$F7FF, under the KERNAL ROM. The VIC
+    reads the RAM there and the CPU only ever writes to the font, so the
+    font copy and glyph POKEs work unchanged apart from the address.
+    `POKE 53272,3` becomes `POKE 53272,12`. The screen stays at $C000.
+  - That frees $C400-$CFFF (3KB) for the player.
+  - In the demo, move the fog map from $C400 to $0400-$07E7 (the old
+    screen area, unused since the screen moved to $C000).
+- Music player:
+  - The real source (player.asm, compose.py, build.py) is recovered and
+    rebuilds musicpal.prg and musicntsc.prg byte for byte, and already
+    assembles at $C400.
+  - Reassemble with BASE=$C400. Every SYS entry point moves (38662 ->
+    50182, etc.) in the game, demo and glyph showcase.
+  - Move the player's state (`vstate`, now $033C-$03D3 in the cassette
+    buffer) into the $C400 block too, in case BLITZ! uses the cassette
+    buffer.
+  - Verify the moved player against the old one: same SID writes every
+    frame for all three songs, PAL and NTSC.
+- Things that would break under BLITZ!:
+  - The array-clear helper (`SYS 38672`) walks BASIC's variable tables
+    via $2F/$30. BLITZ! stores variables its own way, so this must be
+    replaced (plain FOR loop or another method).
+  - `LOAD F$,DV,1` inside the program (line 15) relies on interpreted
+    BASIC restarting the program after the load. Replace with a tiny
+    uncompiled loader that loads the music, then loads and runs the
+    compiled game.
+  - `POKE 55/56` + `CLR` (line 11) only protects the player at $9700 and
+    can be removed once it lives at $C400.
+- Not started: waiting on a full plan with every changed line before any
+  code is written.
+
+## Optimization Pass — IN PROGRESS
+- Glyph setup as DATA/READ — IMPLEMENTED (game, demo, glyph showcase):
+  the 11 custom glyphs are one DATA line each, written by a short READ
+  loop instead of 88 POKEs. Same bytes; each program 533 bytes smaller.
+- Integer arrays — IMPLEMENTED (game and demo): the 13 remaining
+  floating-point arrays (`RX`, `RY`, `RW`, `RH`, `RV`, `RT`, `MX`, `MY`,
+  `MH`, `MP`, `ML`, `MK`, `MQ`) and the demo's trail array `V` are now
+  integer arrays (`RX%` etc.). Every value they hold is a whole number
+  well inside -32768..32767. Each element drops from 5 bytes to 2: 354
+  bytes of array space saved in the game, 375 in the demo; the extra `%`
+  in every use adds 153 / 189 bytes to the program, so the net gain is
+  about 200 bytes free in the game and 186 in the demo. Speed is about the
+  same (BASIC converts integer elements to floating point when reading).
+  The array-clear helper is unaffected (it still clears the first 3 / 2
+  arrays: MA%, RM%, FG% / MA%, RM%).
+- Integer scalar variables — NOT DONE, on purpose: in interpreted BASIC
+  V2 every simple variable takes 7 bytes whether it is `A` or `A%`, and
+  BASIC converts `%` values to floating point for every calculation, so
+  converting them saves no memory and runs slower — against both goals of
+  this pass. Revisit under BLITZ!, where integer variables may compile to
+  real integer maths.
+- Fewer IFs — IMPLEMENTED (game and demo):
+  - Tile drawing (game 4280-4360, demo 4240-4320): reads the tile once
+    (`T=MA%(IX)`), draws floor first, weapons second, and jumps straight
+    to the right line with `ON T+1 GOTO` instead of up to 12 IF lines
+    that each looked the tile up again. The "dark or lit" color is worked
+    out inline (`K1-(XP>=50)*(color-K1)`), so each tile type is one line.
+    Checked against the old code for every tile value, dark and lit.
+  - Monster and weapon stats: loaded once at startup from DATA tables
+    (end of each listing) into small integer arrays (`MG%`, `MZ%`, `HB%`,
+    `MB%`, `XB%`, `KB%`, `SF%`, `MN$` / `WG%`, `WZ%`, `WA%`, `WD%`, `WX%`,
+    `WM%`, `WN$`, `WE$`). The lookups (game 4930 and 5320, demo 4890 and
+    5140) are now one line each instead of 6 and 5 IF lines. Row 0 holds
+    the leech / dagger, matching the old default. Checked value for value
+    against the old IF chains.
+  - Keen Eyes (game 3870-3930, demo 3830-3890): works out the step and
+    side offsets for the direction once, then checks each square through
+    one small reveal routine (game 4260, demo 4220) — about 12 lines run
+    per step instead of about 40. Reveals the same squares in the same
+    order for every position, direction and title (checked exhaustively).
+  - Title tier: `TT` is one expression,
+    `TT=-(XP>=50)-(XP>=150)-(XP>=300)-(XP>=600)`, in the three places it
+    was a block of five lines, and the title names come from a `TL$`
+    table instead of IF chains (character sheet, new-title message, HUD).
+  - Hot new variables (`T`, `EB`, `ES`, `EP`) are created early on the
+    variable setup line so BASIC finds them quickly.
+  - Demo only: the AI's move choice (6570-6700) returns as soon as a move
+    is picked instead of testing every remaining line. It now skips one
+    `RND(1)` call it used to make after a move was already chosen, so the
+    demo's random sequence differs; behaviour is otherwise the same.
+  - Result: each program about 1.5KB smaller (game 22,948 -> 21,457
+    bytes, demo 24,706 -> 23,002), minus about 360 bytes for the new
+    tables while running.
+  - Not changed: key handling and the turn-message builder (run once per
+    turn, little to gain); the `IF XP>=50 THEN CW=...` color picks
+    elsewhere (a flag would test just as slowly as `XP>=50`); the glyph
+    showcase (none of these routines are in it).
+- HUD as one PRINT — PLANNED (game and demo):
+  - Now: the HUD row (lines 5460-5650) is built one character at a time
+    — `MID$`, `ASC`, a PETSCII-to-screen-code conversion and two POKEs
+    per character, about 30-37 times, plus a POKE loop to blank the rest
+    of the row. It runs after every hit, kill, potion, regen tick and
+    rest.
+  - Plan: build the whole row as one string with color codes in it
+    (`{GRY3}` for the labels, `{WHT}` for the values, matching K8/K7),
+    pad it to 40 visible characters, and `PRINT "{HOME}";H$;` — the same
+    way the message line and the room-name row are already printed.
+  - Keep a copy of the last HUD string and skip the PRINT when nothing
+    changed (like `RD$` for the bottom row).
+  - The room-name/title row (`GOSUB 5670`) stays as it is.
+  - Checks: the 40th character wraps the cursor to row 1 (harmless, the
+    message line already does this); a few temporary strings per call,
+    about the same as now.
+  - Expected: several times faster per HUD update; real timing comes from
+    the hardware test.

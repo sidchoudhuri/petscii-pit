@@ -69,6 +69,21 @@
 - On closer watching, the AI doesn't seem to find any doors at all, on
   any side of a room (first noticed as missing doors on the left side).
 
+## Main-Game Engine Sync: Optimization Pass — IMPLEMENTED
+- Glyph setup as DATA/READ instead of 88 POKEs.
+- Room, monster and AI-trail tables are integer arrays.
+- Fewer IFs: tile drawing by `ON ... GOTO`, monster and weapon stats from
+  DATA tables, Keen Eyes through one reveal routine, title tier as one
+  expression, and the AI's move choice returning as soon as a move is
+  picked.
+- Still planned, as in the main game: HUD printed as one string.
+
+## Bug: AI Trail Shares `VY` With the Wall Reveal — TO DO
+- `VY` is one of the AI's six remembered steps (5870, 6410) and is also
+  set to `INT(IX/40)` by the corridor-wall reveal (6920). Each wall reveal
+  overwrites one remembered step with a row number, so the AI can
+  backtrack more than intended. Fix: rename one of them.
+
 ## Everything Else
 - No other outstanding feature requests for the demo specifically at
   this time — it currently does what it was built for (explore, fight,

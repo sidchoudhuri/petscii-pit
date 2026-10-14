@@ -227,3 +227,19 @@
 - Same glyphs, byte for byte; the program is about 530 bytes smaller.
 - The glyph showcase uses the same table, placed ahead of its own grid
   layout DATA so both read in order.
+
+## Optimization: Integer Arrays
+- The room and monster tables (room position/size/type/revealed, monster
+  position/health/attack/type/alive) are now integer arrays, taking 2
+  bytes per entry instead of 5. About 200 bytes more free memory once the
+  game is running; no change to how anything plays.
+
+## Optimization: Fewer IFs
+- Drawing a revealed square is much quicker: the game reads the square
+  once and jumps straight to the right drawing line instead of checking
+  up to 12 possibilities one by one.
+- Monster and weapon stats and thief titles come from small tables loaded
+  once at startup instead of chains of IFs.
+- Keen Eyes works out which squares to reveal in a few lines instead of
+  about 40, every step.
+- Program about 1.5KB smaller. Everything looks and plays the same.
