@@ -218,3 +218,12 @@
   song back up where it left off. Fights still switch to "Assailing" and
   return to whichever mood fits afterwards.
 - The glyph showcase now cycles through all three songs with SPACE.
+
+## Optimization: Glyph Setup as DATA
+- The 11 custom glyphs (player, floor, potion, chest, stairs and the six
+  monsters) are now stored as one DATA line each — screen code followed
+  by the 8 bitmap bytes, with the glyph's name in a REM — and written into
+  the font by a short READ loop, replacing 88 individual POKEs.
+- Same glyphs, byte for byte; the program is about 530 bytes smaller.
+- The glyph showcase uses the same table, placed ahead of its own grid
+  layout DATA so both read in order.

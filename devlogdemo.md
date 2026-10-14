@@ -207,3 +207,8 @@ details differ.
   Alley Rat) and when the character is near death (HP below a quarter of
   max), and Dungeoneering the rest of the time, each picking up where it
   left off.
+
+## Engine Sync: Glyph Setup as DATA
+- Same as the main game: the 11 custom glyphs are now one DATA line each
+  (screen code, 8 bitmap bytes, name in a REM) written by a short READ
+  loop instead of 88 POKEs. Same glyphs, smaller listing.
