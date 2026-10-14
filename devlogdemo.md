@@ -212,3 +212,13 @@ details differ.
 - Same as the main game: the 11 custom glyphs are now one DATA line each
   (screen code, 8 bitmap bytes, name in a REM) written by a short READ
   loop instead of 88 POKEs. Same glyphs, smaller listing.
+
+## Engine Sync: Integer Arrays
+- Same as the main game: room and monster tables are integer arrays, and
+  so is the AI's recent-steps trail. About 186 bytes more free memory.
+
+## Engine Sync: Fewer IFs
+- Same as the main game: faster square drawing, table-driven monster,
+  weapon and title lookups, and a shorter Keen Eyes routine.
+- The AI stops checking moves as soon as it has picked one.
+- Program about 1.7KB smaller.
