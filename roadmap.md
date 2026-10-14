@@ -333,6 +333,8 @@ each piece.
 - The previously-discussed dynamic vision/darkness system (shelved for now),
   applied to certain parts of the dungeon rather than entire levels,
   starting at dungeon level 3.
+- When built, being in a dark area should also switch the music to
+  "Lamenting" (add the condition to the mood check, `QT=` at line 6470).
 
 ## Teleportation Circles
 - Deeper in the dungeon: rooms containing only "O" characters and nothing
@@ -647,10 +649,11 @@ each piece.
   RAM off" fix would apply. Still waiting on the specifics of what the
   main game's error actually says to confirm.
 
-## Show HP as Current/Max
+## Show HP as Current/Max — IMPLEMENTED
 - HUD currently shows "HP:X" (current health only). Change to "HP:X/Y"
   format, showing current health over max health (PM), matching how XP
   and level are already shown with more context.
+- Done: the HUD now shows current/max, e.g. `HP:15/30`.
 
 ## Faster Screen Restore After Instructions/Character Screen — TRIED, DROPPED
 - Currently, pressing I or C clears the screen, shows instructions or
@@ -823,7 +826,7 @@ each piece.
   POKE values changed (lines 156-159 and 166-169); character slots and
   colors are unchanged.
 
-## Music Timing — TO DO
+## Music Timing — IMPLEMENTED
 - To fix:
   1. When eyes adjust right after a fight, the fight music keeps playing
      through the "MY EYES HAVE ADJUSTED!" pause and recolor. It should
@@ -837,3 +840,61 @@ each piece.
   3. Music starts as soon as the first level starts being created
      (descending to level 1). Currently there's no music while level 1
      is built; it only begins after the game is drawn the first time.
+- Done, all four, using new pause/unpause routines in the music player:
+  - The fight check now runs the moment the monster dies, before the
+    eyes-adjust pause.
+  - When a fight ends, the music goes silent and Dungeoneering continues
+    (from where it paused) on the next step.
+  - Resting pauses the music; moving starts it again. A new fight always
+    starts its music straight away, even mid-rest.
+  - Music starts before level 1 is built and plays during every level
+    build, then pauses once the level is ready until the player moves.
+
+## Level Loading Progress Bar — IMPLEMENTED
+- When descending to a new level, draw a progress bar under the
+  "DESCENDING TO LEVEL..." text while the level is generated.
+- The bar is made of `.` characters, shaded from lightest to darkest:
+  white, then the C64's three greys (light grey, medium grey, dark grey).
+- Built as three dots after "PLEASE WAIT ..." whose colors cycle left to
+  right through white, light grey, medium grey, dark grey while the level
+  is generated, stepping about 7 times a second off the jiffy clock.
+- The startup message is now "BUILDING THE DUNGEON, PLEASE WAIT ..." and
+  shows while the music loads (dots still during the load itself).
+- Lesson learned: poking the dot colors into color RAM never showed up
+  on screen; printing the dots with color codes at the saved cursor
+  position does.
+
+## Separate Music for NTSC and PAL — IMPLEMENTED (partly)
+- Use different versions of the songs on NTSC and PAL machines.
+- Current state: both songs sound right on PAL. On NTSC:
+  - "Dungeoneering" plays too fast.
+  - "Assailing" plays very fast, the sound is choppy, and it seems to
+    cause problems with the sound effects.
+- Notes for when this is built: the player runs once per screen frame,
+  which is 50 times a second on PAL but 60 on NTSC, so everything plays
+  20% faster there. NTSC's different clock speed also shifts every note
+  slightly sharp unless it gets its own note table. The choppiness and
+  the clash with sound effects in "Assailing" still need to be tracked
+  down on NTSC.
+- Done: the game, demo, and glyph showcase check `PEEK(678)` at startup
+  and load `musicpal` or `musicntsc`. The NTSC build has its own note
+  table and stretched bars, so both songs keep their PAL tempo and pitch.
+  Same player code and size, so every SYS address is unchanged.
+- Still open: the "Assailing" choppiness and sound-effect clash on NTSC.
+
+## Machine Type on the Instructions Screen — IMPLEMENTED
+- The instructions screen's last line now reads "PAL - PRESS ANY KEY TO
+  CONTINUE" or "NTSC - PRESS ANY KEY TO CONTINUE", using `PEEK(678)`.
+
+## Music Mood: "Lamenting" — IMPLEMENTED
+- Third song, "Lamenting": slow, sparse, sad version of Dungeoneering's
+  opening phrase (Am - F - Dm - E), about 10 seconds, looping.
+- Plays when it's very dark (before Alley Rat, XP under 50) or near death
+  (HP below a quarter of max). Dungeoneering otherwise. Dark areas from
+  the Darkness Mechanic are to be added when that is built.
+- Dungeoneering and Lamenting each keep their own place and continue
+  where they left off. Fights switch to Assailing and return to the
+  current mood.
+- The music player moved down one page to $9700 to fit the new song
+  (POKE 56,151); every SYS/POKE address dropped by 256. New entry:
+  POKE 780,0 or 1 then SYS 38690 sets happy or sad.
