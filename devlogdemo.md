@@ -238,4 +238,5 @@ details differ.
 ## Engine Sync: Second SID Support
 - Same as the main game: with a second SID at $D420 the music plays on
   it at full quality; with one SID, music and sound effects share it.
-- Same "2SID" note on the instructions screen and the same V volume key.
+- Same "2SID" note on the instructions screen and the same volume keys
+  (V on one SID, separate M and E volumes on two SIDs).

@@ -274,6 +274,8 @@
   they play.
 - The music now starts on the first instructions screen, which shows
   "PAL 2SID" or "NTSC 2SID" at the bottom when a second SID is found.
-- New V key: volume HIGH, MEDIUM or LOW for music and sound effects
-  together (both chips with two SIDs). M and E still mute music or
-  sound effects on their own.
+- One SID: M and E still mute music or sound effects on their own, and
+  the new V key sets the volume HIGH, MEDIUM or LOW for both together.
+- Two SIDs: separate volumes. M cycles the music MEDIUM, LOW, OFF, HIGH
+  (starts at MEDIUM); E cycles the sound effects HIGH, MEDIUM, LOW, OFF
+  (starts at HIGH). The new setting shows under the HUD.
