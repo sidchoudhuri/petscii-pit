@@ -227,3 +227,37 @@
 - Same glyphs, byte for byte; the program is about 530 bytes smaller.
 - The glyph showcase uses the same table, placed ahead of its own grid
   layout DATA so both read in order.
+
+## Optimization: Integer Arrays
+- The room and monster tables (room position/size/type/revealed, monster
+  position/health/attack/type/alive) are now integer arrays, taking 2
+  bytes per entry instead of 5. About 200 bytes more free memory once the
+  game is running; no change to how anything plays.
+
+## Optimization: Fewer IFs
+- Drawing a revealed square is much quicker: the game reads the square
+  once and jumps straight to the right drawing line instead of checking
+  up to 12 possibilities one by one.
+- Monster and weapon stats and thief titles come from small tables loaded
+  once at startup instead of chains of IFs.
+- Keen Eyes works out which squares to reveal in a few lines instead of
+  about 40, every step.
+- Program about 1.5KB smaller. Everything looks and plays the same.
+
+## Optimization: Instant HUD
+- The HUD at the top is now printed in one go instead of being written
+  one character at a time, and only when HP, XP, level or coins actually
+  change — most turns it costs almost nothing.
+- The message lines under it are printed the same way, and only when the
+  message changes.
+
+## Optimization: Hot Routines First
+- The routines the game uses most (drawing squares, revealing rooms and
+  walls, the HUD and messages, monster movement, sound effects, music
+  checks) now sit at the top of the program, where BASIC finds them
+  fastest. A plain move does less than half the line-searching it used
+  to, and room reveals and monster turns are much quicker.
+- The program is renumbered in steps of 10; it plays exactly the same.
+
+## Wording
+- The ambush message now reads "A MONSTER AMBUSHED YOU!"
