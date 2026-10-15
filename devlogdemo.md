@@ -222,3 +222,15 @@ details differ.
   weapon and title lookups, and a shorter Keen Eyes routine.
 - The AI stops checking moves as soon as it has picked one.
 - Program about 1.7KB smaller.
+
+## Engine Sync: Instant HUD
+- Same as the main game: the HUD and message line are each printed in one
+  go, and only when they change.
+
+## Engine Sync: Hot Routines First
+- Same as the main game: most-used routines moved to the top and the
+  program renumbered in steps of 10. The AI's move choice sits right
+  after the main loop so it's found quickly every turn.
+
+## Engine Sync: Wording
+- The ambush message now reads "A MONSTER AMBUSHED YOU!"

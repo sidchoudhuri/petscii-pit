@@ -943,11 +943,11 @@ each piece.
   - The array-clear helper (`SYS 38672`) walks BASIC's variable tables
     via $2F/$30. BLITZ! stores variables its own way, so this must be
     replaced (plain FOR loop or another method).
-  - `LOAD F$,DV,1` inside the program (line 15) relies on interpreted
+  - `LOAD F$,DV,1` inside the program (line 60) relies on interpreted
     BASIC restarting the program after the load. Replace with a tiny
     uncompiled loader that loads the music, then loads and runs the
     compiled game.
-  - `POKE 55/56` + `CLR` (line 11) only protects the player at $9700 and
+  - `POKE 55/56` + `CLR` (line 20) only protects the player at $9700 and
     can be removed once it lives at $C400.
 - Not started: waiting on a full plan with every changed line before any
   code is written.
@@ -1009,21 +1009,105 @@ each piece.
     turn, little to gain); the `IF XP>=50 THEN CW=...` color picks
     elsewhere (a flag would test just as slowly as `XP>=50`); the glyph
     showcase (none of these routines are in it).
-- HUD as one PRINT — PLANNED (game and demo):
-  - Now: the HUD row (lines 5460-5650) is built one character at a time
-    — `MID$`, `ASC`, a PETSCII-to-screen-code conversion and two POKEs
-    per character, about 30-37 times, plus a POKE loop to blank the rest
-    of the row. It runs after every hit, kill, potion, regen tick and
-    rest.
-  - Plan: build the whole row as one string with color codes in it
-    (`{GRY3}` for the labels, `{WHT}` for the values, matching K8/K7),
-    pad it to 40 visible characters, and `PRINT "{HOME}";H$;` — the same
-    way the message line and the room-name row are already printed.
-  - Keep a copy of the last HUD string and skip the PRINT when nothing
-    changed (like `RD$` for the bottom row).
-  - The room-name/title row (`GOSUB 5670`) stays as it is.
-  - Checks: the 40th character wraps the cursor to row 1 (harmless, the
-    message line already does this); a few temporary strings per call,
-    about the same as now.
-  - Expected: several times faster per HUD update; real timing comes from
-    the hardware test.
+- HUD and message lines as one PRINT — IMPLEMENTED (game and demo):
+  - HUD (game 5460-5510, demo 5240-5290): first compares the five values
+    it shows (HP, max HP, XP, level, coins) with copies from the last
+    draw and does nothing if none changed. Otherwise it builds one string,
+    `H$`, holding the cursor-home code, the label/value colors (`{GRY3}` /
+    `{WHT}`) and padding to 40 visible characters, and prints it with a
+    single `PRINT H$;`. Replaces the old routine that POKEd every
+    character and blanked the rest of the row one cell at a time.
+  - Message lines (game 5380-5400 and 5420-5440, demo 5200-5220): each
+    builds one string with its cursor and color codes and padding
+    (`M1$`, `N1$`) and prints it only if it differs from what was last
+    printed (`M2$`, `N2$`).
+  - Wherever the screen is cleared and redrawn (new level, death screen,
+    return from the I/C screens) the copies are reset (`HF=1:M2$=""`,
+    and `N2$=""` in the game), so the HUD and messages always come back.
+  - Padding is skipped if a line would ever be longer than 40 characters,
+    so an unusually long value can't cause an error.
+  - The room-name/title row is unchanged (it already printed on change
+    only).
+- Hot routines moved to the top — IMPLEMENTED (game and demo):
+  - Why: for `GOSUB`/`GOTO` to a higher line number BASIC walks forward
+    line by line from the current line; to a lower one it walks from the
+    first line of the program. Routines in the middle of a 630-line
+    program cost hundreds of lines walked per call.
+  - Lines 10-80 (boot, music load, jumps) still come first. The routines
+    called most often follow, most frequent first; then the main loop
+    (and the demo's AI move choice right after it); then everything else
+    in its original order; then the level build, the one-time startup
+    setup and the DATA tables at the end (the glyph DATA still comes
+    before the monster/weapon/title DATA, so READ order is unchanged).
+  - The whole program is renumbered in steps of 10.
+  - Lines walked: a plain move 1,888 -> 874; each tile of a room reveal
+    133 -> 9; each moving monster 415 -> 35; each revealed square's wall
+    check 141 -> 2; HUD from combat 328 -> 31; level build corridor walls
+    462 -> 167 per square.
+  - Audited with a script against the previous listing: same line count,
+    every line's text identical apart from line numbers, every
+    GOTO/GOSUB/THEN/ON target maps to the same statement as before and
+    exists, every line that can fall through still falls through to the
+    same line, DATA in the same order, numbering strictly 10, 20, 30....
+    Both listings tokenize and round-trip cleanly.
+  - Line numbers mentioned elsewhere in this section are from before the
+    renumber. Where the moved routines are now:
+
+  | Routine | Game (old -> new) | Demo (old -> new) |
+  |---|---|---|
+  | Tile draw | 4280-4360 -> 90-170 | 4240-4320 -> 90-170 |
+  | Reveal one square (Keen Eyes) | 4260-4270 -> 180-190 | 4220-4230 -> 180-190 |
+  | Corridor-wall reveal | 6200-6250 -> 200-250 | 6920-6970 -> 200-250 |
+  | Monster lookup | 4930 -> 260 | 4890 -> 260 |
+  | Player weapon stats | 5050-5070 -> 270-290 | 5040-5060 -> 270-290 |
+  | Weapon lookup | 5320 -> 300 | 5140 -> 300 |
+  | HUD | 5460-5510 -> 310-360 | 5240-5290 -> 310-360 |
+  | Room-name/title row | 5670-6080 -> 370-690 | 5450-5860 -> 370-690 |
+  | Message line | 5380-5400 -> 700-720 | 5200-5220 -> 700-720 |
+  | Second message line | 5420-5440 -> 730-750 | — |
+  | Fight-music check | 6330-6400 -> 760-830 | 7050-7120 -> 730-800 |
+  | Mood-music check | 6470-6480 -> 840-850 | 7190-7200 -> 810-820 |
+  | Sound effects | 2840-3030 -> 860-1050 | 2780-2970 -> 830-1020 |
+  | Potion sound | 3770-3790 -> 1060-1080 | 3730-3750 -> 1030-1050 |
+  | Coin sound | 3840-3860 -> 1090-1110 | 3800-3820 -> 1060-1080 |
+  | Monster movement | 2110-2300 -> 1120-1310 | 2140-2330 -> 1090-1280 |
+  | Keen Eyes | 3870-3930 -> 1320-1380 | 3830-3890 -> 1290-1350 |
+  | Room reveal | 2720-2830 -> 1390-1530 | 2660-2770 -> 1360-1500 |
+  | Turn message | 3370-3490 -> 1540-1660 | 3340-3460 -> 1510-1630 |
+  | Corridor walls (level build) | 6110-6190 -> 1670-1750 | 6830-6910 -> 1640-1720 |
+  | Loading dots | 401-402 -> 1760-1770 | 421-422 -> 1730-1740 |
+  | Main loop | 1370-2100 -> 1780-2540 | 1390-2130 -> 1750-2520 |
+  | Level build | 410-1360 -> 4590-5560 | 430-1380 -> 5290-6260 |
+  | Startup setup | 40-400 -> 5570-6130 | 40-420 -> 6270-6830 |
+  | AI move choice | — | 5870-6820 -> 2530-3480 |
+
+## Bug: No Fight Music After an Ambush — TO DO
+- Reported from hardware: fight music doesn't seem to start when a
+  monster ambushes you while resting.
+- Likely causes, from the code (not fixed yet):
+  - The ambush (3710-3820) never runs the fight-music check (760). The
+    check only runs after all 10 rest turns are over (2760), so the
+    ambusher attacks during the rest with no fight music.
+  - If you rest in a corridor, the fight-music check only counts monsters
+    inside rooms (770: `IF RQ=0 ... THEN 800`), so a corridor ambush never
+    switches to fight music. The monster movement loop also skips
+    monsters that aren't in a revealed room, so a corridor ambusher just
+    stands there.
+- Possible fix: run the fight-music check straight after the ambush
+  message, and decide how monsters in corridors should count.
+- Same code in the demo (ambush 4570-4680).
+
+## Ambush Message Wording — IMPLEMENTED
+- "A MONSTER AMBUSHES YOU!" is now "A MONSTER AMBUSHED YOU!" (game line
+  3810, demo line 4670).
+
+## Resting Shows Cycling Dots — PLANNED
+- While resting, show "RESTING ..." with the same color-cycling dots used
+  for "PLEASE WAIT ..." during level builds (white, then the three greys,
+  left to right), instead of the plain "RESTING..." message.
+- Resting currently prints "RESTING..." on the message line (game 2570,
+  demo 3490), then waits before the rest turns run: about 4 seconds in
+  the game (240 jiffies), 1 second in the demo (60 jiffies). The dots
+  would animate through that wait.
+- Game only. Not for the demo: its rest wait is only 1 second, too short
+  for the dots to be worth it.

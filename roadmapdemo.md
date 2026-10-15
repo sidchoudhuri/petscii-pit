@@ -76,13 +76,28 @@
   DATA tables, Keen Eyes through one reveal routine, title tier as one
   expression, and the AI's move choice returning as soon as a move is
   picked.
-- Still planned, as in the main game: HUD printed as one string.
+- HUD and message line each built as one string and printed with one
+  PRINT, only when they change.
+- Hot routines moved to the top and the whole program renumbered in
+  steps of 10, the same as the main game. The AI move choice now sits
+  right after the main loop (old 5870-6820, now 2530-3480). Audited
+  line for line against the previous listing.
 
 ## Bug: AI Trail Shares `VY` With the Wall Reveal — TO DO
-- `VY` is one of the AI's six remembered steps (5870, 6410) and is also
-  set to `INT(IX/40)` by the corridor-wall reveal (6920). Each wall reveal
+- `VY` is one of the AI's six remembered steps (2530, 3070) and is also
+  set to `INT(IX/40)` by the corridor-wall reveal (200). Each wall reveal
   overwrites one remembered step with a row number, so the AI can
   backtrack more than intended. Fix: rename one of them.
+
+## Main-Game Engine Sync: Ambush Message, Ambush Fight Music
+- Ambush message now reads "A MONSTER AMBUSHED YOU!" (line 4670).
+- Same open bug as the main game: no fight music after an ambush while
+  resting (see the main roadmap). Not fixed yet.
+
+## Resting Dots — NOT FOR THE DEMO
+- The main game plans to show "RESTING ..." with cycling dots during its
+  4-second rest wait. Not applied here: the demo's rest wait is only 1
+  second.
 
 ## Everything Else
 - No other outstanding feature requests for the demo specifically at
