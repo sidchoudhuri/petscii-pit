@@ -65,39 +65,13 @@
   quarter of max HP, Dungeoneering otherwise, each continuing where it
   left off. Music player now at $9700.
 
+## Main-Game Engine Sync: Click-Free Music Mix — IMPLEMENTED
+- Same in-game music mix as the main game ("Q"): soft envelopes,
+  triangle lead, narrow pulse, low-pass filter; no clicks.
+
 ## AI Misses Doors — TO DO
 - On closer watching, the AI doesn't seem to find any doors at all, on
   any side of a room (first noticed as missing doors on the left side).
-
-## Main-Game Engine Sync: Optimization Pass — IMPLEMENTED
-- Glyph setup as DATA/READ instead of 88 POKEs.
-- Room, monster and AI-trail tables are integer arrays.
-- Fewer IFs: tile drawing by `ON ... GOTO`, monster and weapon stats from
-  DATA tables, Keen Eyes through one reveal routine, title tier as one
-  expression, and the AI's move choice returning as soon as a move is
-  picked.
-- HUD and message line each built as one string and printed with one
-  PRINT, only when they change.
-- Hot routines moved to the top and the whole program renumbered in
-  steps of 10, the same as the main game. The AI move choice now sits
-  right after the main loop (old 5870-6820, now 2530-3480). Audited
-  line for line against the previous listing.
-
-## Bug: AI Trail Shares `VY` With the Wall Reveal — TO DO
-- `VY` is one of the AI's six remembered steps (2530, 3070) and is also
-  set to `INT(IX/40)` by the corridor-wall reveal (200). Each wall reveal
-  overwrites one remembered step with a row number, so the AI can
-  backtrack more than intended. Fix: rename one of them.
-
-## Main-Game Engine Sync: Ambush Message, Ambush Fight Music
-- Ambush message now reads "A MONSTER AMBUSHED YOU!" (line 4670).
-- Same open bug as the main game: no fight music after an ambush while
-  resting (see the main roadmap). Not fixed yet.
-
-## Resting Dots — NOT FOR THE DEMO
-- The main game plans to show "RESTING ..." with cycling dots during its
-  4-second rest wait. Not applied here: the demo's rest wait is only 1
-  second.
 
 ## Everything Else
 - No other outstanding feature requests for the demo specifically at

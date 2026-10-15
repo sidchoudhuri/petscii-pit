@@ -208,29 +208,6 @@ details differ.
   max), and Dungeoneering the rest of the time, each picking up where it
   left off.
 
-## Engine Sync: Glyph Setup as DATA
-- Same as the main game: the 11 custom glyphs are now one DATA line each
-  (screen code, 8 bitmap bytes, name in a REM) written by a short READ
-  loop instead of 88 POKEs. Same glyphs, smaller listing.
-
-## Engine Sync: Integer Arrays
-- Same as the main game: room and monster tables are integer arrays, and
-  so is the AI's recent-steps trail. About 186 bytes more free memory.
-
-## Engine Sync: Fewer IFs
-- Same as the main game: faster square drawing, table-driven monster,
-  weapon and title lookups, and a shorter Keen Eyes routine.
-- The AI stops checking moves as soon as it has picked one.
-- Program about 1.7KB smaller.
-
-## Engine Sync: Instant HUD
-- Same as the main game: the HUD and message line are each printed in one
-  go, and only when they change.
-
-## Engine Sync: Hot Routines First
-- Same as the main game: most-used routines moved to the top and the
-  program renumbered in steps of 10. The AI's move choice sits right
-  after the main loop so it's found quickly every turn.
-
-## Engine Sync: Wording
-- The ambush message now reads "A MONSTER AMBUSHED YOU!"
+## Engine Sync: Click-Free Music
+- Same new in-game music mix as the main game: no more clicks on every
+  note, at about the same volume, with sound effects unchanged.
