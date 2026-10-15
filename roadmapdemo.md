@@ -111,6 +111,8 @@
 
 ## Main-Game Engine Sync: Second SID — IMPLEMENTED
 - Same second-SID music support as the main game (POKE 56,150).
-- Same instructions-screen "2SID" note and V volume key as the main
-  game (volume routine at 7010-7020, V check on line 1760, music now
-  starts on line 6750 before the instructions, VL=15 on line 6810).
+- Same instructions-screen "2SID" note and the same volume keys as the
+  main game: V on one SID; separate M (music) and E (effects) volume
+  cycles on two SIDs. Lines: V check on 1760, M/E on 1770/1780, music
+  starts on 6750 before the instructions, VL/VM/VF set on 6810, new
+  routines at 7010-7040.

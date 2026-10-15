@@ -1130,14 +1130,25 @@ each piece.
   (or "NTSC 2SID - ...") when a second SID is found.
 
 ## Volume Control — IMPLEMENTED
-- V cycles the volume HIGH (15) -> MEDIUM (10) -> LOW (5) -> HIGH, shown
-  as "VOLUME HIGH" etc. on the message line. Starts at HIGH.
-- One SID: sets $D418 (music and effects together). Two SIDs: sets both
-  chips ($D418 and $D438).
-- M and E stay as mute toggles for music and effects.
-- The volume is put back after the music stops or restarts (M), since
-  the player resets it to 15.
-- Instructions line: "M - MUSIC  E - EFFECTS  V - VOLUME".
-- Volume routine at 6310-6320 (after the DATA, so no renumbering); the V
-  check is on the end of the key line 1780; VL=15 is set on line 6100,
-  where the music used to start (now on 6040).
+- One SID: M mutes the music, E mutes the sound effects (each on its
+  own, as before), and V cycles the shared volume HIGH (15) -> MEDIUM
+  (10) -> LOW (5) -> HIGH, shown as "VOLUME HIGH" etc. Starts at HIGH.
+  The volume is put back after M stops or restarts the music, since the
+  player resets it to 15.
+- Two SIDs: separate volumes, no mute and no V key.
+  - M cycles the music (SID 2, $D438): MEDIUM -> LOW -> OFF -> HIGH.
+    Starts at MEDIUM. OFF only turns the volume to 0, so the tune keeps
+    its place.
+  - E cycles the sound effects (SID 1, $D418): HIGH -> MEDIUM -> LOW ->
+    OFF. Starts at HIGH. At OFF the effect routines are skipped too.
+  - Shown on the message line under the HUD: "MUSIC MEDIUM",
+    "SOUND FX OFF" etc.
+- Instructions line: "M - MUSIC  E - EFFECTS  V - VOLUME" with one SID,
+  "M - MUSIC  E - EFFECTS" with two.
+- NS = number of SIDs (PEEK(38693)), set on line 6040 when the music
+  starts. M and E use ON NS GOSUB (one SID: 3330/3400, two SIDs:
+  6330/6340); MV=1-MV and MU=1-MU moved into 3330/3400.
+- New lines after the DATA, so no renumbering: 6310-6320 (V, one SID),
+  6330 (music, two SIDs), 6340 (effects, two SIDs). V check on the end
+  of key line 1780; VL=15:VM=10:VF=15 on line 6100, where the music used
+  to start (now on 6040).
