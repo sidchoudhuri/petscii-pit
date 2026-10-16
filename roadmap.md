@@ -344,13 +344,28 @@ each piece.
 - Glyph decided: PETSCII 113 (screen code 81 for our POKE-based rendering —
   worth a visual check on real hardware once built).
 
-## Hidden Holes / Trap Tiles
-- Dungeon levels 5 and below can contain filled "O" PETSCII characters that
-  are actually holes rather than teleport circles.
-- Falling into one damages the player.
-- Glyph decided: PETSCII 119 (screen code 87), distinct from the
-  teleportation circle glyph above — resolves the earlier open question
-  about telling the two apart.
+## Hidden Holes / Trap Tiles — IMPLEMENTED
+- From dungeon level 5, a level may have one hole: 20% chance on level 5,
+  40% on 6, 60% on 7, 80% on 8, and always from level 9. Never more than
+  one. It sits on a random floor square inside a room, never in the
+  entry room or the stairs room, never on an item or a room's centre.
+- Glyph: PETSCII 119 (screen code 87), light grey, distinct from the
+  planned teleportation circle (PETSCII 113).
+- Hidden by default. The first time its room is revealed, a player with
+  Keen Eyes gets one roll to spot it: 25% x Keen Eyes level (1 or 2)
+  + 2% x character level, capped at 90%. No Keen Eyes = never seen. If
+  the roll fails it stays hidden until you fall in.
+- Falling in (stepping on it, seen or not): "AAAAH! YOU FELL INTO A PIT!",
+  a 2-second pause, the DESCENDING screen, and you land on the next
+  level, taking INT(MAX HP/10) + INT(LEVEL/2) damage (never below 1 HP,
+  no stairs heal). "THE FALL HURT! -n HP" is shown. Lamenting plays
+  until you move.
+- Lines: hole placement 6420-6450 (called from 5390), spotting 6460-6470
+  (called from the room reveal at 1440), fall 6380-6410 (from 2350),
+  hole drawing 6370 (12th entry of the tile ON GOTO at 110). The hole's
+  square is kept in HZ; a seen hole is MA% = 11, a hidden one stays
+  floor. QP=1 makes the mood check (840) choose Lamenting; moving clears
+  it (2440).
 
 ## Roaming Vendor
 - Starting at dungeon level 5, a chance to encounter a roaming vendor.
@@ -412,7 +427,42 @@ each piece.
   same way Keen Eyes, Nimble Fingers, Sneak Attack, and Shadowstep
   already are. Not decided yet which title it would attach to.
 
+## Monster Scaling, Groups, Character Levels, Random Weapons — IMPLEMENTED
+- Worked out with a Python simulation of 400 runs through levels 1-30
+  using the game's real rules (option "C"). The old game stopped being
+  dangerous after level 5 (2-7% of max HP lost per level); now each
+  level costs roughly 40-80% and it keeps getting harder.
+- Monster HP: 5 + LEVEL + 2 x type bonus (was 6 + LEVEL/3 + bonus).
+  Monster attack: 2 + LEVEL/4 + type bonus (was LEVEL/8). Lines 5190,
+  3780 (ambush).
+- Hit-back when you attack is now random from 0 up to that monster's
+  attack (was a flat 0-3), still halved by Nimble Fingers and reduced
+  by the Mace and dodge. Line 2110.
+- Monster groups: from dungeon level 3 a map monster can be a group,
+  fought one after another on the same square. Max size 1 + (LEVEL+1)/4,
+  capped at 5 (levels 3-6: up to 2, 7-10: 3, 11-14: 4, 15+: 5); the
+  size is rolled when the level is built (GS%, GK% arrays). When one
+  dies and more are left, the next one stands up at full HP and the
+  message reads "ANOTHER GOBLIN! +6XP +3GP". Weapons only drop when the
+  last of the group dies. Ambush monsters are always single.
+- Group rewards: coins in full for every monster; XP full for the
+  first, half for the second, a quarter for each one after.
+- Character levels: level N needs 25 x N x (N+1) XP (50, 150, 300, 500,
+  750, 1050, 1400, 1800, 2250, 2750...). Each level up raises max HP by
+  5 x the new level (+5, +10, +15...). Replaces +5 max HP every 50 XP.
+  Lines 2210-2220. The character sheet shows the XP for the next level;
+  the instructions now read "LEVEL UPS RAISE MAX HP MORE EACH TIME".
+- Titles stay at 50 / 150 / 300 XP; Shadow Hand moved from 600 to 750 XP
+  (character level 5).
+- Random weapon stats: a dropped weapon gets its type's base attack plus
+  a random 0 to LEVEL/3. The roll is stored with the weapon on the
+  floor (map value 19 + type + 10 x roll), shown in the compare message
+  and on the character sheet, and kept when you equip it (WR).
+- The demo has all of this too.
+
 ## Combat Difficulty / Balance
+- Update: monster scaling and weapon strength are now addressed — see
+  "Monster Scaling, Groups, Character Levels, Random Weapons" above.
 - Once armed and at Basic Burglar, combat becomes too easy — you rarely
   take damage because your hits are strong enough to end fights before
   the monster gets a real chance to counter. Needs real balance work,
@@ -1130,25 +1180,158 @@ each piece.
   (or "NTSC 2SID - ...") when a second SID is found.
 
 ## Volume Control — IMPLEMENTED
+- Every volume key steps 0 -> 3 -> 6 -> 9 -> 12 -> 15 -> 0 (0 = mute,
+  then 5 steps). The setting shows on the message line under the HUD as
+  a slider: the name, then one solid (reversed space) block per step and
+  checkered blocks for the rest, e.g. "MUSIC" + 3 solid + 2 checkered.
 - One SID: M mutes the music, E mutes the sound effects (each on its
-  own, as before), and V cycles the shared volume HIGH (15) -> MEDIUM
-  (10) -> LOW (5) -> HIGH, shown as "VOLUME HIGH" etc. Starts at HIGH.
-  The volume is put back after M stops or restarts the music, since the
-  player resets it to 15.
-- Two SIDs: separate volumes, no mute and no V key.
-  - M cycles the music (SID 2, $D438): MEDIUM -> LOW -> OFF -> HIGH.
-    Starts at MEDIUM. OFF only turns the volume to 0, so the tune keeps
-    its place.
-  - E cycles the sound effects (SID 1, $D418): HIGH -> MEDIUM -> LOW ->
-    OFF. Starts at HIGH. At OFF the effect routines are skipped too.
-  - Shown on the message line under the HUD: "MUSIC MEDIUM",
-    "SOUND FX OFF" etc.
+  own, as before), and V steps the shared volume (both registers).
+  Starts at 9. The volume is put back after M stops or restarts the
+  music, since the player resets it to 15.
+- Two SIDs: separate volumes, no mute toggles and no V key.
+  - M steps the music (SID 2, $D438). Starts at 3. At 0 the tune keeps
+    playing silently, so it keeps its place.
+  - E steps the sound effects (SID 1, $D418). Starts at 15. At 0 the
+    effect routines are skipped too.
 - Instructions line: "M - MUSIC  E - EFFECTS  V - VOLUME" with one SID,
   "M - MUSIC  E - EFFECTS" with two.
 - NS = number of SIDs (PEEK(38693)), set on line 6040 when the music
   starts. M and E use ON NS GOSUB (one SID: 3330/3400, two SIDs:
   6330/6340); MV=1-MV and MU=1-MU moved into 3330/3400.
 - New lines after the DATA, so no renumbering: 6310-6320 (V, one SID),
-  6330 (music, two SIDs), 6340 (effects, two SIDs). V check on the end
-  of key line 1780; VL=15:VM=10:VF=15 on line 6100, where the music used
-  to start (now on 6040).
+  6330 (music, two SIDs), 6340 (effects, two SIDs), 6350 (builds the
+  slider, padded to the full 40 columns so it clears longer messages).
+  V check on the end of key line 1780. Line 6040 starts the music, sets
+  VL=9:VM=3:VF=15 and the starting volumes, once. Old lines 6090 (SID
+  volume 15 and voice-1 envelope) and 6100 (music start) are removed:
+  the player's start sets the volume and clears the SID, and every sound
+  effect sets voice 1's envelope through SYS 38668.
+- Glyph showcase: V steps the music volume the same way, starting at 15,
+  with the slider on row 24. It sets both $D418 and $D438 without
+  checking for a second SID (no sound effects; on one SID $D438 is a
+  mirror of $D418). Lines 540 (key line), 545 (VL=15), 554 (V check:
+  ON -(A$="V") GOSUB 610), 610-620 (volume and slider).
+
+## Demo AI Door Finding — IMPLEMENTED (demo only)
+- The demo's AI now records the corridors and doors while the level is
+  built and routes through them (details in roadmapdemo.md, "AI Misses
+  Doors"). The game itself is unchanged.
+
+## Faster "My Eyes Have Adjusted" Recolor — IMPLEMENTED
+- The recolor when Keen Eyes arrives (lines 4420-4510) used to check all
+  1000 screen squares. It now only checks the rows already explored
+  (YL to YH, the same limits the redraw at 3220 uses), so the pause after
+  "MY EYES HAVE ADJUSTED!" is much shorter early in the game. Every square
+  seen so far is still recolored. Line 4420 only.
+
+## Instructions Screen Wording for Two SIDs — IMPLEMENTED
+- With two SIDs the key line reads "VOLUME  M - MUSIC  E - SOUND EFFECTS";
+  one SID keeps "M - MUSIC  E - EFFECTS  V - VOLUME" (game line 3040).
+  The demo shows the same "VOLUME" prefix with two SIDs (line 3900).
+
+## Animated Characters (Player and Monsters) — IMPLEMENTED
+- Sid drew a second frame for every monster and three extra frames for
+  the player. They live in the reversed half of the character set:
+  each monster's second frame is its screen code + 128 (Golem 193, Leech
+  211, Guard 214, Goblin 216, Imp 218, Cultist 219); the player has 128
+  (fighting), 129 and 130 (walking). Added to the glyph DATA lines
+  (5730-5830), loaded with the others (now 20 glyphs, line 5710).
+- Monsters flip between their two frames every time they move or
+  attack, and when you hit them. Each monster keeps its own frame
+  (XF%, 0 or 128), so two of the same kind can be out of step.
+- Player: walking alternates 129 and 130 on every step; attacking shows
+  128; after about 1/3 second with no key pressed he goes back to
+  standing (0). The key wait at 1780 now times out after 20 jiffies and
+  then 6480 puts the standing frame back and keeps waiting. Each new
+  level starts standing.
+- Side effect: reversed "@", "A", "B" and a few reversed graphics
+  characters now draw these frames. The game only uses a reversed space
+  (the volume slider), which is unchanged.
+- Demo: same frames; the player shows the standing frame when the AI
+  rests and on each new level. Glyph showcase: the player and monsters
+  animate (player cycles stand, walk, walk, fight).
+
+## Demo Speed-up — IMPLEMENTED (V14, demo only)
+- The demo's AI was made much faster without changing its decisions;
+  details in roadmapdemo.md.
+
+## Loader and Title Screen — IMPLEMENTED (V15)
+- New first file on the disk, "PETSCII PIT" (source petsciipitloader.bas).
+  LOAD"*",8 and RUN loads it. It loads the music (PAL or NTSC), copies the
+  font and the 20 custom glyphs into RAM, sets up the screen, starts the
+  music and checks for a second SID. All of this used to be repeated at
+  the start of the game, the demo and the glyph showcase.
+- Title screen: the player and the six monsters blown up so each pixel is
+  a character (8x8 characters each), dancing between their two frames and
+  scrolling right to left, with the version, PAL/NTSC and 2SID, and a
+  menu: P play, D demo, G glyph showcase, I instructions, C credits.
+  The big pixels use screen code 94 (pi), redefined as a solid block.
+- Title animation (V18): four pre-built string sets (T$(3,7)); the player
+  cycles stand/walk/walk/fight, monsters alternate their two frames; the
+  scroll moves 2 columns per step, all 8 rows in one PRINT with colour
+  codes (lines 390-500 of the loader).
+- Double buffering (V18): the title is drawn on two screens, $C000 and
+  $C400 (the demo's fog map, unused while the loader runs). Each step
+  points PRINT at the hidden one (POKE 648,192 or 196), prints the 8 rows
+  there, then shows it with one POKE 53272 (3 or 19). The static text is
+  drawn on both screens; instructions, credits and loading switch back to
+  $C000 first. Loader lines 460-490, 540-570.
+- Play and Demo load straight to "DESCENDING TO LEVEL 1, PLEASE WAIT ...";
+  the music keeps playing from the title screen. Quitting the game (Q,
+  confirmed), the demo (hold Q) or the showcase (Q) loads the loader and
+  returns to the title menu.
+- The game, demo and showcase now require the loader and print "PLEASE
+  LOAD PETSCII PIT FIRST" otherwise. They check a 2-byte signature the
+  loader writes at 38654-38655 (in the free end of the music file's
+  first page), then fix BASIC's variable pointer after being loaded from
+  another program (POKE 45,PEEK(174):POKE 46,PEEK(175):CLR).
+- Instructions screen: the loader draws it once (with the version,
+  PAL/NTSC, 2SID and the right key line) and stores a copy of the
+  characters and colours in the RAM under the KERNAL ROM ($E000-$E7FF),
+  which BASIC can write but nothing else uses. Two small machine-code
+  routines in the free part of the music file's first page copy it:
+  SYS 38576 stores the screen, SYS 38512 shows it again (a fraction of
+  a second). The I key in the game and demo now just does SYS 38512, so
+  the instruction text is no longer in either program. The version now
+  lives in the loader's instructions screen and title screen.
+- Memory won back: game 23511 -> 20964 bytes (about 2.5 KB), demo 25897
+  -> 23569 (about 2.3 KB), glyph showcase 2867 -> 1819.
+- All three programs were renumbered in steps of 10 again. Main places in
+  the game now: main loop 1760, instructions 2970, level build 4340,
+  startup 5320, volume routines 5740-5780, groups 5790, hole drawing
+  5800, fall 5810-5840, hole placement 5850-5880, hole spotting 5890,
+  idle standing frame 5910.
+- V17: the loader stops the music (SYS 38665) before loading a program;
+  the game (5500) and demo (6300) start it again (SYS 38662) as they head
+  down to level 1, and the showcase starts it on its own screen.
+- V18 fix: the loader also resets BASIC's end-of-program pointer
+  (POKE 45,PEEK(174):POKE 46,PEEK(175):CLR on line 30) when another
+  program loads it; returning from the shorter glyph showcase used to
+  crash with ?UNDEF'D STATEMENT ERROR IN 500.
+- Quitting any program (Q) now stops the music (SYS 38665) before loading
+  the loader, to avoid glitches during the load.
+- Loading screens: for Play and Demo the loader prints exactly the game's
+  "DESCENDING TO LEVEL 1, PLEASE WAIT ..." line; for other programs
+  "LOADING <NAME> ..." (e.g. LOADING GLYPH SHOWCASE). The three dots are
+  shown in the cycling colours but stay still during the disk load; the
+  loaded program prints the same line, then starts the dot cycling and
+  the music. Loader lines 510-530 (texts) and 570.
+- The game and demo no longer clear the screen during their startup, so
+  the loader's "DESCENDING TO LEVEL 1" screen stays up until the level
+  build reprints it and starts the dots and the music.
+- Credits (V16): design, code and graphics by m0nde; music by m0nde;
+  thanks to Ricky Derocher, Eyvind Ebsen and Bobby Brightling;
+  https://m0nde.itch.io/petscii-pit; (C)2026 m0nde - CC BY 4.0.
+- The RAM under the KERNAL ($E800-$FFFF) is still free for later: level
+  files and story text can be kept there without using BASIC memory.
+
+## Version Numbers — IMPLEMENTED
+- Every build has a 2-character version, starting at 12 (Sid had pushed
+  11 builds before). Order: 00-99, then 0A-0Z, 1A-1Z ... 9A-9Z, then
+  A0-AZ ... Z0-ZZ, then combinations with "!".
+- The .d64 is always titled PETSCII PIT and its disk ID is the version.
+- The version shows on the top line of the instructions screen in the
+  game (2990) and demo (3850), e.g. "PETSCII PIT V12 - HTTPS://M0NDE.ITCH.IO",
+  and in the glyph showcase title (340). Updated on every build.
+- Zips are named "petscii pit all <version>.zip"; SID-only zips are
+  "petscii pit sids <version>.zip".

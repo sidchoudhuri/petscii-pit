@@ -274,8 +274,104 @@
   they play.
 - The music now starts on the first instructions screen, which shows
   "PAL 2SID" or "NTSC 2SID" at the bottom when a second SID is found.
+- Volume steps 0, 3, 6, 9, 12, 15 and wraps back to 0 (0 = mute), shown
+  under the HUD as a slider of solid and checkered blocks.
 - One SID: M and E still mute music or sound effects on their own, and
-  the new V key sets the volume HIGH, MEDIUM or LOW for both together.
-- Two SIDs: separate volumes. M cycles the music MEDIUM, LOW, OFF, HIGH
-  (starts at MEDIUM); E cycles the sound effects HIGH, MEDIUM, LOW, OFF
-  (starts at HIGH). The new setting shows under the HUD.
+  the new V key sets the volume for both together. Starts at 9.
+- Two SIDs: separate volumes. M steps the music (starts at 3), E steps
+  the sound effects (starts at 15).
+- Glyph showcase: new V key steps the music volume 0, 3, 6, 9, 12, 15
+  and back to 0, shown as the same slider on the bottom row. Music
+  starts at 15. Key line now reads "SPACE - NEXT TRACK V - VOLUME  Q -
+  QUIT".
+- Demo only: the self-playing AI now reads the level layout and finds
+  doors and corridors (see devlogdemo.md). No change to the game.
+- Faster "MY EYES HAVE ADJUSTED!": the recolor only checks the rows you've
+  explored instead of the whole screen.
+
+## Harder Monsters, Groups, Levels, Weapons and Pits
+- Monsters get much tougher as you go deeper, and hit back according to
+  how strong they are. Worked out with a 30-level simulation so the game
+  keeps getting harder instead of easier.
+- From level 3 a monster can be a group: kill one and "ANOTHER GOBLIN!"
+  steps up, up to 5 deep. Coins for every one; XP full, then half, then
+  a quarter.
+- Character levels now get further apart (50, 150, 300, 500, 750 XP...),
+  and each level up raises max HP more than the last. The character
+  sheet shows the XP needed for the next level. Shadow Hand is now at
+  750 XP.
+- Dropped weapons roll a random attack bonus that grows with depth.
+- Pits: from level 5 a level may hide a hole in the floor. With Keen
+  Eyes you might spot it; otherwise "AAAAH! YOU FELL INTO A PIT!" and
+  you drop to the next level, hurt, with Lamenting playing until you
+  move.
+
+## Version Numbers and Two-SID Key Line
+- Builds now have version numbers, starting at 12. The version is the
+  disk ID of the .d64 (titled PETSCII PIT) and shows on the top line of
+  the instructions screen, e.g. "PETSCII PIT V12".
+- With two SIDs the instructions key line reads
+  "VOLUME  M - MUSIC  E - SOUND EFFECTS".
+
+## Version 13: Animated Characters
+- The player and every monster now animate with Sid's new frames:
+  monsters flip between two poses when they move or fight, the player
+  takes walking steps, swings when attacking, and settles back to
+  standing a moment after you stop.
+- The glyph showcase animates them too.
+
+## Version 14
+- Demo speed-up (see devlogdemo.md). The game itself only changes its
+  version number.
+
+## Version 15: Loader and Title Screen
+- New loader, first on the disk: LOAD"*",8 and RUN. It loads the music,
+  the font and the glyphs once, then shows a title screen with the player
+  and monsters blown up big, dancing and scrolling, and a menu: play,
+  demo, glyph showcase, instructions and credits.
+- The game and demo start straight at "DESCENDING TO LEVEL 1" with the
+  music already playing; quitting returns to the title menu.
+- The instructions screen is stored once by the loader and pops up
+  instantly with I, in the menu and in the game.
+- About 2.5 KB of BASIC memory freed in the game for future features.
+
+## Version 16: Credits
+- Credits screen text: design, code and graphics by m0nde; music
+  (PETSCII Pit - Dungeoneering, Assailing, Lamenting) by m0nde; thanks to
+  Ricky Derocher, Eyvind Ebsen and Bobby Brightling; the itch.io page;
+  (C)2026 m0nde - CC BY 4.0.
+
+## Version 17: Music Hand-off
+- The loader stops the music before it loads the game, demo or showcase;
+  each program starts it again itself (the game and demo on the way down
+  to level 1, the showcase on its screen).
+
+## Version 18: Fix Returning From the Glyph Showcase
+- Quitting the glyph showcase loaded the loader but stopped with
+  ?UNDEF'D STATEMENT ERROR IN 500. The showcase is shorter than the
+  loader, and BASIC keeps the old end-of-program pointer when one program
+  loads another, so the loader's variables were written over its own
+  code. The loader now resets that pointer when it is loaded from another
+  program (line 30), the same way the game, demo and showcase do.
+- Title screen: the big player now cycles through all four of his frames
+  (stand, walk, walk, fight) while the monsters keep alternating their
+  two, and the scroll moves two columns per step for about twice the
+  speed (still all BASIC PRINTs, colour codes now inside the PRINT).
+- Quitting the game, demo or glyph showcase now stops the music before
+  loading the loader, so it no longer glitches during the disk load.
+- Loading from the title menu now looks seamless: for the game and demo
+  the loader shows the same "DESCENDING TO LEVEL 1, PLEASE WAIT ..." the
+  game shows, with the three dots in the cycling colours (standing still
+  while the disk loads); the game then takes over the same screen, starts
+  the dot cycling and the music. The glyph showcase gets "LOADING GLYPH
+  SHOWCASE ..." the same way.
+- The game and demo keep the loader's screen up while they start, instead
+  of clearing it, so the hand-off to "DESCENDING TO LEVEL 1" is seamless.
+- The title animation is now double-buffered: each step is printed on a
+  hidden second screen and then shown all at once, so the big glyphs no
+  longer redraw visibly from top to bottom. Still all BASIC.
+- Instructions screen recoloured in the credits' style: keys and actions
+  in white, a dark grey dash, descriptions in light grey; the tips are
+  all light grey with a blank line separating them from the controls.
+- Each instruction tip now has its key word in white (STAIRS, MONSTERS,
+  TREASURE, HEALTH, POTIONS, LEVEL UPS, XP, WEAPONS, EQUIP).
