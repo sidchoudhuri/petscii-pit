@@ -277,3 +277,22 @@ details differ.
 - Quitting the demo: press Q at any time (it now reads the key buffer as
   well as the held key, so a quick tap isn't missed); the music stops and
   it loads back to the title menu, like the glyph showcase.
+
+## Version 19: Battle Screen
+- The demo fights on the same big battle screen as the game, with
+  lunges, damage numbers, HP bars and group counts.
+- The AI never flees, and once a battle starts it keeps hitting the
+  monster on screen until it's dead.
+- The demo is now called DEMO on the disk, and quitting loads PETSCIIPIT.
+- New title ladder from the game: Delver of the Depths at 300 XP, Skilled
+  Skeeve at 500, Shadow Hand at 750. Delver brings Keen Eyes (3), room
+  walls coloured by what the room holds; Skilled Skeeve brings Keen Eyes
+  (4), seeing further down halls. The demo has no rune stones and no
+  Glyph Lore, since it can't use them.
+- Freed about 0.4 KB of memory (old unused notes removed, title check shared).
+- Same battle-screen wipes as the game: a red flash and a wipe in the
+  direction of the blow going in, and an eyelid shutter coming out.
+- The demo's music starts straight on Lamenting.
+- With two SIDs the music stays on the first chip and the effects use the second, like the game.
+- Follows the SID configuration (music and effects on the chips chosen in the loader).
+- Starts at the music and sound fx volumes set on the loader's SID screen.
