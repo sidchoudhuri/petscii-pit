@@ -375,3 +375,103 @@
   all light grey with a blank line separating them from the controls.
 - Each instruction tip now has its key word in white (STAIRS, MONSTERS,
   TREASURE, HEALTH, POTIONS, LEVEL UPS, XP, WEAPONS, EQUIP).
+
+## Version 19: Battle Screen
+- Every fight now happens on its own battle screen: you and the monster
+  drawn big, side by side, with the HUD on top, names and HP bars under
+  you both, and "2 MORE GOBLINS" when there's a group behind it.
+- Sides follow the map: if you're above the monster or to its right,
+  you're on the right; otherwise you're on the left.
+- Each hit is a lunge toward the other fighter, with the damage shown
+  above whoever took it ("MISS" if nothing got through).
+- New: F - FLEE. A coin flip (better odds with Shadowstep). Get away and
+  the monster and its group are gone, but you drop 10% of your coins
+  (none with Shadowstep). Fail and you lose your turn while it hits you.
+- Beat the last monster and you're back on the map.
+- Switching screens is instant: the battle screen is kept in spare memory
+  and a small machine code helper (installed by the loader) saves and
+  restores the map's colours and draws the big glyphs.
+- New file names on the disk: the loader is PETSCIIPIT, the game GAME,
+  the demo DEMO and the glyph showcase SHOWCASE (music files unchanged).
+  Start with LOAD"PETSCIIPIT",8 (or LOAD"*",8 - it is still first).
+
+## Version 19: Runes, Glyph Lore and a New Title
+- New title at 300 XP: DELVER OF THE DEPTHS. Skilled Skeeve moves to
+  500 XP (with Sneak Attack). The ladder is now Alley Rat (50), Basic
+  Burglar (150), Delver of the Depths (300), Skilled Skeeve (500) and
+  Shadow Hand (750). Every title now comes with a character level.
+- Delver of the Depths brings two skills:
+  - GLYPH LORE - READ THE RUNES OF THE PIT
+  - KEEN EYES (3) - SENSE WHAT ROOMS HOLD: room walls take on the colour
+    of what's inside. Treasuries glow orange like treasure, apothecaries
+    green like potions, and a room whose pit you've spotted goes dark grey.
+- Skilled Skeeve adds KEEN EYES (4) - SEE FURTHER DOWN HALLS: one more
+  square straight ahead, plus the squares either side two ahead.
+- Rune stones: from level 3 down, every level has one, glowing white once
+  your eyes adjust. Until you have Glyph Lore it's "A STRANGE RUNE... I
+  CAN'T MAKE IT OUT." With Glyph Lore you read it and get a DESCENT RUNE,
+  a 12-character code that remembers your level, XP, HP, coins and
+  weapon. The character sheet keeps your LAST RUNE.
+- New on the title menu: R - RESUME THE DESCENT. Speak (type) your rune
+  and you go straight back down to that level with those stats. A wrong
+  rune gets "THE PIT DOES NOT KNOW THAT RUNE."
+- The long title message is shortened to fit: "NOW A DELVER OF THE
+  DEPTHS! PRESS C".
+- Freed about 2.5 KB of memory in the game (and about 0.4 KB in the demo)
+  so there's room for what's next; the game should also pause less often
+  to tidy up its memory.
+
+## Version 20: Smoother Loader Start
+- The title screen now appears right away, with the music starting at the
+  same moment, both when the disk is first started and when you come back
+  from the game, demo or glyph showcase. The big scrolling characters
+  start moving a moment later, once they're ready. No more black screen
+  with music playing.
+- The instructions screen no longer flashes up when the loader starts.
+  It's prepared out of sight the first time you start the game, demo or
+  showcase (or press I), as part of that loading time, and only once.
+- The big dancing characters on the title screen are now ready-made in
+  the loader, so they start dancing the moment the title appears instead
+  of after a pause.
+- Fights now open with a quick wipe instead of a hard cut: the border
+  flashes red, the map is swept away in the direction of the blow (down,
+  up, left or right, the way you or the monster moved), and the battle
+  screen sweeps in the same way. Leaving a fight, the battle screen
+  closes like a pair of eyelids and the map opens up from the middle.
+  Each wipe takes about a tenth of a second.
+- New on the title menu: S - SIDS. It cycles AUTO (detect, showing how
+  many SIDs it found), 1 and 2, so a second SID at $D420 can be forced
+  on if detection misses it. If AUTO doesn't find your second SID, set
+  it to 2.
+- New on the title menu: Q - QUIT. It asks "QUIT PETSCII PIT? Y/N" and
+  resets the C64.
+- A wrong descent rune now shows "THE PIT DOES NOT KNOW THAT RUNE." long
+  enough to read; a RETURN pressed after the last character no longer
+  makes it vanish.
+- The game and demo now start their music straight on Lamenting instead
+  of beginning with Dungeoneering.
+- Fixed a bug in the new battle wipes that could clash with the music
+  and corrupt memory.
+- With two SIDs the music now stays on the first chip ($D400) and the
+  sound effects go to the second ($D420), so SID-reactive lights (like
+  the Ultimate's) follow the music. The volume controls still work the
+  same: M for music, E for sound effects.
+- Test: the title screen shows which SID model it finds at each address
+  (6581 or 8580), with a test number in brackets while the check is
+  being tuned.
+- New SID configuration screen (S on the title menu): shows how many
+  SIDs were found and which model is at each address (6581 or 8580), lets
+  you choose auto, one SID, or two SIDs with the music on either chip,
+  and says exactly where the music and the sound effects play. The title
+  menu just shows how many SIDs were found.
+- Fixed: after a reset, starting the disk again could keep the previous
+  music player in memory, so the music started on a loud Dungeoneering.
+  The loader now always sets itself up from scratch unless it's coming
+  back from the game, demo or showcase.
+- The game's glyphs moved off the ordinary text characters, so symbols like $ and > print normally again (e.g. the SID screen's > marker no longer shows as stairs).
+- The SID screen now shows the music and sound fx volumes with the same
+  bars as the game, and lets you test and set them: M plays the next
+  song, C/V turn the music down/up, D/F turn the sound fx down/up, E plays
+  the sound effect, R repeats it until you press a key, T picks the next
+  one. The volumes you set carry into the game and demo.
+- The loader goes straight to a black screen on start-up, with no flash of blue or garbage while it sets up.

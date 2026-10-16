@@ -202,3 +202,17 @@
   entry 3500, corridor follow 3530, rest 3570, level build 5130,
   startup 6110, groups 6530, hole drawing 6540, fall 6550, hole
   placement 6590, hole spotting 6630 (after V18's startup change).
+
+## Battle Screen — IMPLEMENTED (V19)
+- Same battle screen as the game (see roadmap.md): big player and
+  monster, HUD, HP bars, group count, lunges with damage numbers. No hint
+  line, and the AI never flees.
+- In a battle the AI's move is always turned into an attack on the
+  monster on screen (6850), so it can't switch to a second monster that
+  is also next to it.
+- Lines: enter 6650-6670, bars and group line 6680-6710, glyph and colour
+  6720-6730, big glyph 6740, player lunge 6750, monster lunge 6760-6790,
+  monster attack hook 6800-6820, kill 6830, exit 6840, attack direction
+  6850. Hooks: 390, 1210, 1730 (quitting resets the screen first), 1860,
+  2000, 2060, 2110, 2140, 3790 (death leaves the battle first), 6530.
+- V19: on the disk the demo is DEMO; quitting (1730) loads PETSCIIPIT.

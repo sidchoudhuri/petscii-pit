@@ -1333,5 +1333,381 @@ each piece.
 - The version shows on the top line of the instructions screen in the
   game (2990) and demo (3850), e.g. "PETSCII PIT V12 - HTTPS://M0NDE.ITCH.IO",
   and in the glyph showcase title (340). Updated on every build.
-- Zips are named "petscii pit all <version>.zip"; SID-only zips are
-  "petscii pit sids <version>.zip".
+- Zips are named "petscii-pit-all-<version>.zip"; SID-only zips are
+  "petscii-pit-sids-<version>.zip" (no spaces in file names).
+
+## Battle Screen — IMPLEMENTED (V19)
+- Every fight switches to a battle screen: the player and the monster
+  drawn big (8x8 blocks, like the title), the HUD on top, names and HP
+  bars under them (player green, monster red), the group count under the
+  monster ("2 MORE GOBLINS"), and the hint line
+  "W/A/S/D/SPACE - ATTACK   F - FLEE".
+- Sides follow the map: whoever is above or to the right is on the right.
+  Attacking from above or from the right puts the player on the right;
+  from the left or from below, on the left. The same rule applies when a
+  monster attacks first.
+- Each hit is a lunge: the attacker jumps one column toward the other and
+  back, and the damage ("-5", or "MISS") shows above the target until the
+  next hit. Monster hit-backs that do damage get their own lunge.
+- Killing the last monster of the group wipes it from the screen, pauses
+  for half a second and returns to the map. A group refills the HP bar
+  and counts down "n MORE ...".
+- Fleeing (F): 50% chance, 75% with Shadowstep (Shadow Hand). Success:
+  the monster and its whole group vanish, you lose 10% of your coins (at
+  least 1 if you have any; none with Shadowstep) and the turn goes on
+  ("YOU FLED! -nGP" / "YOU SLIPPED AWAY!"). Failure: "COULDN'T ESCAPE!",
+  the turn is lost and the monster attacks.
+- During a battle only attacking, fleeing and the volume keys work
+  (I, C and Q wait until the fight is over). Other monsters still move
+  and can hit you; only the one you are fighting is shown.
+- How it works: the battle screen is the RAM under the KERNAL at $E800
+  (59392), shown with POKE 53272,163, and PRINT goes there during the
+  fight (POKE 648,232), so the HUD and message code is unchanged. The
+  map's colour memory is saved to $EC00 (60416) on the way in and
+  restored on the way out, and while the fight is on CB points at the
+  saved copy, so anything drawn on the map lands in the right place. The
+  screen is blanked for the moment of switching (POKE 53265).
+- Machine code (195 bytes at $9500 = 38144, loaded by the loader from its
+  DATA at 1010-1130; the top of BASIC is now POKE 56,149):
+  SYS 38144 saves the colour memory, SYS 38174 restores it, SYS 38214
+  draws one big glyph (POKE 38335 glyph, 38336/38337 screen address,
+  38338 colour).
+- Game lines: enter 5920-5940, bars and group line 5950-5980, glyph and
+  colour 5990-6000, big glyph 6010, player lunge 6020, monster lunge
+  6030-6060, monster attack hook 6070-6090, kill 6100, exit 6110, keys
+  6120, flee 6130-6160, attack direction 6170. Hooks: 390 (footer waits
+  until the fight is over), 1240, 1520 (flee message), 1790, 1880, 2020,
+  2080, 2130, 2160, 2770 (game over leaves the battle first), 5790.
+- Memory: the game grew by about 2 KB (22964 bytes now) and the demo by
+  about 1.6 KB (25176), plus the 256 bytes for the machine code.
+
+## Disk File Names — IMPLEMENTED (V19)
+- On the .d64: loader PETSCIIPIT (first file), game GAME, demo DEMO,
+  glyph showcase SHOWCASE, music MUSICPAL / MUSICNTSC. The local .bas/.prg
+  files keep their names (petsciipitloader, petsciipit, petsciipitdemo,
+  glyphshowcase).
+- Loader lines 510-530 load GAME / DEMO / SHOWCASE; the game (2910, 3910),
+  demo (1730) and showcase (350) load PETSCIIPIT to quit. Their "please
+  load first" message (line 20) names PETSCIIPIT.
+
+## Disk Directory Art — IMPLEMENTED (V19)
+- Every game disk uses the same directory layout: PETSCIIPIT first (so
+  LOAD"*",8 still loads it), then a blank line, the player's standing
+  glyph as eight 0-block DEL entries and another blank line, then GAME,
+  DEMO, SHOWCASE, MUSICPAL, MUSICNTSC, then "C64.M0N.DE", the chest glyph
+  and "M0NDE.ITCH.IO", all as 0-block entries.
+- The art is drawn with the CBM-+ checkerboard, two characters per pixel.
+- Built by c1541 as before, then a script rewrites the directory from a
+  saved template (block counts of the real files come from the new build).
+  Don't VALIDATE the disk; it can remove the art entries.
+
+## Titles, Glyph Lore, Keen Eyes 3 and 4 — IMPLEMENTED (V19)
+- Titles (TL$(1-5), DATA 5730): ALLEY RAT 50 XP (Keen Eyes 1), BASIC
+  BURGLAR 150 (Keen Eyes 2, Nimble Fingers), DELVER OF THE DEPTHS 300
+  (Glyph Lore, Keen Eyes 3), SKILLED SKEEVE 500 (Sneak Attack, Keen Eyes
+  4), SHADOW HAND 750 (Shadowstep). TT=-(XP>=50)-(XP>=150)-(XP>=300)-
+  (XP>=500)-(XP>=750) in 350, 2220, 3610, 6260. Sneak Attack now XP>=500
+  (2060); Shadowstep TT>=5 (rest 2610, flee 6130-6140). The title message
+  drops "YOU ARE " when it would be longer than 40 (3860).
+- Keen Eyes 1 and 2 are unchanged (1300-1360).
+- Keen Eyes 3 (XP>=300): room walls coloured by the room: treasury = chest
+  colour (8), apothecary = potion colour (5), others unchanged (12); a room
+  whose pit has been spotted = dark grey (11). Wall routine 6400-6450
+  (room in QR, colour KZ), all revealed rooms 6370-6380, hooks: room
+  reveal 1430, redraw 3020, pit spotted 5900 -> 6390. Reaching 300 XP
+  shows "I CAN SENSE WHAT THE ROOMS HOLD!" and recolours (2250 -> 6490).
+- Keen Eyes 4 (TT>=4): also reveals 4 squares ahead and the squares either
+  side 2 ahead, only on map rows 3-23 (1350, 1360 -> 6460-6480).
+- Character sheet: one Keen Eyes line with the current level (3750),
+  Glyph Lore (3770), Sneak Attack and Shadowstep (3780), LAST RUNE (3790).
+- Demo: same titles, Keen Eyes 3 and 4 (wall routine 6890-6940, all rooms
+  6860-6870, pit 6880, Keen Eyes 4 6950-6970, message 6980; hooks 1320,
+  1330, 1400, 2230, 3980, 6640). No runes or Glyph Lore.
+
+## Descent Runes (Save Codes) — IMPLEMENTED (V19)
+- Rune stones: from level 3, one per level in a random room (not on a room
+  centre or the hidden pit), placed by 6300-6330 (called from 5140), map
+  value MA%=7, drawn by 6340 with screen code 38 (the "&" character,
+  redefined by the loader, DATA line 230), white after Keen Eyes. A weapon
+  can't drop onto a rune (2170).
+- Stepping on one (2360 -> 6350): under 300 XP "A STRANGE RUNE... I CAN'T
+  MAKE IT OUT." and it stays; with Glyph Lore the rune is read (6360),
+  the stone is used up, "YOU READ THE RUNE: XXXX-XXXX-XXXX" shows and RU$
+  keeps it for the character sheet.
+- The code: 12 characters (3 groups of 4, from ABCDEFGHJKLMNPQRSTUVWXYZ
+  23456789: no 0/O or 1/I) for your stats when you read it. It saves
+  level (up to 127), XP (32767), HP (2047), coins (16383), weapon type
+  (0-5) and weapon roll (15). Max HP, character level, title and skills are
+  worked out again from XP. Resuming starts that level freshly built.
+- Packing: three 20-bit groups. Group 1 = level + 128*(weapon + 8*(roll +
+  16*check)); group 2 = XP + 32768*(HP/64); group 3 = (HP mod 64) +
+  64*coins. Each group is written as 4 base-32 digits, low digit first.
+  Every character is scrambled with its position and the character before
+  it. The check value is (level*7 + XP*3 + HP*5 + coins*11 + weapon*13 +
+  roll*17 + 23) mod 61; about 1 typo in 400 still slips through. Encoding
+  6180-6220.
+- Loader: title menu R - RESUME THE DESCENT (610, other menu lines moved
+  down one row; key at 560). Entry and checking at 1140-1330; DEL rubs
+  out, RETURN with nothing typed goes back. A good rune is passed to the
+  game in the spare bytes after the battle helper: 38339 = 82 (flag),
+  38340 level, 38341/38342 XP, 38343/38344 HP, 38345/38346 coins, 38347
+  weapon, 38348 roll. P clears the flag. The loader then loads GAME with
+  "DESCENDING TO LEVEL n". The game picks it up at startup (5530 ->
+  6240-6260). "IT'S SO DARK!" at the start only shows under 50 XP.
+- The demo doesn't use runes.
+
+## Memory Slim-down — IMPLEMENTED (V19)
+- Game: the fog map (which squares you've seen) moved out of the FG%
+  array into the free 1 KB at $C400 (50176+cell, PEEK/POKE), the way the
+  demo already does it. It is cleared with the music player's map clear
+  (POKE 781,0:POKE 782,196:SYS 38675) at the level build (4420), and the
+  array clear there now does 2 arrays (MA%, RM%). Saves about 2 KB.
+- Dead REM lines removed: game 4400-4450, demo 5190-5230 (old FRE(0) and
+  array-clearing experiments). The header and table REMs stay.
+- The title formula is one subroutine: game 6500 (used by 350, 2220,
+  3610, 6260), demo 6990 (350, 2200, 4560).
+- Result: game program 24711 bytes with about 5 KB left for strings and
+  working space; demo 25613 bytes with about 3.2 KB left.
+
+## Game Parts Linked by a Passage Rune — FUTURE (when memory or speed runs out)
+- When the game outgrows BASIC memory or gets too slow, it splits into
+  parts: separate programs on the disk (e.g. GAME, then GAME2). Only one
+  is in memory at a time, so each part gets the full ~36 KB.
+- The shared engine (movement, combat, battle screen, HUD, level
+  builder) is copied into each part; what each part saves is its own
+  monsters, story text, designed levels and skills.
+- Part 1 launches part 2 directly at the end of part 1, passing the state
+  and completion flags through the spare bytes after the battle helper
+  (38339 onwards), the same way the loader passes a rune to the game. No
+  typing needed.
+- The rune grows to carry:
+  - which part (game program) to go to: the loader reads it and loads the
+    right program, so R - RESUME THE DESCENT works for every part.
+  - completion flags showing what was done in earlier parts (e.g. boss
+    beaten, hidden room found, runes read).
+  - Option: 16 characters (a fourth group of 4 = 20 more bits, room for
+    the part number and ~16 flags), or a separate "passage rune" just for
+    part and flags. Either way checked and scrambled like now.
+- A part started from the menu, or a returning player, is asked for the
+  rune when it's needed.
+- Before splitting: story text and designed levels can live outside BASIC
+  (the RAM under the KERNAL, about 4 KB still free there, or loaded from
+  disk), which may keep the game in one program for longer.
+
+## Design Rules (decided)
+- Story text and designed-level data live outside BASIC: in the RAM under
+  the KERNAL or loaded from disk, never as PRINT strings or DATA in the
+  game. BASIC only holds the code that shows them.
+- The demo skips features that only matter to a human player. It already
+  skips runes, Glyph Lore and fleeing. Every new feature is marked "game
+  only" or "game and demo" when it is planned.
+
+## Loader Start-up Order — IMPLEMENTED (V20)
+- The very first thing the loader does is set a black border and
+  background (line 20), so a freshly reset machine's blue screen goes
+  straight away. The display is switched off (POKE 53265,11) while the
+  loader moves the screen to $C000, checks the SIDs and draws the title
+  (360-370); before, the uncleared new screen memory could flash up as
+  light-blue garbage.
+- Start: the music starts and the title menu is drawn at once (370), then
+  the scrolling strips are built (390-450) and the hidden buffer screen
+  drawn, then the animation loop starts (470). I and C still return to
+  460, which redraws both screens.
+- The instructions screen is no longer built at start-up (old line 380).
+  It is built with the display switched off (POKE 53265,11), saved to the
+  RAM under the KERNAL (SYS 38576) and the "loader has run" signature
+  (38654/38655 = 80) set by 1340, called the first time a program is
+  launched (570) or I is pressed (540). After that it's never rebuilt.
+- The title strips are no longer built from the glyphs at start-up: the
+  32 finished rows (4 animation sets x 8 rows, each 70 columns plus the
+  first 40 again so it wraps) are string literals at 1400-1710, called by
+  410. "~" is PETSCII 255 (pi), which the loader redefines as a solid
+  block. BASIC uses literal strings straight from the program text, so
+  this takes no time. The rows are generated from the glyph DATA
+  (120-230) by a build script; after editing a glyph, the strips have to
+  be regenerated to match.
+
+## Battle Screen Transitions — IMPLEMENTED (V20)
+- Going into a fight: the border flashes red (53280), the map's colours
+  are saved, the map is wiped to black in the direction of the hit (rows
+  down or up, columns right or left: the player's DX/DY, or the
+  monster's EX/EY when it attacks first; BH/BI, BO/BP), the battle screen
+  is drawn with the display off, its colours saved and blacked out, then
+  it is wiped in the same way. Leaving: shutter (rows from top and bottom
+  to the middle) to black, switch to the map, shutter open from the
+  middle out of the saved map colours.
+- 5 frames per wipe (5 rows, 8 columns or 3 shutter row-pairs per frame),
+  about 0.08 s on PAL; nothing else is slower.
+- Machine code (275 bytes) at $0600 (1536), the unused default screen
+  memory, installed by the loader from DATA at 1730-1900. Parameters 1536
+  kind (0 rows, 1 columns, 2 shutter), 1537 reverse, 1538 0 = to black /
+  1 = from buffer, 1539 buffer page, 1540 steps per frame; SYS 1541 saves
+  colour memory to the buffer, SYS 1575 runs the wipe. Buffers are in the
+  RAM under the BASIC ROM: map colours $A000 (40960, CB during a fight),
+  battle colours $A400. The wipe switches only the BASIC ROM out ($01=$36)
+  so the KERNAL and the music keep running.
+- The old colour save/restore at 38144/38174 and $EC00 are no longer used
+  (the big glyph routine at 38214 still is).
+- Game lines: enter 5920, 5940, exit 6110, wipe helper 6510, direction
+  set in 2020 and 6070. Demo: 6650, 6670, 6840, helper 7000, 2000, 6800.
+
+## SID Choice, Quit, Rune Message, Start Mood — IMPLEMENTED (V20)
+- Title menu S - SIDS (key 560 -> 1350-1370, shown by 660): cycles AUTO,
+  1, 2; the choice is kept in 38652 (in the music file's spare page, so
+  it survives going into a program and back). Changing it stops the
+  music, POKEs 38693 (0 = detect at the next start, or 1/2 forced),
+  starts it again, re-applies the volumes and, if the instructions screen
+  has been saved already, rebuilds it (with the display off until the
+  title is redrawn, 460) so its volume line matches.
+- Second-SID detection (player.asm, detect): the full check, as before:
+  $D420 isn't a mirror of $D400, voice 3 at $D420 is running, and its test
+  bit stops it. (A more lenient version without the last check was tried
+  in V20 and taken out again.) The S choice 1 or 2 skips detection.
+- Title menu Q - QUIT (1380-1390): "QUIT PETSCII PIT? Y/N"; Y stops the
+  music and resets the C64 (SYS 64738).
+- Menu rows: P 13, R 14, D 15, G 16, I 17, C 18, S 19, Q 20; NTSC/PAL 22,
+  web address 23.
+- Wrong rune (1330): the message stays for a second, then the key buffer
+  is cleared before "PRESS ANY KEY", so a RETURN typed after the 12th
+  character can't skip it.
+- Music start mood: start reads 38653 (0 = Dungeoneering, 1 = Lamenting).
+  The game (5500) and demo (6300) POKE 1 so they begin on Lamenting; the
+  loader (370, 1350), showcase (290) and the music-on toggles (game 3130,
+  demo 4090) POKE 0.
+- The loader blacks out the colour of the screen cells under $0600 before
+  installing the wipe code there (260), so its bytes don't show as
+  garbage on the start-up screen.
+- Battle wipes: moved their zero-page pointers from $FB-$FE to $57-$5A;
+  the music IRQ uses $FB/$FC and could corrupt a wipe in progress.
+
+## Two SIDs: Music on $D400, Effects on $D420 — IMPLEMENTED (V20)
+- So SID-reactive lights (the Ultimate's follow the first SID) light up
+  with the music. Before, two SIDs meant music on $D420 and effects on
+  $D400.
+- Player: the music voices always use $D400 (sidoff 0, 7, 14); setsid sets
+  fxoff = $20 when sids = 2, and the effect routines (fxbegin, stop) set
+  up voice 1 of that chip. With two SIDs an effect never takes a music
+  voice (fxhold stays 0).
+- Game and demo: SI (the effects' SID) is 54272, or 54304 with two SIDs
+  (game 5500, demo 6300). Music volume is always POKE 54296 ($D418); the
+  effects volume is POKE SI+24 ($D418, or $D438 with two SIDs). On one SID
+  both are the same register. Game volume routines 5750-5760; loader 370
+  and 1350 set the title volumes the same way.
+
+## SID Model Check (6581 / 8580) — TEST BUILD (V20)
+- The loader takes three readings of voice 3 on the chip at $D400 and the
+  one at $D420 before it starts the title music (370), and shows them raw
+  on row 21 (1950-1960): "#D400 A/B/C   #D420 A/B/C" (the $D420 group only
+  with two SIDs). "#" is used because "$" is the treasure chest glyph.
+  - A: classic check: test bit on with frequency $FFFF, sawtooth started,
+    oscillator read 4 cycles later; the two models read back one step
+    apart.
+  - B: non-zero readings out of 256 with sawtooth+triangle combined.
+  - C: the same with pulse+sawtooth combined (50% pulse).
+- First readings on the Ultimate with the B check alone were 3 ($D400) and
+  2 ($D420), too close to tell the models apart, hence the extra checks.
+  Once known chips have been measured, the one that separates them
+  becomes the label (6581 / 8580) and the raw numbers go.
+- Machine code: 121 bytes at $0720 (1824), installed by the loader from
+  DATA at 2000-2070. POKE 1824 with 0 or 32, SYS 1828, results in
+  1825-1827. Kept in 38645-38647 ($D400) and 38648-38650 ($D420).
+- Loader lines are now kept under 250 bytes each: BASIC can misbehave
+  skipping past the end of a longer line. The REM at 250 was shortened
+  and the S line split.
+
+## SID Configuration Screen and Fresh Start — IMPLEMENTED (V20)
+- Title menu: "S - SID SETUP (2 SIDS FOUND)" (660) opens the SID
+  configuration screen (2100-2200):
+  - FOUND: how many SIDs auto-detection found, and the model at each
+    address, e.g. "$D400 8580" / "$D420 6581". Model from the sawtooth+triangle check: above 9
+    is an 8580 (8580s read 12-14, 6581s 2-6 on the Ultimate).
+  - Choices 1-4: AUTO DETECT, ONE SID, TWO SIDS MUSIC ON SID 1, TWO SIDS
+    MUSIC ON SID 2. The current one is white with ">".
+  - "MUSIC: 8580 $D400" and "SOUND EFFECTS: 6581 $D420" (or "(SHARED)"
+    with one SID) show where each goes.
+  - Choosing stops the music, clears both chips, starts it again on the
+    chosen chip and sets the volumes; RETURN goes back to the menu (and
+    rebuilds the stored instructions screen if it has been saved, so its
+    volume line matches).
+- Kept in the music file's spare page: 38644 SIDs found, 38645-38650
+  model test readings, 38651 music chip (1 = $D420), 38652 mode, 38653
+  start mood. Volumes for the title (2200): music 3 / effects 15 with two
+  SIDs, both 9 with one.
+- Player: setsid puts the music on $D400, or $D420 when mchip (38651) is 1
+  with two SIDs, and the effects on the other chip (fxoff). Effects only
+  borrow a music voice with one SID.
+- Game (5500) and demo (6300): SI (effects chip) and VR (music volume
+  register) follow the setting; M/E still set music/effects volume.
+- The loader's instructions-screen routines moved from 38512/38576 to
+  1280/1344 ($0500) to make room in the player's spare page. Game (2970)
+  and demo (3930) call 1280.
+- Fresh start vs coming back: the game, demo and showcase POKE 38643,82
+  just before they load the loader; only then does the loader skip its
+  set-up (line 30). Before, it looked at the "loader has run" signature,
+  which survives a reset, so after a reset with a new disk it kept the
+  old music player and machine code in memory (old music behaviour,
+  e.g. Dungeoneering first, loud). Now every fresh RUN reloads the music
+  and reinstalls everything.
+
+## Glyph Map and Rule — IMPLEMENTED (V20)
+- Rule: never redefine or use as a glyph any screen code from 0 to 63
+  (letters, digits, punctuation): text needs them. Text may only use
+  those, the reverse space (160, HUD bars and sliders) and the ROM
+  checkerboard (102). No other reverse text.
+- Screen codes in use (loader glyph DATA 120-230):
+
+  | Code | Glyph | | Code | Glyph |
+  |---|---|---|---|---|
+  | 128 | player standing | | 83 / 211 | leech, 2 frames |
+  | 129, 130 | player walking | | 86 / 214 | guard |
+  | 144 | player fighting | | 88 / 216 | goblin |
+  | 132 | treasure chest | | 90 / 218 | imp |
+  | 158 | potion | | 91 / 219 | cultist |
+  | 159 | floor | | 65 / 193 | golem |
+  | 190 | stairs | | 94 | solid block (title strips, "~") |
+  | 166 | rune | | 102 | wall (ROM checkerboard) |
+  | | | | 87 | hole (ROM) |
+
+  Weapons use the ROM characters / = < * % (47, 61, 60, 42, 37), not
+  redefined.
+- petscii-pit.pf: the whole character set exactly as the loader builds it
+  (raw 2048 bytes, screen-code order, no header: ROM uppercase/graphics
+  set + the glyph DATA + solid block at 94), for PETSCII editors. Kept in
+  the repo, regenerated whenever the glyph DATA changes, and included in
+  every full zip.
+- Moved in V20 from the text range: player 0 -> 128, fighting 128 -> 144,
+  treasure 36 -> 132, potion 30 -> 158, floor 31 -> 159, stairs 62 -> 190,
+  rune 38 -> 166. Game constants 5480-5490 (FC, XC, PC, PT, TS), player
+  frames 2080, 4370, 5910, big battle glyph 5990, rune 6340; demo 2060,
+  3570, 5160, 6280-6290, 6720; showcase DATA 170-270 and 460; title strips
+  regenerated.
+
+## SID Screen: Volumes, Song and Sound FX Tests — IMPLEMENTED (V20)
+- The screen is cleared and drawn in full only when it opens (2110). After
+  that each key redraws just its part, with the cursor placed by 2600:
+  volume bars (2430), song name (2160), sound fx name (2180); a new mode
+  redraws the found/model lines (2120), the choices (2130) and the music
+  and sound fx lines (2140) without clearing the screen.
+- Bottom of the SID configuration screen (draw 2110-2200, keys 2240-2380):
+
+      MUSIC    - 8580 $D400 [volume bar]
+                 DUNGEONEERING
+      SOUND FX - 6581 $D420 [volume bar]
+                 BUMP
+
+  The volume bars are drawn like the game's (2420): reversed blocks for
+  the level, the checkerboard for the rest, steps off/3/6/9/12/15.
+- Keys, in neighbouring pairs and rows on the keyboard: M next song
+  (Dungeoneering, Assailing, Lamenting); C / V music volume down / up;
+  D / F sound fx volume down / up (steps of 3, stopping at 0 and 15; with
+  one SID both pairs move the shared volume); E play the sound effect, R
+  play it over and over until a key is pressed, T next sound effect (bump,
+  hit, step, kill, stairs, game over, potion, treasure; copies of the
+  game's effects at 2500-2580); 1-4 mode; RETURN back. Key handling
+  2240-2470.
+- The volumes carry into the game and demo: kept in 38641 (music) and
+  38642 (sound fx), stored +1 so 0 means "not set yet". Defaults (2400):
+  music 3 and effects 15 with two SIDs, 9 with one. Choosing a mode resets
+  them to that mode's defaults. The game (5500) and demo (6300) start at
+  these volumes, and the game's M, E and V write their changes back
+  (5750-5770), so the loader shows them on return.
