@@ -238,5 +238,42 @@ details differ.
 ## Engine Sync: Second SID Support
 - Same as the main game: with a second SID at $D420 the music plays on
   it at full quality; with one SID, music and sound effects share it.
-- Same "2SID" note on the instructions screen and the same volume keys
-  (V on one SID, separate M and E volumes on two SIDs).
+- Same "2SID" note on the instructions screen. Fixed volumes, no volume
+  keys: two SIDs = music 3, sound effects 15; one SID = 9.
+
+## AI Finds Doors
+- The demo now reads the whole level layout. While the level is built it
+  records every corridor, which rooms it joins and where its doors are.
+- The AI picks the next room to go through, walks to that room's door
+  and follows the corridor to the next room, instead of walking straight
+  at the room it wants. It no longer gets stuck pacing in a room.
+- Fixed the AI's step memory being overwritten by the corridor-wall
+  reveal (`VY` is now `VQ` in the reveal).
+
+## Engine Sync: Harder Monsters, Groups, Levels, Weapons and Pits
+- Everything from the main game's update. The AI steps around a pit it
+  has spotted and falls in when it hasn't, just like a player.
+- Version number on the instructions screen's top line (V12), and the
+  same "VOLUME" key-line prefix with two SIDs.
+
+## Version 13: Animated Characters
+- Same animated player and monsters as the game. The player stands
+  still while the AI rests and at the start of each level.
+
+## Version 14: Faster Demo
+- The demo plays much faster: the AI remembers what it found in each
+  room instead of searching the whole room every step, its "don't walk
+  back" check is a few quick expressions instead of a 24-step loop, its
+  route-following code sits right next to it, and the forced memory
+  clean-up every 25 steps is gone. The AI makes exactly the same moves.
+- The demo is renumbered in steps of 10 again (see roadmapdemo.md for
+  where routines moved).
+
+## Version 15: Loader
+- The demo is started from the new title menu and goes straight to level
+  1. Hold Q to return to the menu. About 2.3 KB of memory freed.
+- V17: the demo starts the music itself on the way down to level 1 (the
+  loader stops it before loading).
+- Quitting the demo: press Q at any time (it now reads the key buffer as
+  well as the held key, so a quick tap isn't missed); the music stops and
+  it loads back to the title menu, like the glyph showcase.
