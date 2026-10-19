@@ -421,57 +421,123 @@
   so there's room for what's next; the game should also pause less often
   to tidy up its memory.
 
-## Version 20: Smoother Loader Start
-- The title screen now appears right away, with the music starting at the
-  same moment, both when the disk is first started and when you come back
-  from the game, demo or glyph showcase. The big scrolling characters
-  start moving a moment later, once they're ready. No more black screen
-  with music playing.
-- The instructions screen no longer flashes up when the loader starts.
-  It's prepared out of sight the first time you start the game, demo or
-  showcase (or press I), as part of that loading time, and only once.
-- The big dancing characters on the title screen are now ready-made in
-  the loader, so they start dancing the moment the title appears instead
-  of after a pause.
-- Fights now open with a quick wipe instead of a hard cut: the border
-  flashes red, the map is swept away in the direction of the blow (down,
-  up, left or right, the way you or the monster moved), and the battle
-  screen sweeps in the same way. Leaving a fight, the battle screen
-  closes like a pair of eyelids and the map opens up from the middle.
-  Each wipe takes about a tenth of a second.
-- New on the title menu: S - SIDS. It cycles AUTO (detect, showing how
-  many SIDs it found), 1 and 2, so a second SID at $D420 can be forced
-  on if detection misses it. If AUTO doesn't find your second SID, set
-  it to 2.
+## Version 20: Battle Wipes and SID Setup
+- Fights open with a quick wipe instead of a hard cut: the border flashes
+  red, the map is swept away in the direction of the blow (the way you or
+  the monster moved), and the battle screen sweeps in the same way.
+  Leaving a fight, the battle screen closes like a pair of eyelids and the
+  map opens up from the middle. Each wipe takes about a tenth of a second.
+- New SID setup screen (S on the title menu, which shows how many SIDs
+  were found):
+  - shows how many SIDs were found and which model (6581 or 8580) is at
+    each address
+  - choose auto, one SID, or two SIDs with the music on either chip; it
+    says exactly where the music and the sound effects play
+  - volume bars like the game's; C/V turn the music down/up, D/F the
+    sound effects
+  - M plays the next song; E plays a sound effect, R repeats it until a
+    key is pressed, T picks the next one
+  - the volumes you set carry into the game and demo
+- With two SIDs, the music and the sound effects each get their own chip
+  (music on $D400 by default, so SID-reactive lights like the Ultimate's
+  follow the music).
+- The game and demo start their music straight on Lamenting.
+- The title screen appears right away, with the music, and the big
+  characters dance from the first moment (they are now ready-made in the
+  loader). The loader goes straight to a black screen on start-up, with no
+  flash of blue or garbage.
+- The instructions screen is prepared out of sight the first time you
+  start the game, demo or showcase (or press I), only once.
 - New on the title menu: Q - QUIT. It asks "QUIT PETSCII PIT? Y/N" and
   resets the C64.
-- A wrong descent rune now shows "THE PIT DOES NOT KNOW THAT RUNE." long
-  enough to read; a RETURN pressed after the last character no longer
-  makes it vanish.
-- The game and demo now start their music straight on Lamenting instead
-  of beginning with Dungeoneering.
-- Fixed a bug in the new battle wipes that could clash with the music
-  and corrupt memory.
-- With two SIDs the music now stays on the first chip ($D400) and the
-  sound effects go to the second ($D420), so SID-reactive lights (like
-  the Ultimate's) follow the music. The volume controls still work the
-  same: M for music, E for sound effects.
-- Test: the title screen shows which SID model it finds at each address
-  (6581 or 8580), with a test number in brackets while the check is
-  being tuned.
-- New SID configuration screen (S on the title menu): shows how many
-  SIDs were found and which model is at each address (6581 or 8580), lets
-  you choose auto, one SID, or two SIDs with the music on either chip,
-  and says exactly where the music and the sound effects play. The title
-  menu just shows how many SIDs were found.
+- A wrong descent rune shows "THE PIT DOES NOT KNOW THAT RUNE." long
+  enough to read.
+- The game's glyphs moved off the ordinary text characters, so $ and >
+  and the other symbols print normally.
 - Fixed: after a reset, starting the disk again could keep the previous
-  music player in memory, so the music started on a loud Dungeoneering.
-  The loader now always sets itself up from scratch unless it's coming
-  back from the game, demo or showcase.
-- The game's glyphs moved off the ordinary text characters, so symbols like $ and > print normally again (e.g. the SID screen's > marker no longer shows as stairs).
-- The SID screen now shows the music and sound fx volumes with the same
-  bars as the game, and lets you test and set them: M plays the next
-  song, C/V turn the music down/up, D/F turn the sound fx down/up, E plays
-  the sound effect, R repeats it until you press a key, T picks the next
-  one. The volumes you set carry into the game and demo.
-- The loader goes straight to a black screen on start-up, with no flash of blue or garbage while it sets up.
+  music player in memory. The loader now always sets itself up from
+  scratch unless it's coming back from the game, demo or showcase.
+
+## Version 21: Ready to Publish
+- License: CC BY-NC-SA 4.0 (Creative Commons Attribution-NonCommercial-
+  ShareAlike 4.0 International). Share and adapt with credit, under the
+  same license; no commercial use without permission from m0nde. Shown on
+  the credits screen.
+- The instructions screen now explains fleeing (F in a fight) and saving
+  with runes (read a rune, then R on the title to resume). Two pairs of
+  tips were merged to make room.
+
+## Version 22: Faster Rooms and Menus
+- Rooms appear at once when you walk in, instead of filling in. The whole
+  level is now drawn in black while it's being built, so walking into a
+  room only has to light it up.
+- I (instructions) and C (character sheet) now open on a separate screen,
+  so coming back to the map is instant instead of redrawing everything.
+- Fights: keys you pressed before or during a fight no longer pile up.
+  Each round only takes one key, so mashing doesn't turn into extra
+  attacks. Walking still remembers keys you type ahead.
+- Fights now wipe in red: the map sweeps to red from the side you came
+  from, then the battle sweeps in over it. Leaving a fight starts on a red
+  screen that opens from the middle out to the map.
+
+## Version 23: Battle Moves
+- Every fight key is now its own move: D (or SPACE) hits as before, A is a
+  quick jab that always lands for half damage, W is a heavy blow that
+  hits 60% of the time for double damage, and S guards, halving the
+  damage you take with a chance to strike back.
+- Monsters sometimes give away their next move: a monster that WINDS UP
+  is about to hit twice as hard (guard!), one DARTING AROUND is hard to
+  land a heavy blow on (jab!), and one OFF BALANCE is wide open (go
+  heavy!).
+- The instructions screen lists the fight keys.
+- Fight wipes again: the battle screen now sweeps straight over the map
+  from the side you came from, and leaving a fight opens the map from the
+  middle out over the battle. No more red. The sweep always goes from you
+  toward the monster, even when it attacks first.
+
+## Version 24: The Story Begins
+- Two games now: PLAY THE STORY (P) and PLAY THE ENDLESS PIT (E).
+- The story has 100 levels that are the same every time, read from the
+  disk. Monsters still turn up in different places.
+- The story starts with a tutorial (shown as TUTORIAL instead of a level
+  number): seven rooms that walk you through moving, potions, treasure,
+  resting, fighting, and the I and C screens. If you die later you go
+  back to level 1, not the tutorial.
+- Walking onto a note or the stairs stops any keys you typed ahead, so
+  you don't walk past a note or answer the stairs question by accident.
+- Notes: scrolls on the floor. Walk over one to read it.
+- Runes from the story take you back into the story, runes from the
+  endless pit back into the endless pit.
+- Reach the bottom of level 100 and the story ends.
+- The endless pit is the game as it was.
+- P and E now ask HAVE YE A RUNE? first, so you can go straight to the
+  rune screen.
+- The tutorial has a GLYPH LORE CHAMBER with a rune anyone can read: it
+  gives the code for level 1, so next time you can skip the tutorial.
+  There may also be a secret way out...
+- Falling into a hidden hole now shows the hole as you fall.
+- The endless pit has no runes on the floor any more. Instead, when you
+  die you get a descent rune for that run, if you have Glyph Lore to
+  read it; without it the rune is just question marks.
+- Runes on the floor of the story are light green once your eyes adjust.
+- The music starts at your chosen volume instead of starting loud and
+  then dropping.
+
+## Version 25: The Serpent
+- A new monster slithers in from level 5: the SERPENT. It dances on the
+  title screen and shows in the glyph showcase, along with the rune and
+  the note.
+- The game files are about 2 KB smaller: the programs on the disk are
+  "crunched" (no spaces or comments), which leaves more memory free while
+  you play.
+- The story has an ending now (for the moment) after level 100.
+
+## Version 26: Stop and Read
+- Runes, notes and the stairs now stop you even if you hold a key down,
+  so you can't walk past them without seeing them.
+- Questions (Y/N), the I and C screens and game over no longer get
+  answered by keys you pressed earlier, and each new level starts fresh.
+- Reading a rune shows it in light green with a reminder: WRITE IT DOWN!
+  PRESS C TO SEE IT AGAIN.
+- Notes and their text are light blue once your eyes adjust.
+- Fixed: entering a story rune on the title could give ?FILE NOT FOUND.
