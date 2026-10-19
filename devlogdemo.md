@@ -296,3 +296,24 @@ details differ.
 - With two SIDs the music stays on the first chip and the effects use the second, like the game.
 - Follows the SID configuration (music and effects on the chips chosen in the loader).
 - Starts at the music and sound fx volumes set on the loader's SID screen.
+
+## Version 21
+- No changes to the demo itself; the disk is now licensed CC BY-NC-SA 4.0.
+
+## Version 22
+- Rooms light up at once (same level fill and room reveal as the game).
+- I and C open on a separate screen, so coming back is instant.
+- Red battle wipes, the same as the game.
+
+## Version 23
+- The demo keeps the plain attack (battle moves are for players).
+- Fight wipes as in the game: the battle sweeps straight over the map, and
+  leaving opens the map from the middle out. No red.
+
+## Version 24
+- No changes to the demo apart from the shared colour list moving by a few
+  bytes (notes were added to it).
+
+## Version 25
+- The demo meets the new SERPENT from level 5 too.
+- The demo program on the disk is crunched (about 2.4 KB smaller).

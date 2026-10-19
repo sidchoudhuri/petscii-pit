@@ -1494,6 +1494,347 @@ each piece.
   (the RAM under the KERNAL, about 4 KB still free there, or loaded from
   disk), which may keep the game in one program for longer.
 
+## License and Instructions — IMPLEMENTED (V21)
+- License: CC BY-NC-SA 4.0 (LICENSE file is the full legal code). Others
+  may share and adapt with credit, non-commercially, under the same
+  license; commercial use needs m0nde's permission. Credits line 760.
+- Instructions screen: 910 merges monster coins and treasure, 920 explains
+  F - flee, 940 merges potions and stairs, 950 explains runes and R on the
+  title. Same number of lines as before, so it still fits the screen.
+- Player download for itch.io: petscii-pit-<version>.zip with the .d64,
+  README.txt and LICENSE only (not the development files).
+
+## Fast Room Reveal and Instant Menus — IMPLEMENTED (V22)
+- Machine code from tools/gfx.asm, installed by the loader (line 380, DATA
+  2700-2910) after the SID model check has run, so it can reuse $0720.
+  Zero page $57-$5F during the SYS only.
+- SYS 1824 FILL ($0720): finds the integer array MA% by name, writes the
+  character for every map cell (rows 3-24) to $C000 and sets its colour to
+  black. Called once per level after everything is placed (game 5230,
+  demo 6020). Character table 2018-2037 (MA% 0-19), weapons 2038-2042
+  (WT 1-5), filled at start-up (game 6540-6550, demo 7030-7040).
+- SYS 1398 REVEAL ($0576): POKE 1516/1517 start cell, 1518 width, 1519
+  height. Sets the fog bytes at $C400 and colours each cell from a
+  character -> colour list (characters 1492-1503, colours 1504-1515).
+  Anything not in the list (player, monster) keeps its colour. Used for
+  rooms (game 1370, demo 1340). The list's colours are set by game 6520-6530
+  / demo 7010-7020 at every level start and when Keen Eyes arrives.
+- Not changed: corridor reveal (160/180) and the one-off 50 XP recolour
+  (4200), because corridor walls and room walls share character 102 and
+  have different colours. Could use a look-alike corridor-wall glyph later.
+- I and C: the map colours are saved to $A000 (SYS 1541), the page is shown
+  on the battle screen at $E800 (53272=163, 648=232), and coming back
+  switches to $C000 and copies the colours back (SYS 1575, 25 rows per
+  frame). The instructions routine at 1280 now writes to $E800 ($E8-$EB),
+  in the loader too (540 shows it with 53272=163). The full map redraw
+  (game 2990-3100) is gone. Game 2970/2980/3620, demo 3930/4570/7050.
+  The demo's quit prompt still uses its old redraw (3940).
+- Fights: the key buffer is cleared when a fight starts (5940), after every
+  fight round (2520) and when it ends (6110). Walking keeps type-ahead.
+- Red battle wipes (tools/wipe.asm): two new ops, 2 = red blocks (reverse
+  space 160 in red on the screen page at 38349) and 3 = copy characters
+  (buffer page at 38350) and colours back. The per-cell code moved partly
+  to 38144-38188 (the old colour save/restore) and SYS 38356 copies 4
+  pages from 38351 to 38352 with the ROMs switched out.
+  - Going in (5920-5940): map characters saved to $A800, the map sweeps to
+    red in the direction you came from (original speed, 5 rows or 8
+    columns per frame), the battle is drawn blanked, its characters saved
+    to $AC00, $E800 filled red, then the battle sweeps in over the red.
+  - During the fight SB points at $A800 (like CB at $A000), so monsters
+    moving or dying update the saved map.
+  - Leaving (6110): the map screen is filled red at once, shown, and opens
+    from the middle out (shutter, 3 per frame) to the map.
+- V23: no red anywhere (border flash gone too). Going in: map saved,
+  display blanked (black) while the battle is drawn on $E800 and saved
+  ($AC00 characters, $A400 colours), map colours put back, then the battle
+  sweeps straight onto the map screen in your direction (5 rows or 8
+  columns per frame), and the display switches to $E800 at the end (game
+  5920-5940 and 6670, demo 6650-6670 and 7060). Leaving: the battle is
+  copied onto the map screen (SYS 38356), shown, and the map opens from
+  the middle out over it (shutter, 3 per frame, 6110 / demo 6840). Speeds
+  are the fastest for now; to be tuned after testing.
+- The sweep always travels from the player toward the monster: when a
+  monster starts the fight, its approach direction is flipped (game 6070,
+  demo 6800: BH=-EX, BI=-EY).
+
+## Battle Moves and Monster Tells — IMPLEMENTED (V23)
+- Each key is a different move. Cursor keys match WASD; SPACE = Hit.
+  - D / right / SPACE: Hit, as now.
+  - A / left: Jab, always hits, half damage (rounded up).
+  - W / up: Heavy, 60% chance to hit, double damage.
+  - S / down: Guard, no attack, damage taken this round halved, 25% chance
+    of a counter for half damage.
+- Tells: after each round, 40% chance the monster shows its next move on
+  the empty battle row under the group line:
+  - "THE GOLEM WINDS UP...": next hit does double; Guard blocks it
+    completely and always counters.
+  - "THE IMP IS DARTING AROUND...": Heavy always misses, Hit misses half
+    the time, Jab does full damage.
+  - "THE CULTIST IS OFF BALANCE!": Heavy always hits, the monster does half
+    damage this round.
+- Guard and tells apply to all damage taken that round (the monster in
+  the fight currently hits twice a round: its counter at 2090 and again in
+  the monster loop at 1240).
+- Key help: "W HEAVY A JAB D HIT S GUARD F FLEE". Instructions line 920:
+  "FIGHT: W HEAVY, A JAB, S GUARD, F FLEE". Demo keeps the plain attack.
+- Lines (game): move from the key 6170 (JM 1 hit, 2 jab, 3 heavy, 4
+  guard), your damage 6590-6630 (called from 2080; no lunge on a guard
+  without a counter), damage-taken factor JG 6640 (used at 2110 and 1240,
+  reset to 1 each round at 2520, on a kill 6100 and a flee 6160; flee
+  attempts use 6640 with JM=0), tells JT rolled and shown on row 19 at
+  6560-6580 after each fight round (2520), key help and fight start
+  6660 (from 5940). JG=1 at start-up (5520).
+
+## Priority (decided)
+1. Battle wipes (V23): tested, working.
+2. Battle Moves and Monster Tells (V23).
+3. Two Games: STORY and ENDLESS: steps 1-3 done (V24, waiting for
+   testing), step 4 (notes and story features) when we decide.
+
+## Two Games: STORY and ENDLESS — PLANNED (after V23, priority 3)
+- Two games loaded from the loader instead of one:
+  - STORY: 100 pre-made levels read from disk, all story features (runes
+    found on the floor, notes in levels, more later). Ends at level 100
+    with an ending screen, then back to the title. No level generation
+    code at all (so no random levels after 100).
+  - ENDLESS: the current game, randomly generated, endless, no story
+    features. Runes come from dying.
+- The demo stays on the random engine. Music player, wipes, SID setup and
+  charset unchanged.
+- Note: the current game has no level limit (it keeps going; runes store
+  levels up to 127), so the level 100 ending is new.
+
+### Disk (one disk, all files after MUSICNTSC)
+- PETSCIIPIT (loader), STORY, ENDLESS, DEMO, SHOWCASE, MUSICPAL,
+  MUSICNTSC, then LEVELS and LEVELIDX, then the existing art.
+- LEVELS: all 100 packed levels plus their note text, in one file.
+- LEVELIDX: track/sector of each level's blocks (about 2 blocks), loaded
+  once when STORY starts.
+- Space: about 349 blocks free in V22; second game about 95, levels and
+  notes about 150-170, leaving roughly 80-100. Check when built.
+
+### Level data (packed)
+- Header (about 40 bytes): room count and each room's x/y/width/height,
+  stairs room, hole position or none, rune position or none, note
+  position and number or none.
+- Map: rows 3-24 as runs, one byte per run (4-bit cell type, 4-bit
+  length), about 250-400 bytes. Note text (up to two 38-character lines)
+  stored with the level, so story text stays outside BASIC.
+- Fixed in the level: walls, corridors, potions, chests, stairs, holes,
+  runes, notes.
+- Random every time: monsters (type, group size, room and cell), weapon
+  drops as now, room names (from the monster types, as now).
+- Reading: STORY reads only that level's 2-3 blocks with the drive's
+  block-read command (U1), using LEVELIDX. No directory search and no
+  100 directory entries. Real 1541 and the Ultimate's 1541 emulation
+  support U1; SD2IEC should too (confirm in testing).
+- Speed: about 1.5-2 s per level on a stock 1541 (well under a second on
+  Ultimate / SD2IEC fast loading), plus about 0.1 s unpacking and
+  0.1-0.2 s placing monsters. Faster than generating a level now.
+
+### Level tool: tools/pitlevels.py
+- Makes the 100 levels with the game's rules (5-7 rooms, L-shaped
+  corridors room to room, potions and chests by level, holes from level
+  5) and checks each one can be completed.
+- Reads levels.txt for per-level extras (notes, runes, hand-placed items)
+  that we decide later.
+- Packs each level, checks it fits its blocks, writes LEVELS, then reads
+  the built d64 back to make LEVELIDX (run from build_d64.sh).
+- Makes a preview page of all 100 maps to review; any level can be
+  regenerated.
+
+### STORY game (from the current game)
+- Removed: level generation (about 1650-1720, 4460-5230) and random hole
+  and rune placement (5850-5880, 6300-6330): roughly 3-4 KB of BASIC freed
+  for story features.
+- New level start: read the level's blocks into $B000 (RAM under the BASIC
+  ROM), BASIC reads the header, one SYS unpacks the map into MA% and RM%,
+  monsters placed at random, rooms named, then black fill and first room
+  reveal as now.
+- Machine code: unpack routine in the RAM under the KERNAL at $EC00. The
+  block-read stub needs the KERNAL, so STORY lowers the top of BASIC by one
+  page (POKE 56,148) and puts it at $9400 (256 bytes, covered by the space
+  saved).
+- Notes: a new map cell type. Walking onto one shows its text on a page on
+  the $E800 screen (like I and C, so returning is instant).
+- Floor runes: where the level puts them. Reading them needs Glyph Lore
+  (300 XP) and gives a story rune.
+- Level 100: ending screen (text on disk), then back to the title.
+
+### ENDLESS game (the current game)
+- Random generation and endless levels as now. Floor runes removed
+  (placement and reading).
+- Death: game over keeps K, N and S as now and also shows a descent rune
+  for the run (level, XP, max HP, coins, weapon, same fields as now).
+  Glyph Lore decides whether you can read it: without it the rune shows
+  as ????-????-???? with a line saying you can't read it; with it the
+  real code shows and R on the title resumes.
+
+### Loader
+- Menu: separate lines for STORY and ENDLESS; other keys unchanged.
+- R resume works for both: story and endless runes use different
+  checksums, so the loader knows which game to load (same 12-character
+  format).
+- Instructions and credits updated for the two games.
+
+### Order of work
+1. pitlevels.py, the LEVELS / LEVELIDX format and the preview page;
+   review the maps.
+2. STORY game (levels, random monsters, ending), reader and unpack code.
+3. ENDLESS changes, loader menu and resume.
+4. Notes and other story features, once we decide how to use the levels.
+Docs, TESTING.txt, d64 and zips with each step.
+
+## STORY Game, Steps 1-2 — IMPLEMENTED (V24, waiting for testing)
+- Level 0 is the tutorial (STORY starts there; dying and K/N restart at
+  level 1, so the tutorial is never repeated). Level 0 shows TUTORIAL in
+  place of LVL on the HUD (310), on the character sheet (3640), the game
+  over screen (2800) and the loading line (4380); the loader says
+  ENTERING THE TUTORIAL for P. LEVELS holds records 0-100 plus the ending
+  (102 index entries, $9200-$9331), so the reader moved to $9334-$9429
+  (SYS 37684 read block, 37687 unpack; 37690/37691 buffer, 37692/37693
+  link, 37694/37695 map start; name "LEVELIDX" at $942A). Level 1 is the
+  generated level 1 again.
+- P and E on the title ask HAVE YE A RUNE? Y/N (row 22, loader 1360):
+  Y goes to the rune screen (1150), anything else starts that game. R
+  still goes straight to the rune screen. The rune decides which game
+  loads (checksum 23 ENDLESS, 29 STORY).
+- Tutorial (level 0), 8 rooms: ENTRY WAY, APOTHECARY, TREASURY,
+  DORMITORY, GOBLIN ROOM, STUDY, GLYPH LORE CHAMBER, STAIRWAY TO LEVEL 1.
+  The GLYPH LORE CHAMBER has a note (READ RUNES TO SAVE YOUR DESCENT /
+  THIS ONE NEEDS NO GLYPH LORE) and a rune that can be read without
+  Glyph Lore and always gives the code for story level 1 with starting
+  stats (6350, 6360 -> 6860), so the tutorial can be skipped. Secret: a
+  passage north out of the stairs room ends in a hidden hole that drops
+  to level 1. STORY's room arrays now hold 8 rooms (5390-5400). The
+  tutorial packs to 756 of the 762 bytes a level can use (3 blocks), so
+  longer tutorial text needs a 4-block level (the fog-map buffer holds
+  1000 bytes, so that needs a different buffer).
+- Step 3, ENDLESS: floor runes removed (placement 6300-6330 and reading
+  6350-6360 gone, 2360 and 5140 updated). The game over screen shows a
+  descent rune for the run (6300-6310 from 2810): level, XP, full HP,
+  coins and weapon, checksum 23 so R / P / E load ENDLESS. Without Glyph
+  Lore (300 XP) it shows ????-????-???? and YOU CAN'T READ THE RUNE (and
+  LAST RUNE on the character sheet keeps the previous one); with it, the
+  code and R ON THE TITLE TAKES YOU BACK HERE. The character sheet's
+  Glyph Lore line reads GLYPH LORE - READ YOUR RUNE WHEN YOU DIE.
+- Runes in STORY are light green (13) after Keen Eyes (6340 and the
+  reveal colour list 1509); dark grey before, as everything else.
+- Falling into a hidden hole: the cell shows the hole character (87,
+  light grey) as you fall, instead of the player (5820, STORY and
+  ENDLESS).
+- Music volume at start: the player used to start (and stop) at full
+  volume, and the game set the saved volume a moment later, so the music
+  jumped down. The player now sets both chips from the saved volumes
+  itself (sidtune/player.asm setvol: 38641 music, 38642 effects, each +1;
+  0 = the loader's defaults, 3/15 with two SIDs, 9 with one), at start and
+  at stop. musicpal.prg and musicntsc.prg rebuilt with build.py; the SYS
+  addresses are unchanged.
+- Changes from the plan above, decided while building:
+  - Level buffer: the fog map at $C400 (normal RAM, so BASIC can PEEK it;
+    cleared again after unpacking), not a buffer under the ROMs.
+  - STORY lowers the top of BASIC to $9200 (line 30: POKE 56,146), 768
+    bytes, not 1.25 KB. $9200-$932E LEVELIDX (loaded at start-up with the
+    KERNAL LOAD, 6780-6790, name at $9426), $9330-$9425 the reader.
+  - The reader (tools/story.asm, 246 bytes) is installed by the loader
+    just before it loads STORY (loader 570 -> 1350, DATA after the gfx
+    DATA), so it costs the STORY game no BASIC memory. SYS 37680 reads a
+    block from channel 2 (after a U1), SYS 37683 unpacks the map into MA%.
+  - Room names can be set per level (levels.txt "name"), stored with the
+    level. The tutorial: ENTRY WAY, APOTHECARY, TREASURY, DORMITORY, GOBLIN
+    ROOM, STUDY, STAIRWAY TO LEVEL 2.
+  - The ending is the last record of LEVELS (levels.txt "ending" lines,
+    up to 10): SOMEHOW... / YOU HAVE REACHED THE BOTTOM / OF THE PIT. /
+    (blank) / BUT THERE'S MORE TO COME!
+  - Source files: petsciipitstory.bas (STORY) and petsciipitendless.bas
+    (ENDLESS, the old petsciipit.bas, unchanged apart from the colour list
+    addresses). On disk: STORY and ENDLESS; GAME is gone.
+- Level format (pitlevels.py): rooms, room types, hidden hole, notes (cell
+  and two lines of up to 39), fixed monsters (cell, type, group size), room
+  names, then the map runs. Up to 3 blocks a level, up to 8 notes.
+- STORY level start: 4460-4650 (read with U1 via 6700-6720, parse the
+  header with PEEKs and 6730-6740 for text, unpack, RM% for room interiors,
+  clear the fog, monsters, room names), then the fill and first room as
+  before. Level 1 is the hand-made tutorial with a fixed goblin; other
+  levels put one monster group on a random free floor cell in each middle
+  room. Middle rooms with no monster are QUIET ROOM / QUIET TREASURY /
+  QUIET APOTHECARY. Removed: corridor walls 1650-1730, generation
+  4460-5230, random hole 5850-5880, random rune 6300-6330.
+- Notes: map type 8, screen code 167 (Sid's scroll in the loader DATA line
+  230 and petscii-pit.pf), light grey before Keen Eyes and white after
+  (6770; the reveal colour list is now 13 entries: characters 1492-1504,
+  colours 1505-1517, room settings 1518-1521, in all three games).
+  Walking onto one shows its two lines (2340 -> 6750-6760); the second
+  line clears with the first (1630).
+- Story runes use checksum constant 29 (6190; ENDLESS keeps 23). The
+  loader's R tries both and loads STORY or ENDLESS (1290, 1320).
+- Level 101 = the ending: 4340 jumps to 6800-6830 (from the stairs on 100
+  or the hole), shows the text, PRESS ANY KEY, back to the title.
+- Loader: P - PLAY THE STORY, E - PLAY THE ENDLESS PIT (menu rows 13-21),
+  scroll glyph added (110 reads 22 glyphs).
+- Disk: LEVELS (115 blocks) and LEVELIDX after MUSICNTSC; build_d64.sh runs
+  pitlevels.py and dirlayout24.bin (the V23 build is build_d64_v23.sh).
+  122 blocks free.
+
+## Serpent — IMPLEMENTED (V25, waiting for testing)
+- New monster by Sid: SERPENT, glyph 84 / 212 (loader DATA line 190,
+  110 now reads 24 glyphs; petscii-pit.pf). Green (5) after Keen Eyes.
+  HP bonus 3, attack bonus 2, XP bonus 6, coin bonus 3, hit sound -5.
+- Monster types are now 1 leech, 2 goblin, 3 imp, 4 serpent, 5 guard,
+  6 cultist, 7 golem (monster table DATA 5620-5630 / demo 6410-6420,
+  arrays DIM 7, read loop 0-7). The serpent arrives at level 5 and the
+  others keep their levels (imp 4, guard 8, cultist 12, golem 16):
+  MW=2+INT(LV/4)-(LV>=5), at most 7 (STORY 3540, 4530; ENDLESS 3540,
+  4920; demo 4490, 5710).
+- Glyph showcase: 5 per row (DATA 170-230, 14 glyphs): player, floor,
+  potion, treasure, stairs / leech, goblin, imp, serpent, guard /
+  cultist, golem, rune (light green), note (white); the monsters animate.
+- Title screen: the serpent dances after the imp (tools/titlestrips.py
+  MON list, strips 1400-1710 now 80 characters a cycle, line 470 wraps
+  OF at 80). pitlevels.py: map letter E for a fixed serpent.
+
+## Memory Optimization — IMPLEMENTED (V25, steps 1-2)
+- Step 1, crunching: the .prg files are built from the .bas listings by
+  tools/crunch.py (run by tools/buildprgs.sh): every space outside quotes
+  and every REM text is removed (a REM-only line keeps its number and a
+  bare REM). It tokenizes both versions and stops the build if any line
+  would mean something different. The .bas listings stay readable.
+  Saved about 2.2 KB per program: STORY 25815 -> 23665 bytes, ENDLESS
+  25985 -> 23820, demo 26856 -> 24467, loader 21667 -> 19230. Free
+  memory while playing: STORY about 11,660 bytes, ENDLESS about 12,280.
+- Step 2, merging repeated code (STORY and ENDLESS): the wait loops at
+  2570, 3820, 6050 and 6100 use the one at 4310; the key waits at 2900
+  and 5910 use 4180; quitting to the title (2910, 3910, and the ending)
+  goes through 6830. The game over S line is one PRINT with its colours
+  picked by SD (2860; 2870 removed).
+- Decided not to do: shorter or moved messages (all the text is about
+  1 KB) and wipe presets in machine code (about 200 bytes after crunching,
+  and no clean place left for the code).
+
+## V26: Keyboard Stops, Message Colours, Rune Loading Fix — IMPLEMENTED
+- Loader: STORY loads failed (?FILE NOT FOUND) when the file name F$, a
+  joined string at the top of string memory, sat where 1350 writes the
+  level reader ($9334-$9429). 570 now checks F$ first and jumps to 1350,
+  which installs the reader and loads "STORY" by a fixed name.
+- 6870 (STORY and ENDLESS): waits until no key is held (PEEK(197)=64),
+  then clears the buffer. Used by every key wait (4180: I, C, Y/N
+  prompts, stairs, game over, quit, weapons, the ending) and by notes
+  (6750) and runes (6350/6360). Each new level clears the buffer (5290).
+- Rune messages light green (the rune's colour): A STRANGE RUNE... or
+  YOU READ THE RUNE: code / WRITE IT DOWN! PRESS C TO SEE IT AGAIN, shown
+  like a note (both lines together).
+- Notes: light grey before Keen Eyes, light blue (14) after (6770 and the
+  reveal colour list 1517); note text is always light blue.
+- Glyph showcase shows the note in light blue.
+
+## Monster Battles — MAYBE
+- Per-monster quirks: each monster reacts differently to the moves (the
+  leech drains you if you guard too long, the golem shrugs off jabs, the
+  guard counters heavy strikes). Mostly data, like the MZ% tables.
+- Timing strike: a marker sweeps a short bar on the battle screen; press
+  at the right moment for a critical hit. Most code, and BASIC timing
+  differs between PAL and NTSC.
+
 ## Design Rules (decided)
 - Story text and designed-level data live outside BASIC: in the RAM under
   the KERNAL or loaded from disk, never as PRINT strings or DATA in the

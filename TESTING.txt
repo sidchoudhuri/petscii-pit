@@ -1,0 +1,129 @@
+PETSCII PIT v26 - test before publishing (real hardware or Ultimate)
+
+Start-up
+[ ] Reset, LOAD"*",8, RUN: black screen, title appears, characters dance
+[ ] Title music plays; SID setup line shows the right number of SIDs
+
+Fights
+[ ] Attack a monster from each direction: wipe follows the direction
+[ ] Get attacked first by a monster (walk next to one, wait)
+[ ] Get attacked while resting (SPACE in a room with a monster nearby)
+[ ] A group fight ("2 MORE GOBLINS"), kill the whole group
+[ ] Flee successfully (coins drop, monster gone) and fail a flee
+[ ] Die during a fight: wipe out, game over screen, continue
+
+Runes and resume
+[ ] Level 3+: step on a rune before 300 XP ("A STRANGE RUNE...")
+[ ] After 300 XP: read a rune, note the code, check C shows LAST RUNE
+[ ] Q to title, R, type the rune: back on that level with those stats
+[ ] Type a wrong rune: "THE PIT DOES NOT KNOW THAT RUNE." stays up
+
+Titles
+[ ] 300 XP: "I CAN SENSE WHAT THE ROOMS HOLD!", walls recolour
+[ ] 500 XP and 750 XP titles appear (C shows the new skills)
+
+Loader round trips
+[ ] Game -> Q -> title, Demo -> Q -> title, Showcase -> Q -> title, twice each
+[ ] SID setup: every key; RETURN back; then start the game (volumes kept)
+[ ] Q on the title: Y resets the C64, any other key returns
+
+New in V22
+[ ] Walk into rooms before 50 XP: room appears at once, all dark grey
+[ ] After 50 XP: rooms appear at once in colour (walls, potions, chests,
+    stairs, weapons, runes); corridor walls stay dark
+[ ] Nothing shows before you see it (look for stray items in the dark)
+[ ] A monster standing in a doorway when you enter keeps its look/colour
+[ ] 300 XP: room wall colours by room type still appear
+[ ] I in the game: instructions appear; any key: map back instantly, intact
+[ ] C in the game: character sheet; any key: map back instantly, intact
+[ ] I and C in the demo, and I on the title screen
+[ ] Resume from a rune with 50+ XP: first room in colour
+[ ] Mash a move key into a monster: the fight doesn't attack on its own
+[ ] In a fight, mash attack: one attack per round, none left over after
+[ ] Walking: typing several moves ahead still works
+[ ] Into a fight: short black blink, then the battle sweeps straight over
+    the map from the side you entered (no red anywhere)
+[ ] Out of a fight (win, flee, die): the map opens from the middle out
+    over the battle screen
+[ ] Get attacked by a monster from each side: the sweep still goes from
+    you toward the monster
+[ ] Wipe speeds: too fast? (they are the fastest settings for now)
+[ ] A monster that moves or dies during a fight is right on the map after
+
+New in V23 (battle moves)
+[ ] Fight key help reads W HEAVY  A JAB  D HIT  S GUARD  F FLEE
+[ ] D / SPACE / cursor right: normal hit; A / left: jab (half damage,
+    never misses); W / up: heavy (misses sometimes, double damage)
+[ ] S / down: guard - no lunge unless you counter, damage taken halved
+[ ] Tells appear under the monster's group line some rounds and clear
+    the next round: WINDS UP / IS DARTING AROUND / IS OFF BALANCE!
+[ ] WINDS UP then guard: no damage taken, you always counter
+[ ] DARTING AROUND: heavy always misses, jab does full damage
+[ ] OFF BALANCE: heavy always hits, monster hits softer
+[ ] The first blow of a fight (walking into a monster) is a normal hit
+[ ] After a fight, monsters on the map hit normally again
+[ ] Instructions screen shows FIGHT: W HEAVY, A JAB, S GUARD, F FLEE
+
+New in V24 (STORY and ENDLESS)
+[ ] Title menu: P - PLAY THE STORY, E - PLAY THE ENDLESS PIT, rows line up
+[ ] P: ENTERING THE TUTORIAL; HUD shows TUTORIAL instead of LVL; 7 rooms
+    named ENTRY WAY, APOTHECARY, TREASURY, DORMITORY, GOBLIN ROOM, STUDY,
+    STAIRWAY TO LEVEL 1; the stairs lead to level 1
+[ ] C in the tutorial says DUNGEON LEVEL: TUTORIAL
+[ ] Die on level 1 or 2, press K or N: back to level 1, not the tutorial
+[ ] Notes and stairs stop typed-ahead keys
+[ ] P and E ask HAVE YE A RUNE? Y/N: Y opens the rune screen (RETURN goes
+    back to the title), N starts the tutorial / the endless pit
+[ ] Tutorial room 7 GLYPH LORE CHAMBER: note, then the rune: reading it
+    shows a code; Q, R (or P, Y), type it: story level 1, 10 HP, 0 XP
+[ ] Tutorial secret: from the stairs room go north up the passage: hidden
+    hole drops you to level 1; the hole character shows as you fall
+[ ] Any hidden hole (STORY or ENDLESS): the hole shows as you fall
+[ ] STORY runes: dark grey before 50 XP, light green after
+New in V25
+[ ] SERPENT: appears from level 5 (STORY, ENDLESS, demo), both frames
+    animate, green after Keen Eyes, battle screen and room names
+    (SERPENT ROOM) look right
+[ ] Imps from level 4, guards 8, cultists 12, golems 16 (unchanged)
+[ ] Glyph showcase: 3 rows of 5 with the serpent, rune and note; labels
+    don't overlap; monsters animate
+[ ] Title screen: the serpent dances after the imp; the scroll loops
+    smoothly
+[ ] Crunched programs: everything above behaves the same; quit to title
+    (Q, game over Q, ending) still works; waits (rest, fall, ending) the
+    same length
+[ ] ENDLESS: no runes on the floor (play to level 3+)
+[ ] ENDLESS death under 300 XP: DESCENT RUNE ????-????-???? and YOU CAN'T
+    READ THE RUNE; C afterwards does not show it as LAST RUNE
+[ ] ENDLESS death with 300+ XP: the code shows; R (or P/E, Y) with it
+    loads ENDLESS on that level with full HP, your XP, coins, weapon
+[ ] Music starts at the set volume (title at power-on, P, E, D, back
+    from a game) with no loud start; volumes from SID setup are kept
+[ ] Notes: light grey scroll before Keen Eyes; walking on one shows two
+    lines; they clear a couple of moves later; the scroll stays
+[ ] The tutorial goblin is always in room 5 (GOBLIN ROOM)
+[ ] Levels 2, 3, 4...: same map every time you play; monsters move around
+    between plays; rooms without monsters say QUIET
+[ ] Time from stairs to the next level (stock drive / Ultimate / SD2IEC)
+[ ] Holes: fall from level 5+ (story levels have them from about level 9)
+[ ] Story rune: read one (300 XP), Q, R, type it: back into the STORY
+[ ] Endless rune (from ENDLESS): R takes you back into ENDLESS
+[ ] E: the endless pit plays as before (random levels)
+[ ] Level 100 -> stairs (or a rune for level 100): the ending text, any
+    key returns to the title
+[ ] Long STORY run: no ?OUT OF MEMORY (top of BASIC is 768 bytes lower)
+
+New in V26
+[ ] Rune from the tutorial on the title (R, or P then Y): loads the STORY
+    (no ?FILE NOT FOUND), several times, also after playing a while
+[ ] Hold a cursor key and walk over a note / rune / onto stairs: you stop
+    and the message stays; the stairs question waits for Y or N
+[ ] Read a rune: two light green lines (code, WRITE IT DOWN!...)
+[ ] Notes: light grey scroll before 50 XP, light blue after; text light
+    blue
+[ ] Y/N questions, I, C, game over: not answered by earlier keypresses
+[ ] Glyph showcase: the note is light blue
+
+[ ] Play the game for 20-30 minutes, several levels deep: no ?OUT OF MEMORY,
+    no getting slower and slower
+[ ] Leave the demo running for an hour

@@ -216,3 +216,16 @@
   6850. Hooks: 390, 1210, 1730 (quitting resets the screen first), 1860,
   2000, 2060, 2110, 2140, 3790 (death leaves the battle first), 6530.
 - V19: on the disk the demo is DEMO; quitting (1730) loads PETSCIIPIT.
+
+## Fast Room Reveal and Instant Menus — IMPLEMENTED (V22)
+- Same machine code as the game (see roadmap.md). FILL after the level is
+  built (6020), REVEAL for rooms (1340), colour list 7010-7020, tables
+  7030-7040 (from 6290), list refreshed at level start (5210) and Keen
+  Eyes (2210).
+- I and C use the $E800 screen and restore the colours (3930, 4570, 7050).
+  The quit prompt (4840) still uses the old redraw at 3940.
+- Red battle wipes as in the game: enter 6650-6670, exit 6840 (SB points at
+  $A800 during a fight).
+- V23: wipes as in the game, no red (enter 6650-6670 and 7060, exit 6840).
+- V24: room reveal settings moved to 1518-1521 and the colour list to 13
+  entries (1340, 7010-7040), to match the game's notes.
