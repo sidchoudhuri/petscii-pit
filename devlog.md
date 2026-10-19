@@ -261,3 +261,283 @@
 
 ## Wording
 - The ambush message now reads "A MONSTER AMBUSHED YOU!"
+
+## Second SID Support
+- If your C64 has a second SID chip at $D420 (Ultimate 64 / C64 Ultimate,
+  or VICE with an extra SID set to $D420), the game now finds it at
+  startup and plays the music on it, while the sound effects keep the
+  first chip to themselves.
+- The music is now always the full, original version, the same as the
+  .sid files, instead of the turned-down mix that clicked on every note.
+- With only one SID, the music and sound effects share the chip at the
+  same volume, and the sound effects still borrow one music voice while
+  they play.
+- The music now starts on the first instructions screen, which shows
+  "PAL 2SID" or "NTSC 2SID" at the bottom when a second SID is found.
+- Volume steps 0, 3, 6, 9, 12, 15 and wraps back to 0 (0 = mute), shown
+  under the HUD as a slider of solid and checkered blocks.
+- One SID: M and E still mute music or sound effects on their own, and
+  the new V key sets the volume for both together. Starts at 9.
+- Two SIDs: separate volumes. M steps the music (starts at 3), E steps
+  the sound effects (starts at 15).
+- Glyph showcase: new V key steps the music volume 0, 3, 6, 9, 12, 15
+  and back to 0, shown as the same slider on the bottom row. Music
+  starts at 15. Key line now reads "SPACE - NEXT TRACK V - VOLUME  Q -
+  QUIT".
+- Demo only: the self-playing AI now reads the level layout and finds
+  doors and corridors (see devlogdemo.md). No change to the game.
+- Faster "MY EYES HAVE ADJUSTED!": the recolor only checks the rows you've
+  explored instead of the whole screen.
+
+## Harder Monsters, Groups, Levels, Weapons and Pits
+- Monsters get much tougher as you go deeper, and hit back according to
+  how strong they are. Worked out with a 30-level simulation so the game
+  keeps getting harder instead of easier.
+- From level 3 a monster can be a group: kill one and "ANOTHER GOBLIN!"
+  steps up, up to 5 deep. Coins for every one; XP full, then half, then
+  a quarter.
+- Character levels now get further apart (50, 150, 300, 500, 750 XP...),
+  and each level up raises max HP more than the last. The character
+  sheet shows the XP needed for the next level. Shadow Hand is now at
+  750 XP.
+- Dropped weapons roll a random attack bonus that grows with depth.
+- Pits: from level 5 a level may hide a hole in the floor. With Keen
+  Eyes you might spot it; otherwise "AAAAH! YOU FELL INTO A PIT!" and
+  you drop to the next level, hurt, with Lamenting playing until you
+  move.
+
+## Version Numbers and Two-SID Key Line
+- Builds now have version numbers, starting at 12. The version is the
+  disk ID of the .d64 (titled PETSCII PIT) and shows on the top line of
+  the instructions screen, e.g. "PETSCII PIT V12".
+- With two SIDs the instructions key line reads
+  "VOLUME  M - MUSIC  E - SOUND EFFECTS".
+
+## Version 13: Animated Characters
+- The player and every monster now animate with Sid's new frames:
+  monsters flip between two poses when they move or fight, the player
+  takes walking steps, swings when attacking, and settles back to
+  standing a moment after you stop.
+- The glyph showcase animates them too.
+
+## Version 14
+- Demo speed-up (see devlogdemo.md). The game itself only changes its
+  version number.
+
+## Version 15: Loader and Title Screen
+- New loader, first on the disk: LOAD"*",8 and RUN. It loads the music,
+  the font and the glyphs once, then shows a title screen with the player
+  and monsters blown up big, dancing and scrolling, and a menu: play,
+  demo, glyph showcase, instructions and credits.
+- The game and demo start straight at "DESCENDING TO LEVEL 1" with the
+  music already playing; quitting returns to the title menu.
+- The instructions screen is stored once by the loader and pops up
+  instantly with I, in the menu and in the game.
+- About 2.5 KB of BASIC memory freed in the game for future features.
+
+## Version 16: Credits
+- Credits screen text: design, code and graphics by m0nde; music
+  (PETSCII Pit - Dungeoneering, Assailing, Lamenting) by m0nde; thanks to
+  Ricky Derocher, Eyvind Ebsen and Bobby Brightling; the itch.io page;
+  (C)2026 m0nde - CC BY 4.0.
+
+## Version 17: Music Hand-off
+- The loader stops the music before it loads the game, demo or showcase;
+  each program starts it again itself (the game and demo on the way down
+  to level 1, the showcase on its screen).
+
+## Version 18: Fix Returning From the Glyph Showcase
+- Quitting the glyph showcase loaded the loader but stopped with
+  ?UNDEF'D STATEMENT ERROR IN 500. The showcase is shorter than the
+  loader, and BASIC keeps the old end-of-program pointer when one program
+  loads another, so the loader's variables were written over its own
+  code. The loader now resets that pointer when it is loaded from another
+  program (line 30), the same way the game, demo and showcase do.
+- Title screen: the big player now cycles through all four of his frames
+  (stand, walk, walk, fight) while the monsters keep alternating their
+  two, and the scroll moves two columns per step for about twice the
+  speed (still all BASIC PRINTs, colour codes now inside the PRINT).
+- Quitting the game, demo or glyph showcase now stops the music before
+  loading the loader, so it no longer glitches during the disk load.
+- Loading from the title menu now looks seamless: for the game and demo
+  the loader shows the same "DESCENDING TO LEVEL 1, PLEASE WAIT ..." the
+  game shows, with the three dots in the cycling colours (standing still
+  while the disk loads); the game then takes over the same screen, starts
+  the dot cycling and the music. The glyph showcase gets "LOADING GLYPH
+  SHOWCASE ..." the same way.
+- The game and demo keep the loader's screen up while they start, instead
+  of clearing it, so the hand-off to "DESCENDING TO LEVEL 1" is seamless.
+- The title animation is now double-buffered: each step is printed on a
+  hidden second screen and then shown all at once, so the big glyphs no
+  longer redraw visibly from top to bottom. Still all BASIC.
+- Instructions screen recoloured in the credits' style: keys and actions
+  in white, a dark grey dash, descriptions in light grey; the tips are
+  all light grey with a blank line separating them from the controls.
+- Each instruction tip now has its key word in white (STAIRS, MONSTERS,
+  TREASURE, HEALTH, POTIONS, LEVEL UPS, XP, WEAPONS, EQUIP).
+
+## Version 19: Battle Screen
+- Every fight now happens on its own battle screen: you and the monster
+  drawn big, side by side, with the HUD on top, names and HP bars under
+  you both, and "2 MORE GOBLINS" when there's a group behind it.
+- Sides follow the map: if you're above the monster or to its right,
+  you're on the right; otherwise you're on the left.
+- Each hit is a lunge toward the other fighter, with the damage shown
+  above whoever took it ("MISS" if nothing got through).
+- New: F - FLEE. A coin flip (better odds with Shadowstep). Get away and
+  the monster and its group are gone, but you drop 10% of your coins
+  (none with Shadowstep). Fail and you lose your turn while it hits you.
+- Beat the last monster and you're back on the map.
+- Switching screens is instant: the battle screen is kept in spare memory
+  and a small machine code helper (installed by the loader) saves and
+  restores the map's colours and draws the big glyphs.
+- New file names on the disk: the loader is PETSCIIPIT, the game GAME,
+  the demo DEMO and the glyph showcase SHOWCASE (music files unchanged).
+  Start with LOAD"PETSCIIPIT",8 (or LOAD"*",8 - it is still first).
+
+## Version 19: Runes, Glyph Lore and a New Title
+- New title at 300 XP: DELVER OF THE DEPTHS. Skilled Skeeve moves to
+  500 XP (with Sneak Attack). The ladder is now Alley Rat (50), Basic
+  Burglar (150), Delver of the Depths (300), Skilled Skeeve (500) and
+  Shadow Hand (750). Every title now comes with a character level.
+- Delver of the Depths brings two skills:
+  - GLYPH LORE - READ THE RUNES OF THE PIT
+  - KEEN EYES (3) - SENSE WHAT ROOMS HOLD: room walls take on the colour
+    of what's inside. Treasuries glow orange like treasure, apothecaries
+    green like potions, and a room whose pit you've spotted goes dark grey.
+- Skilled Skeeve adds KEEN EYES (4) - SEE FURTHER DOWN HALLS: one more
+  square straight ahead, plus the squares either side two ahead.
+- Rune stones: from level 3 down, every level has one, glowing white once
+  your eyes adjust. Until you have Glyph Lore it's "A STRANGE RUNE... I
+  CAN'T MAKE IT OUT." With Glyph Lore you read it and get a DESCENT RUNE,
+  a 12-character code that remembers your level, XP, HP, coins and
+  weapon. The character sheet keeps your LAST RUNE.
+- New on the title menu: R - RESUME THE DESCENT. Speak (type) your rune
+  and you go straight back down to that level with those stats. A wrong
+  rune gets "THE PIT DOES NOT KNOW THAT RUNE."
+- The long title message is shortened to fit: "NOW A DELVER OF THE
+  DEPTHS! PRESS C".
+- Freed about 2.5 KB of memory in the game (and about 0.4 KB in the demo)
+  so there's room for what's next; the game should also pause less often
+  to tidy up its memory.
+
+## Version 20: Battle Wipes and SID Setup
+- Fights open with a quick wipe instead of a hard cut: the border flashes
+  red, the map is swept away in the direction of the blow (the way you or
+  the monster moved), and the battle screen sweeps in the same way.
+  Leaving a fight, the battle screen closes like a pair of eyelids and the
+  map opens up from the middle. Each wipe takes about a tenth of a second.
+- New SID setup screen (S on the title menu, which shows how many SIDs
+  were found):
+  - shows how many SIDs were found and which model (6581 or 8580) is at
+    each address
+  - choose auto, one SID, or two SIDs with the music on either chip; it
+    says exactly where the music and the sound effects play
+  - volume bars like the game's; C/V turn the music down/up, D/F the
+    sound effects
+  - M plays the next song; E plays a sound effect, R repeats it until a
+    key is pressed, T picks the next one
+  - the volumes you set carry into the game and demo
+- With two SIDs, the music and the sound effects each get their own chip
+  (music on $D400 by default, so SID-reactive lights like the Ultimate's
+  follow the music).
+- The game and demo start their music straight on Lamenting.
+- The title screen appears right away, with the music, and the big
+  characters dance from the first moment (they are now ready-made in the
+  loader). The loader goes straight to a black screen on start-up, with no
+  flash of blue or garbage.
+- The instructions screen is prepared out of sight the first time you
+  start the game, demo or showcase (or press I), only once.
+- New on the title menu: Q - QUIT. It asks "QUIT PETSCII PIT? Y/N" and
+  resets the C64.
+- A wrong descent rune shows "THE PIT DOES NOT KNOW THAT RUNE." long
+  enough to read.
+- The game's glyphs moved off the ordinary text characters, so $ and >
+  and the other symbols print normally.
+- Fixed: after a reset, starting the disk again could keep the previous
+  music player in memory. The loader now always sets itself up from
+  scratch unless it's coming back from the game, demo or showcase.
+
+## Version 21: Ready to Publish
+- License: CC BY-NC-SA 4.0 (Creative Commons Attribution-NonCommercial-
+  ShareAlike 4.0 International). Share and adapt with credit, under the
+  same license; no commercial use without permission from m0nde. Shown on
+  the credits screen.
+- The instructions screen now explains fleeing (F in a fight) and saving
+  with runes (read a rune, then R on the title to resume). Two pairs of
+  tips were merged to make room.
+
+## Version 22: Faster Rooms and Menus
+- Rooms appear at once when you walk in, instead of filling in. The whole
+  level is now drawn in black while it's being built, so walking into a
+  room only has to light it up.
+- I (instructions) and C (character sheet) now open on a separate screen,
+  so coming back to the map is instant instead of redrawing everything.
+- Fights: keys you pressed before or during a fight no longer pile up.
+  Each round only takes one key, so mashing doesn't turn into extra
+  attacks. Walking still remembers keys you type ahead.
+- Fights now wipe in red: the map sweeps to red from the side you came
+  from, then the battle sweeps in over it. Leaving a fight starts on a red
+  screen that opens from the middle out to the map.
+
+## Version 23: Battle Moves
+- Every fight key is now its own move: D (or SPACE) hits as before, A is a
+  quick jab that always lands for half damage, W is a heavy blow that
+  hits 60% of the time for double damage, and S guards, halving the
+  damage you take with a chance to strike back.
+- Monsters sometimes give away their next move: a monster that WINDS UP
+  is about to hit twice as hard (guard!), one DARTING AROUND is hard to
+  land a heavy blow on (jab!), and one OFF BALANCE is wide open (go
+  heavy!).
+- The instructions screen lists the fight keys.
+- Fight wipes again: the battle screen now sweeps straight over the map
+  from the side you came from, and leaving a fight opens the map from the
+  middle out over the battle. No more red. The sweep always goes from you
+  toward the monster, even when it attacks first.
+
+## Version 24: The Story Begins
+- Two games now: PLAY THE STORY (P) and PLAY THE ENDLESS PIT (E).
+- The story has 100 levels that are the same every time, read from the
+  disk. Monsters still turn up in different places.
+- The story starts with a tutorial (shown as TUTORIAL instead of a level
+  number): seven rooms that walk you through moving, potions, treasure,
+  resting, fighting, and the I and C screens. If you die later you go
+  back to level 1, not the tutorial.
+- Walking onto a note or the stairs stops any keys you typed ahead, so
+  you don't walk past a note or answer the stairs question by accident.
+- Notes: scrolls on the floor. Walk over one to read it.
+- Runes from the story take you back into the story, runes from the
+  endless pit back into the endless pit.
+- Reach the bottom of level 100 and the story ends.
+- The endless pit is the game as it was.
+- P and E now ask HAVE YE A RUNE? first, so you can go straight to the
+  rune screen.
+- The tutorial has a GLYPH LORE CHAMBER with a rune anyone can read: it
+  gives the code for level 1, so next time you can skip the tutorial.
+  There may also be a secret way out...
+- Falling into a hidden hole now shows the hole as you fall.
+- The endless pit has no runes on the floor any more. Instead, when you
+  die you get a descent rune for that run, if you have Glyph Lore to
+  read it; without it the rune is just question marks.
+- Runes on the floor of the story are light green once your eyes adjust.
+- The music starts at your chosen volume instead of starting loud and
+  then dropping.
+
+## Version 25: The Serpent
+- A new monster slithers in from level 5: the SERPENT. It dances on the
+  title screen and shows in the glyph showcase, along with the rune and
+  the note.
+- The game files are about 2 KB smaller: the programs on the disk are
+  "crunched" (no spaces or comments), which leaves more memory free while
+  you play.
+- The story has an ending now (for the moment) after level 100.
+
+## Version 26: Stop and Read
+- Runes, notes and the stairs now stop you even if you hold a key down,
+  so you can't walk past them without seeing them.
+- Questions (Y/N), the I and C screens and game over no longer get
+  answered by keys you pressed earlier, and each new level starts fresh.
+- Reading a rune shows it in light green with a reminder: WRITE IT DOWN!
+  PRESS C TO SEE IT AGAIN.
+- Notes and their text are light blue once your eyes adjust.
+- Fixed: entering a story rune on the title could give ?FILE NOT FOUND.

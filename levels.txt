@@ -1,0 +1,66 @@
+# PETSCII Pit story levels: changes to the generated levels.
+# One change per line:  <level> seed <number> | <level> rune off | <level> note <line 1> | <line 2>
+# A level can be drawn by hand: <level> room x y w h (one per room, in order), then
+# <level> map, 22 rows (rows 3-24, 40 characters), then end. See pitlevels.py for the characters.
+# Room names: <level> name <room> <name>. The ending: ending <line> (up to 10 lines of 39).
+# Lines starting with # are ignored.
+
+# The ending, shown after level 100
+ending SOMEHOW...
+ending YOU HAVE REACHED THE BOTTOM
+ending OF THE PIT.
+ending
+ending BUT THERE'S MORE TO COME!
+
+# Level 0: the tutorial (the game starts here; dying sends you back to level 1, not here).
+# Eight rooms: top row left to right, bottom row right to left. The rune in the
+# GLYPH LORE CHAMBER always gives the code for level 1 (skip the tutorial).
+# Secret: a passage north out of the stairs room ends in a hidden hole to level 1.
+0 room 2 4 7 5
+0 room 12 4 7 5
+0 room 22 4 7 5
+0 room 32 4 7 5
+0 room 32 15 7 5
+0 room 22 15 7 5
+0 room 12 15 7 5
+0 room 2 15 7 5
+0 name 1 ENTRY WAY
+0 name 2 APOTHECARY
+0 name 3 TREASURY
+0 name 4 DORMITORY
+0 name 5 GOBLIN ROOM
+0 name 6 STUDY
+0 name 7 GLYPH LORE CHAMBER
+0 name 8 STAIRWAY TO LEVEL 1
+0 note WASD OR CURSOR KEYS TO MOVE | WALK OVER THINGS TO USE THEM
+0 note WALK INTO A POTION TO HEAL
+0 note TREASURE IS WORTH 5-20 COINS
+0 note SPACE TO REST AND HEAL | KEEP AN EYE ON YOUR HEALTH
+0 note WALK INTO A MONSTER TO FIGHT | W HEAVY A JAB S GUARD F FLEE
+0 note STAIRS TAKE YOU DOWN | AND HEAL 10% OF YOUR HEALTH
+0 note READ RUNES TO SAVE YOUR DESCENT | THIS ONE NEEDS NO GLYPH LORE
+0 note PRESS I FOR THE INSTRUCTIONS | PRESS C FOR YOUR CHARACTER SHEET
+0 map
+
+  #######   #######   #######   #######
+  #.....#+++#...P.#+++#...C.#+++#.....#
+  #...N......N.........N.........N....#
+  #.....#+++#.....#+++#.....#+++#.....#
+  #######   #######   #######   ###.###
+    +++                           +.+
+    +O+                           +.+
+    +.+                           +.+
+    +.+                           +N+
+    +.+                           +.+
+    +.+                           +.+
+  ###.###   #######   #######   ###.###
+  #.....#+++#.....#+++#.....#+++#.....#
+  #..S.N......R..N.........N.......G..#
+  #.....#+++#.....#+++#.....#+++#.....#
+  #######   #######   #######   #######
+
+
+
+
+
+end
