@@ -156,3 +156,11 @@ New in V27
     every room reachable; with 8 rooms the room names, Keen Eyes (3) wall
     colours and the stairs room all work
 [ ] Demo: runs several levels with 8 rooms without getting stuck
+[ ] Delver of the Depths: character sheet lists BACKTRACK - T RUNS TO A
+    FOUND ROOM; before 300 XP, T does nothing
+[ ] T: list of found rooms, the one you're in is dark grey and can't be
+    picked; RETURN goes back, no turn used
+[ ] T + number: you appear in that room (away from monsters and items),
+    room name and music update, monsters there get a move
+[ ] Every so often (about 1 in 10) an ambush on arrival opens a fight
+[ ] Works in STORY and ENDLESS

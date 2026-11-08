@@ -566,3 +566,7 @@
 - The endless pit is a little busier: 6 to 8 rooms a level instead of 5
   to 7, so more corridors, and the extra room can hold a monster or
   treasure like any other. The story's levels don't change.
+- New skill for DELVER OF THE DEPTHS: BACKTRACK - press T to pick any room
+  you've found on this level and run straight there. It takes a turn, and
+  there's a small chance (10%, 3% with Shadowstep) something is waiting
+  for you when you arrive.

@@ -404,7 +404,7 @@ each piece.
 - All of the above are open design questions to think through when we
   actually build this, not decided specifics yet.
 
-## Fast Travel ("T" key)
+## Fast Travel ("T" key) — IMPLEMENTED (V27, BACKTRACK; see V27 below)
 - Scoped to the current dungeon level only — levels aren't saved once
   you leave them (each one is generated fresh and discarded on
   descent), so traveling back to a previous level isn't part of this;
@@ -2130,3 +2130,17 @@ Docs, TESTING.txt, d64 and zips with each step.
   demo plays through to level 5 with 6-8 rooms.
 - Test tools added to the repo in tools/: basiccheck.py (static checks on
   every listing) and vicetest.py (scripted VICE runs of a test copy).
+- BACKTRACK (Delver of the Depths, XP 300): T opens a list of the rooms
+  found on this level (RV%), numbered, the current room in dark grey
+  (6880-6950, opened like the C screen). A number runs you to the free
+  floor square nearest the middle of that room (6960-7020: MA% floor,
+  that room, not the hidden hole, no monster); RETURN goes back with no
+  turn. The move goes through the normal end-of-move code (2290), so it
+  costs a turn and updates the room name, Keen Eyes and music. 2435: 10%
+  ambush on arrival (3% with Shadowstep), same as the V27 rest ambush.
+  If the room has no free square: NO SPACE TO LAND THERE, no turn.
+  1805 sends T there (XP>=300; otherwise T is ignored). Character sheet
+  3775: BACKTRACK - T RUNS TO A FOUND ROOM (the longer wording wrapped).
+  STORY and ENDLESS; tutorial and demo unchanged. Tested in VICE: list in
+  both games, landing in a room, ambush on arrival, RETURN, T before 300
+  XP, full room message, character sheet at Shadow Hand.
