@@ -164,3 +164,9 @@ New in V27
     room name and music update, monsters there get a move
 [ ] Every so often (about 1 in 10) an ambush on arrival opens a fight
 [ ] Works in STORY and ENDLESS
+[ ] Weapons: FOUND x KEEP IT? then EQUIPPED; the character sheet shows the
+    weapon's rolled attack and special (e.g. SWORD + 4 ATK - +12% CRIT)
+[ ] Two of the same weapon can show different numbers in EQP/NEW
+[ ] Sword: now and then a hit does double damage (crit)
+[ ] Rune with a weapon: the weapon comes back, special at its middle value
+[ ] Demo: still picks up and swaps weapons

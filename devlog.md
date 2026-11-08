@@ -548,7 +548,7 @@
   after the 12th letter it shows DECIPHERING, PLEASE WAIT... while it
   checks the rune.
 
-## Version 27: Ambushes, Deep Sleep and Busier Levels
+## Version 27: Ambushes, Deep Sleep, Backtrack, Busier Levels and Rolled Weapons
 - Ambushes now throw you straight onto the battle screen, with the fight
   music, whether you were resting in a room or in a corridor. The rest is
   cut short and you get no heal (see DEEP SLEEP below for R). You still
@@ -570,3 +570,15 @@
   you've found on this level and run straight there. It takes a turn, and
   there's a small chance (10%, 3% with Shadowstep) something is waiting
   for you when you arrive.
+- Weapons roll their stats: every weapon's attack and its special land
+  somewhere in a range, so two maces can differ. The sword finally has a
+  special: a chance to land a critical hit for double damage.
+    DAGGER  ATK 1-3  +5 to +15% dodge
+    SWORD   ATK 3-5  +5 to +15% crit
+    BLADE   ATK 2-4  +1 to +5 damage on a sneak hit
+    MACE    ATK 4-6  0 to -2 counter damage
+    FLAIL   ATK 7-9  +10 to +20% dodge
+  Deeper weapons still add their depth bonus on top. The pickup prompt,
+  the EQP/NEW comparison and the character sheet show the actual rolls.
+  A rune keeps the attack exactly; the special comes back as the middle
+  value.

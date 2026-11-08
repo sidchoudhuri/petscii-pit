@@ -321,3 +321,5 @@ details differ.
 ## V27: Denser Levels
 - Same change as the game's endless pit: 6 to 8 rooms a level instead of
   5 to 7. The AI's room tables grew to fit the eighth room.
+- Weapons roll their attack and special like the game's (the sword gets
+  a crit chance); the AI still keeps whichever has the higher attack.
