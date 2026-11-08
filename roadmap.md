@@ -1840,7 +1840,24 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Repo: the old single-game files petsciipit.bas and petsciipit.prg are
   removed (replaced by petsciipitendless in V24).
 
-## Monster Battles — MAYBE
+## Battle Arena — PLANNED (idea, not designed yet)
+- A third way to play: no exploring, just fights. You face harder and
+  harder monsters one after another on the battle screen.
+- Uses the battle screen, the battle moves and the monster tells as they
+  are; no map, no level build.
+- To decide when we design it:
+  - where it lives: its own program on the disk (like STORY and ENDLESS,
+    a new title-menu key) or a mode inside ENDLESS
+  - how the monsters ramp up (one step per win, waves, the same depth
+    scaling as the pit's levels) and when bosses or groups appear
+  - what carries between fights: HP (heal a little after each win?),
+    XP, titles and skills, weapons (bought or dropped?)
+  - what coins are for here
+  - the score: wins in a row / deepest round, shown on game over; is a
+    rune or a saved best score wanted?
+  - music: Assailing all the way, or a change as rounds get harder
+
+
 - Per-monster quirks: each monster reacts differently to the moves (the
   leech drains you if you guard too long, the golem shrugs off jabs, the
   guard counters heavy strikes). Mostly data, like the MZ% tables.
@@ -2111,3 +2128,5 @@ Docs, TESTING.txt, d64 and zips with each step.
   with the ambusher gone; R heals to full, refuses at full health, is a
   plain rest before 150 XP; RESTING ... dots; full ENDLESS maps draw; the
   demo plays through to level 5 with 6-8 rooms.
+- Test tools added to the repo in tools/: basiccheck.py (static checks on
+  every listing) and vicetest.py (scripted VICE runs of a test copy).
