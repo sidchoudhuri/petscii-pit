@@ -152,3 +152,7 @@ New in V27
 [ ] R at full HP: YOU'RE ALREADY AT FULL HEALTH, no turn used
 [ ] R ambushed: HP goes up a bit (sometimes not at all) before the fight
 [ ] R three times on a level: RESTING AGAIN IS RISKY! comes up like SPACE
+[ ] ENDLESS: levels have 6 to 8 rooms (count a few), no overlapping rooms,
+    every room reachable; with 8 rooms the room names, Keen Eyes (3) wall
+    colours and the stairs room all work
+[ ] Demo: runs several levels with 8 rooms without getting stuck
