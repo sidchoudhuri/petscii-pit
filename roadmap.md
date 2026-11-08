@@ -514,7 +514,7 @@ each piece.
   else)? Does this replace the existing plain potions, or exist
   alongside them as a separate, riskier pickup?
 
-## Weapons With Variable Stat Rolls
+## Weapons With Variable Stat Rolls — IMPLEMENTED (V27; see V27 below)
 - Currently each weapon type has fixed stats (e.g. Mace is always
   exactly +6 ATK, -1 counter damage). Planned change: each stat rolls
   within a range specific to that weapon type instead of being a fixed
@@ -2083,7 +2083,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   these volumes, and the game's M, E and V write their changes back
   (5750-5770), so the loader shows them on return.
 
-## V27: Ambushes, Resting Dots, Deep Sleep, Denser Dungeons — IMPLEMENTED (waiting for testing)
+## V27: Ambushes, Resting Dots, Deep Sleep, Denser Dungeons, Backtrack, Rolled Weapons — IMPLEMENTED (waiting for testing; V27 is complete)
 - An ambush (3490-3600, from the rest at 2630) can happen in a room or a
   corridor. The ambusher becomes the target (TG=BM=MN), the side and wipe
   direction are set from the player toward it, the fight-music check runs
@@ -2116,9 +2116,6 @@ Docs, TESTING.txt, d64 and zips with each step.
   demo AI's AJ%(8,8), PV%(8), Q%(9)). Simulated over 3,000 levels: room
   squares 16% -> 19% of the map, no failed room placements. STORY levels
   are fixed and unchanged.
-- Next: test V27 on hardware (TESTING.txt, New in V27) before adding more.
-  Then fast travel (T) is the suggested next feature (more rooms means more
-  walking back and forth); teleportation circles are the alternative.
 - Tested before release with new tools (tools/basiccheck.py: jump targets,
   two-letter variable clashes, variables read but never set, on every
   listing; tools/vicetest.py: scripted runs of a throwaway test copy in
@@ -2144,3 +2141,22 @@ Docs, TESTING.txt, d64 and zips with each step.
   STORY and ENDLESS; tutorial and demo unchanged. Tested in VICE: list in
   both games, landing in a room, ambush on arrival, RETURN, T before 300
   XP, full room message, character sheet at Shadow Hand.
+- Rolled weapons (STORY, ENDLESS, demo): the weapon table now holds the
+  lowest attack, the special's kind (1 dodge, 2 crit, 3 sneak, 4 counter),
+  its lowest value and how many values it can roll (SK%, SM%, SN%), plus
+  the four effect texts (SU$). A dropped weapon (2170; demo 2150) is
+  stored in MA% as 19 + type + 10 x (depth bonus + attack roll 0-2) +
+  1000 x special roll; the map drawing and gfx.asm only look at the last
+  digit, so they are unchanged. Pickup (3940; demo 4920) decodes it; WS
+  holds the equipped weapon's special roll, WR its attack bonus (attack
+  roll folded in, so the rune keeps it). 280 sets WD, WK (crit), WX, WM
+  and the effect text from the roll. Crit: 6635 doubles your damage
+  (demo 2055). Rune load (6240) gives the middle special roll. Old V26
+  runes holding a weapon come back with its attack 1-2 lower (the table
+  now starts at the lowest roll); runes were never released.
+- Tested: Python (every weapon, roll and depth encodes, decodes and draws
+  as the right glyph; texts fit the message line), VICE (pickup, the
+  EQP/NEW comparison, the character sheet; the demo picks up and compares
+  rolled weapons with forced drops).
+- V27 is complete. Next: test V27 on hardware (TESTING.txt, New in V27).
+
