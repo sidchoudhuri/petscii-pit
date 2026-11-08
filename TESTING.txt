@@ -133,3 +133,15 @@ New in V26
 [ ] Play the game for 20-30 minutes, several levels deep: no ?OUT OF MEMORY,
     no getting slower and slower
 [ ] Leave the demo running for an hour
+
+New in V27
+[ ] Rest (SPACE): RESTING shows with the dots cycling white to grey for
+    about 4 seconds, then RESTED - HEALED x HP replaces it
+[ ] Get ambushed while resting in a room: the battle screen opens at once
+    with the fight music and A MONSTER AMBUSHED YOU!; you move first
+[ ] Get ambushed while resting in a corridor: same, and the monster hits
+    back during the fight
+[ ] Win the ambush fight: back on the map, calm music, no heal from the rest
+[ ] Flee an ambush: the monster is gone from the map, calm music
+[ ] Both in STORY and ENDLESS; the title and showcase say V27
+(Tip: ambushes are likelier the more often you rest in a row.)

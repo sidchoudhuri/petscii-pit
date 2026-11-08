@@ -1131,7 +1131,7 @@ each piece.
   | Startup setup | 40-400 -> 5570-6130 | 40-420 -> 6270-6830 |
   | AI move choice | — | 5870-6820 -> 2530-3480 |
 
-## Bug: No Fight Music After an Ambush — TO DO
+## Bug: No Fight Music After an Ambush — FIXED (V27, see Ambushes below)
 - Reported from hardware: fight music doesn't seem to start when a
   monster ambushes you while resting.
 - Likely causes, from the code (not fixed yet):
@@ -1151,7 +1151,7 @@ each piece.
 - "A MONSTER AMBUSHES YOU!" is now "A MONSTER AMBUSHED YOU!" (game line
   3810, demo line 4670).
 
-## Resting Shows Cycling Dots — PLANNED
+## Resting Shows Cycling Dots — IMPLEMENTED (V27)
 - While resting, show "RESTING ..." with the same color-cycling dots used
   for "PLEASE WAIT ..." during level builds (white, then the three greys,
   left to right), instead of the plain "RESTING..." message.
@@ -2065,3 +2065,20 @@ Docs, TESTING.txt, d64 and zips with each step.
   them to that mode's defaults. The game (5500) and demo (6300) start at
   these volumes, and the game's M, E and V write their changes back
   (5750-5770), so the loader shows them on return.
+
+## V27: Ambushes Start a Fight, Resting Dots — IMPLEMENTED
+- An ambush (3490-3600, from the rest at 2630) can happen in a room or a
+  corridor. The ambusher becomes the target (TG=BM=MN), the side and wipe
+  direction are set from the player toward it, the fight-music check runs
+  (740) and the battle screen opens (5920). 2630 then skips the 10 rest
+  turns and the heal and goes to the end of the turn (2520), so you move
+  first (no free hit).
+- 1125: the monster you are fighting takes its turns even outside a lit
+  room (monster turns skip anything in a corridor otherwise), so a
+  corridor ambusher fights back. No monster ever walks the corridors.
+- Fleeing removes the ambusher like any fled monster (6140).
+- Also fixes the old bug: an ambush in a room ran all 10 rest turns with
+  the monster hitting and no key; in a corridor nothing happened.
+- Resting: 2550 prints RESTING and 2570 cycles the PLEASE WAIT dots
+  (1740-1750) every 8 jiffies through the 4-second wait.
+- STORY and ENDLESS only; the demo is unchanged.
