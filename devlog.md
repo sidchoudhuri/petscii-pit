@@ -562,3 +562,6 @@
   resting risk plus up to 25% more the more health you're missing
   (Shadowstep makes it 25%). If something jumps you, you keep part of
   the heal. R counts as a rest, so resting again still gets riskier.
+- The endless pit is a little busier: 6 to 8 rooms a level instead of 5
+  to 7, so more corridors, and the extra room can hold a monster or
+  treasure like any other. The story's levels don't change.

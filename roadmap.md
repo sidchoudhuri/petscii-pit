@@ -483,7 +483,7 @@ each piece.
   scaling issue above, and the first piece of this overall balance
   problem to actually get fixed.
 
-## Dungeon Density
+## Dungeon Density — IMPLEMENTED (V27)
 - Maps should feel slightly more dense than they currently do — more
   packed with rooms/corridors relative to the available space. Only a
   small increase, not a major overhaul of generation.
@@ -2091,3 +2091,10 @@ Docs, TESTING.txt, d64 and zips with each step.
   2630 an ambush first heals a random 0 to half the missing HP; 2700
   heals to full. Character sheet line 3765. Instructions screen
   unchanged (a skill, shown on the character sheet).
+- Denser dungeons (ENDLESS and the demo): 6-8 rooms a level instead of
+  5-7 (ENDLESS 4460, demo 5250). The extra room is like any other (one
+  more monster on average, potions and treasure can land there). Room
+  arrays grew from 7 to 8 (ENDLESS 5390-5400; demo 6170-6190, and the
+  demo AI's AJ%(8,8), PV%(8), Q%(9)). Simulated over 3,000 levels: room
+  squares 16% -> 19% of the map, no failed room placements. STORY levels
+  are fixed and unchanged.

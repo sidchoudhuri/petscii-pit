@@ -317,3 +317,7 @@ details differ.
 ## Version 25
 - The demo meets the new SERPENT from level 5 too.
 - The demo program on the disk is crunched (about 2.4 KB smaller).
+
+## V27: Denser Levels
+- Same change as the game's endless pit: 6 to 8 rooms a level instead of
+  5 to 7. The AI's room tables grew to fit the eighth room.
