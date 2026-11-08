@@ -16,7 +16,8 @@ usage (from Python):
                 keys="R" + "D"*20, setup='XP=150:TT=2:TN=2:PH=2', patches={...})
   run(d, [40e6, 60e6], "t1")
 
-Keys: one character per key press (a key only, never an empty press).
+Keys: one character per key press (a key only, never an empty press);
+"!" stands for RETURN.
 Patches are (old, new) pairs of whole listing text, applied to the test copy
 only, e.g. ('2600 IF AC>90 THEN AC=90', '2600 AC=100') to force an ambush.
 """
@@ -72,12 +73,12 @@ def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=()):
          "4180 GOSUB 9020"),
         ("5540 GOSUB 4340", "5535 %s\n5540 GOSUB 4340" % (setup or "REM")),
     ] + list(patches))
-    g += ('9000 KP=KP+1:A$=MID$(K$,KP,1):IF A$="~" THEN A$=""\n'
+    g += ('9000 KP=KP+1:A$=MID$(K$,KP,1):IF A$="!" THEN A$=CHR$(13)\n'
           '9010 RETURN\n'
           '9020 GOSUB 9000:IF A$<>"" THEN RETURN\n'
           '9030 IF KP<=LEN(K$) THEN 9020\n'
           '9040 GOTO 9040\n')
-    g = g.replace("5535 ", "5535 K$=\"%s\":" % keys, 1)
+    g = g.replace("\n5535 ", "\n5535 K$=\"%s\":" % keys, 1)
     build_prg(g, os.path.join(d, "game.prg"))
     disk = os.path.join(d, "test.d64")
     shutil.copy(os.path.join(folder, "petsciipit.d64"), disk)
