@@ -123,6 +123,12 @@ New in V26
     blue
 [ ] Y/N questions, I, C, game over: not answered by earlier keypresses
 [ ] Glyph showcase: the note is light blue
+[ ] New runes: tutorial rune and a level 3+ story rune resume correctly;
+    an ENDLESS death rune resumes ENDLESS; coins over 1,023 come back
+    as 1,023
+[ ] Made-up letters and old (V25 and earlier) runes are refused
+[ ] Rune screen: DECIPHERING, PLEASE WAIT... after the 12th letter;
+    RETURN goes back to the title with or without letters typed
 
 [ ] Play the game for 20-30 minutes, several levels deep: no ?OUT OF MEMORY,
     no getting slower and slower

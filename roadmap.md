@@ -1826,6 +1826,19 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Notes: light grey before Keen Eyes, light blue (14) after (6770 and the
   reveal colour list 1517); note text is always light blue.
 - Glyph showcase shows the note in light blue.
+- Stronger runes (new format; runes from V19-V25 no longer work): coins
+  are saved up to 1,023 (10 bits instead of 14) and the checksum grew from
+  6 to 10 bits, modulo 1021 (game 6180-6190, constants 29 STORY and 23
+  ENDLESS; the high 4 checksum bits sit above the coins). The loader
+  (1270-1290, 1370) also rejects runes that couldn't happen: HP below 1
+  or above the maximum HP the rune's XP gives, and STORY levels above 100.
+  Random letters now pass about 1 time in 1,100 (was 1 in 30).
+- Rune screen: RETURN goes back to the title at any time (1210, hint
+  RETURN TO GO BACK); the 12th letter starts the check, which shows
+  DECIPHERING, PLEASE WAIT... (1180). Checked
+  in Python against the BASIC: 40,000 random saves decode back exactly.
+- Repo: the old single-game files petsciipit.bas and petsciipit.prg are
+  removed (replaced by petsciipitendless in V24).
 
 ## Monster Battles — MAYBE
 - Per-monster quirks: each monster reacts differently to the moves (the
