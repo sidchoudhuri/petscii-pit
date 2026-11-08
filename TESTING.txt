@@ -145,3 +145,10 @@ New in V27
 [ ] Flee an ambush: the monster is gone from the map, calm music
 [ ] Both in STORY and ENDLESS; the title and showcase say V27
 (Tip: ambushes are likelier the more often you rest in a row.)
+[ ] Before 150 XP, R rests like SPACE
+[ ] Basic Burglar: character sheet lists DEEP SLEEP - R RESTS UNTIL HEALED
+[ ] R when hurt: dots for a bit longer the more you're missing, then
+    RESTED - HEALED x HP and HP is full
+[ ] R at full HP: YOU'RE ALREADY AT FULL HEALTH, no turn used
+[ ] R ambushed: HP goes up a bit (sometimes not at all) before the fight
+[ ] R three times on a level: RESTING AGAIN IS RISKY! comes up like SPACE
