@@ -541,3 +541,9 @@
   PRESS C TO SEE IT AGAIN.
 - Notes and their text are light blue once your eyes adjust.
 - Fixed: entering a story rune on the title could give ?FILE NOT FOUND.
+- Runes are much harder to guess: made-up letters almost never work now.
+  Old runes from earlier test versions no longer work, and a rune saves
+  up to 1,023 coins.
+- The rune screen: RETURN takes you back to the title at any time, and
+  after the 12th letter it shows DECIPHERING, PLEASE WAIT... while it
+  checks the rune.
