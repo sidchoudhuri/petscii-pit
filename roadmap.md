@@ -2066,7 +2066,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   these volumes, and the game's M, E and V write their changes back
   (5750-5770), so the loader shows them on return.
 
-## V27: Ambushes Start a Fight, Resting Dots — IMPLEMENTED
+## V27: Ambushes, Resting Dots, Deep Sleep, Denser Dungeons — IMPLEMENTED (waiting for testing)
 - An ambush (3490-3600, from the rest at 2630) can happen in a room or a
   corridor. The ambusher becomes the target (TG=BM=MN), the side and wipe
   direction are set from the player toward it, the fight-music check runs
@@ -2098,3 +2098,6 @@ Docs, TESTING.txt, d64 and zips with each step.
   demo AI's AJ%(8,8), PV%(8), Q%(9)). Simulated over 3,000 levels: room
   squares 16% -> 19% of the map, no failed room placements. STORY levels
   are fixed and unchanged.
+- Next: test V27 on hardware (TESTING.txt, New in V27) before adding more.
+  Then fast travel (T) is the suggested next feature (more rooms means more
+  walking back and forth); teleportation circles are the alternative.

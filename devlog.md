@@ -548,10 +548,11 @@
   after the 12th letter it shows DECIPHERING, PLEASE WAIT... while it
   checks the rune.
 
-## Version 27: Ambushes
+## Version 27: Ambushes, Deep Sleep and Busier Levels
 - Ambushes now throw you straight onto the battle screen, with the fight
   music, whether you were resting in a room or in a corridor. The rest is
-  cut short and you get no heal. You still move first.
+  cut short and you get no heal (see DEEP SLEEP below for R). You still
+  move first.
 - Flee an ambush and the monster that jumped you is gone.
 - Fixed: an ambush used to play out over all 10 rest turns with calm music
   and no chance to fight back, and in corridors the ambusher just stood
