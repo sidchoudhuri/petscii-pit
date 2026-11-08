@@ -372,7 +372,7 @@ each piece.
 - The vendor sells weapons and shields with buffs similar to the weapon
   pickups above.
 
-## "R" - Rest Until Healed
+## "R" - Rest Until Healed — IMPLEMENTED (V27, DEEP SLEEP; see V27 below)
 - A new key, separate from the existing SPACE (rest 10 turns, small
   fixed heal). R rests for as long as it takes to fully heal instead of
   a fixed duration.
@@ -2082,3 +2082,12 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Resting: 2550 prints RESTING and 2570 cycles the PLEASE WAIT dots
   (1740-1750) every 8 jiffies through the 4-second wait.
 - STORY and ENDLESS only; the demo is unchanged.
+- DEEP SLEEP (Basic Burglar, XP 150): R rests until healed. 1890 sets RR
+  (1 for R with XP>=150, else 0; R before then is a plain rest) and goes
+  to 2525, which refuses at full HP without using a turn. The rest code is
+  shared: 2560 waits 4 s plus up to 4 s by HP missing; 2595 adds
+  INT(25*missing/PM)% to the ambush chance (after the resting-again
+  build-up, before the 90% cap); 2610 Shadowstep makes it a flat 25%;
+  2630 an ambush first heals a random 0 to half the missing HP; 2700
+  heals to full. Character sheet line 3765. Instructions screen
+  unchanged (a skill, shown on the character sheet).

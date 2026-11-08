@@ -557,3 +557,8 @@
   and no chance to fight back, and in corridors the ambusher just stood
   there.
 - Resting shows RESTING with the colour-cycling dots.
+- New skill for BASIC BURGLAR: DEEP SLEEP - press R to rest until you're
+  fully healed. The longer the sleep, the likelier an ambush: the usual
+  resting risk plus up to 25% more the more health you're missing
+  (Shadowstep makes it 25%). If something jumps you, you keep part of
+  the heal. R counts as a rest, so resting again still gets riskier.
