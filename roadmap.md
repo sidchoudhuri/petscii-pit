@@ -2082,7 +2082,8 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Resting: 2550 prints RESTING and 2570 cycles the PLEASE WAIT dots
   (1740-1750) every 8 jiffies through the 4-second wait.
 - STORY and ENDLESS only; the demo is unchanged.
-- DEEP SLEEP (Basic Burglar, XP 150): R rests until healed. 1890 sets RR
+- DEEP SLEEP (Basic Burglar, XP 150): R rests until healed. 1870 lets R
+  through (it used to drop every key but movement and SPACE). 1890 sets RR
   (1 for R with XP>=150, else 0; R before then is a plain rest) and goes
   to 2525, which refuses at full HP without using a turn. The rest code is
   shared: 2560 waits 4 s plus up to 4 s by HP missing; 2595 adds
@@ -2101,3 +2102,12 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Next: test V27 on hardware (TESTING.txt, New in V27) before adding more.
   Then fast travel (T) is the suggested next feature (more rooms means more
   walking back and forth); teleportation circles are the alternative.
+- Tested before release with new tools (tools/basiccheck.py: jump targets,
+  two-letter variable clashes, variables read but never set, on every
+  listing; tools/vicetest.py: scripted runs of a throwaway test copy in
+  VICE). Found and fixed the R key being ignored (1870). Checked in VICE:
+  ambush in a room and in a corridor opens the battle screen, both sides
+  hit (the corridor ambusher too), winning and fleeing return to the map
+  with the ambusher gone; R heals to full, refuses at full health, is a
+  plain rest before 150 XP; RESTING ... dots; full ENDLESS maps draw; the
+  demo plays through to level 5 with 6-8 rooms.
