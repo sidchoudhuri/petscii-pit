@@ -1846,6 +1846,13 @@ Docs, TESTING.txt, d64 and zips with each step.
   moves. Half bind for 150 moves (rests count: 10, deep sleep 10 per 10%
   healed); after that it stays cursed but can be swapped.
 
+## More Weapon Ideas — LATER
+- Lift a curse for coins (coins have no use yet; fits the roaming vendor,
+  or a shrine).
+- Weapons that work better or worse against certain monsters (a mace
+  against golems, a dagger against leeches...).
+- Weapons that wear out with use and need replacing or repairing.
+
 ## Battle Arena — PLANNED (idea, not designed yet)
 - A third way to play: no exploring, just fights. You face harder and
   harder monsters one after another on the battle screen.
@@ -2188,5 +2195,19 @@ Docs, TESTING.txt, d64 and zips with each step.
   binding with the drain applied, a backfiring cursed sword).
   vicetest.py now uses ZY for its key pointer (KP clashed with the curse
   penalty, QK with the colour table).
+- Weapon polish (STORY and ENDLESS): 280-286 split up; 282 names a weapon
+  RUSTY when its special roll is in the bottom quarter of its range and
+  FINE in the top quarter (the attack roll is folded into the depth
+  bonus, so the special roll decides); 284 shows NO COUNTER CUT for a
+  mace with 0 (also 7110 for a cursed one). CF marks a crit (6635) or a
+  backfire (6636, which now counts toward TOOK DMG); 1555-1556 put CRIT!
+  in front of the hit/kill message or replace it with CURSED x
+  BACKFIRES!; CF is cleared each turn (1880) and each attack (6590);
+  1595 cuts the message line at 40. 4060: EQP shows CURSED for a cursed
+  weapon. The sneak text is now +n SNEAK DMG (was DMG ON SNEAK HIT) so
+  RUSTY/FINE names fit 40 columns; the character sheet puts the effect on
+  its own line (3700). Checked in Python that every weapon message fits
+  40 columns; in VICE: the cursed EQP line, a FINE flail, the sheet at
+  Shadow Hand with a cursed rusty mace, a CRIT! kill, a backfire.
 - V27 is complete. Next: test V27 on hardware (TESTING.txt, New in V27).
 

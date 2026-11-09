@@ -179,3 +179,9 @@ New in V27
     and the next weapon you find can replace it
 [ ] With Glyph Lore (300 XP): FOUND CURSED x KEEP IT? / NEW: ... - CURSED
 [ ] Dying (K, N or S) clears the curse
+[ ] Weapon names: some are RUSTY (low rolls) or FINE (high rolls)
+[ ] Sword crit: CRIT! HIT x FOR n / CRIT! KILLED x
+[ ] Cursed sword backfire: CURSED SWORD BACKFIRES! -TOOK nDMG
+[ ] Holding a cursed weapon, the EQP line ends in CURSED
+[ ] A mace with no counter cut shows NO COUNTER CUT
+[ ] Character sheet: weapon name and attack, effect on the next line

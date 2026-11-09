@@ -575,7 +575,7 @@
   special: a chance to land a critical hit for double damage.
     DAGGER  ATK 1-3  +5 to +15% dodge
     SWORD   ATK 3-5  +5 to +15% crit
-    BLADE   ATK 2-4  +1 to +5 damage on a sneak hit
+    BLADE   ATK 2-4  +1 to +5 sneak damage
     MACE    ATK 4-6  0 to -2 counter damage
     FLAIL   ATK 7-9  +10 to +20% dodge
   Deeper weapons still add their depth bonus on top. The pickup prompt,
@@ -593,3 +593,9 @@
   ambushes. Once it loosens its grip it is still cursed, but you can swap
   it for the next weapon you find. Glyph Lore spots a curse before you
   pick the weapon up.
+- Weapon polish: a weapon that rolled near the bottom of its range is
+  RUSTY, near the top FINE (RUSTY MACE, FINE FLAIL). Crits say so (CRIT!
+  HIT GOLEM FOR 24), a cursed sword's backfire says so (CURSED SWORD
+  BACKFIRES!), the EQP line marks a cursed weapon (EQP: MACE +4 ATK -
+  CURSED), and a mace with no counter cut says NO COUNTER CUT instead of
+  -0 COUNTER DMG.
