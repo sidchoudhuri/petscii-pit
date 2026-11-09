@@ -406,6 +406,23 @@ each piece.
   how to talk again once in the room, prices, shield strength, STORY
   levels 5/10/.../100, the demo.
 
+## Game Text in the Text Bank — IMPLEMENTED (V28)
+- Fixed text (character sheet, skills, game over, rune screen, status
+  messages, CHAR's shop) moved out of ENDLESS and STORY into a text bank
+  in the RAM under the BASIC ROM at $B200 (2 KB, about 1.7 KB used).
+- Source: src/texts.txt (one message per line, "^" = RETURN). The build
+  attaches the bank to the end of the loader program; the loader copies it
+  to $B200 (line 386). tools/textbank.py does the conversion and the attach.
+- src/asm/text.asm at $0400: SYS 1024,N prints message N, SYS 1027,N
+  fetches it; line 98 turns the fetched text into MS$.
+- Freed about 1 KB in ENDLESS and 0.7 KB in STORY.
+
+## More Memory If Needed — IDEAS (not done)
+- Shorten long variable names in the busiest lines.
+- Merge short one-statement lines into their neighbours (each line number
+  costs about 5 bytes).
+- Both make the listing harder to read, so only if memory runs out again.
+
 ## "R" - Rest Until Healed — IMPLEMENTED (V27, DEEP SLEEP; see V27 below)
 - A new key, separate from the existing SPACE (rest 10 turns, small
   fixed heal). R rests for as long as it takes to fully heal instead of

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """PETSCII Pit: move fixed game text out of the BASIC games into a text bank.
 
-The bank lives in the RAM under the BASIC ROM at $B200 (3 KB, to $BDFF).
+The bank lives in the RAM under the BASIC ROM at $B200 (2 KB, to $B9FF).
 Its source is src/texts.txt: one message per line, "NNN text", with {CODES}
 as in the listings and "^" for RETURN. The build attaches the bank to the end
-of the loader program (page aligned, 12 pages); the loader copies it to $B200
+of the loader program (page aligned, 8 pages); the loader copies it to $B200
 at start (line 385). The games reach it through src/asm/text.asm:
 
   PRINT "TEXT"            ->  SYS 1024,N          (message N ends with RETURN)
@@ -23,8 +23,8 @@ usage: textbank.py convert <texts.txt> <game.bas> [<game.bas> ...]
 import re, sys
 
 PRINT_MIN = 6      # shortest PRINT text (in bytes) worth moving
-MS_MIN = 10        # shortest status message worth moving
-PAGES = 12         # bank size in pages ($B200-$BDFF)
+MS_MIN = 9         # shortest status message worth moving
+PAGES = 8          # bank size in pages ($B200-$B9FF); the loader copies 2 x 4 (line 386)
 KW = ["PRINT", "GOSUB", "SYS", "THEN", "LEFT$", "MID$", "STR$", "CHR$", "PEEK"]
 
 
@@ -148,7 +148,7 @@ def do_ms(stmt, bank):
     if not m:
         return None
     lit, rest = m.group(2), m.group(3).strip()
-    if nbytes(lit) < MS_MIN or nbytes(lit) > 39 or "{" in lit:
+    if nbytes(lit) < MS_MIN or nbytes(lit) > 40 or "{" in lit:
         return None
     if rest and (not rest.startswith("+") or "MS$" in rest):
         return None
@@ -201,20 +201,23 @@ def petscii(msgs):
     with tempfile.TemporaryDirectory() as d:
         src = os.path.join(d, "t.bas")
         out = os.path.join(d, "t.prg")
-        open(src, "w").write("".join('%d PRINT "%s"\n' % (i + 1, t.replace('"', "@").replace("^", ""))
-                                     for i, t in enumerate(msgs)))
+        text = "".join('%d PRINT"%s"\n' % (i + 1, t.replace('"', "@").replace("^", ""))
+                       for i, t in enumerate(msgs))
+        # as in crunch.py: petcat wants lower case for the letters and codes
+        text = text.translate(str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"))
+        open(src, "w").write(text.replace("{cbm-+}", "{CBM-+}"))
         subprocess.run(["petcat", "-w2", "-o", out, "--", src], check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         b = open(out, "rb").read()[2:]
     res, p = [], 0
     for t in msgs:
-        q1 = b.index(34, p)
-        q2 = b.index(34, q1 + 1)
-        body = bytes(34 if c == 64 else c for c in b[q1 + 1:q2])
+        end = b.index(0, p + 4)            # each line: link, number, PRINT, "text", 0
+        assert b[p + 4] == 0x99 and b[p + 5] == 34 and b[end - 1] == 34
+        body = bytes(34 if c == 64 else c for c in b[p + 6:end - 1])
         if t.endswith("^"):
             body += b"\r"
         res.append(body)
-        p = q2 + 1
+        p = end + 1
     return res
 
 
@@ -239,7 +242,8 @@ def convert(texts, games):
         out, n = [], 0
         for l in lines:
             m = re.match(r"(\d+) (.*)$", l)
-            if m and not m.group(2).startswith("REM") and not m.group(2).startswith("DATA"):
+            # lines below 30 run before the loader check, so they keep their text
+            if m and int(m.group(1)) >= 30 and not m.group(2).startswith(("REM", "DATA")):
                 body, ch = convert_line(m.group(2), bank)
                 if ch:
                     n += 1
