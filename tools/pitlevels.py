@@ -32,7 +32,7 @@ Files:
   levelidx.prg  load address $9200: per record (102) track, sector, block
                 count (made by reading the finished d64 back)
 
-levels.txt (next to the tool), one change per line, # = comment:
+levels.txt (src/levels.txt in the repo, or next to the tool), one change per line, # = comment:
   12 seed 5123                     regenerate level 12 from another seed
   30 rune off                      no floor rune on level 30
   45 note LINE ONE | LINE TWO      a note, placed in a random room
@@ -486,7 +486,8 @@ def main():
         print(__doc__)
         return
     here = os.path.dirname(os.path.abspath(__file__))
-    opts = read_options(os.path.join(here, "levels.txt"))
+    src = os.path.join(here, "..", "src", "levels.txt")   # repo layout
+    opts = read_options(src if os.path.exists(src) else os.path.join(here, "levels.txt"))
     if sys.argv[1] == "index":
         d = open(sys.argv[2], "rb").read()
         chain = d64_chain(d, "levels")

@@ -1840,6 +1840,19 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Repo: the old single-game files petsciipit.bas and petsciipit.prg are
   removed (replaced by petsciipitendless in V24).
 
+## Cursed Weapons — IMPLEMENTED (V27; see V27 below)
+- From level 3, 1 weapon in 8 is cursed, hidden until equipped (Glyph Lore
+  shows it first). Negative special, -1 to -3 attack, 1 HP drain every 10
+  moves. Half bind for 150 moves (rests count: 10, deep sleep 10 per 10%
+  healed); after that it stays cursed but can be swapped.
+
+## More Weapon Ideas — LATER
+- Lift a curse for coins (coins have no use yet; fits the roaming vendor,
+  or a shrine).
+- Weapons that work better or worse against certain monsters (a mace
+  against golems, a dagger against leeches...).
+- Weapons that wear out with use and need replacing or repairing.
+
 ## Battle Arena — PLANNED (idea, not designed yet)
 - A third way to play: no exploring, just fights. You face harder and
   harder monsters one after another on the battle screen.
@@ -2158,5 +2171,55 @@ Docs, TESTING.txt, d64 and zips with each step.
   as the right glyph; texts fit the message line), VICE (pickup, the
   EQP/NEW comparison, the character sheet; the demo picks up and compares
   rolled weapons with forced drops).
+- Cursed weapons (STORY and ENDLESS; not the demo): a dropped weapon is
+  cursed 1 time in 8 from level 3 (2170 adds 20000 to its MA% value; the
+  map drawing still only reads the last digit). Pickup (3945) reads the
+  flag into FK; Glyph Lore (XP>=300) shows FOUND CURSED x and NEW: ... -
+  CURSED (3950-3960). Equipping (3990/4120 -> 7070-7090) sets KC (cursed),
+  KP (attack penalty 1-3) and, half the time, KT=150 (bound moves).
+  260 -> 7100-7110: attack minus KP (never below 1) and every special
+  negated: dodge below 0 gives monsters a chance to hit double (1240,
+  2110), counter and sneak work as negative numbers, and a negative crit
+  backfires (6636: your hit does nothing and you take its damage, never
+  your last HP; shows MISS). 3940: a bound weapon refuses a swap (YOUR
+  CURSED x WON'T LET GO). Moves count at 2433 (1) and after a rest at
+  2705 (SPACE 10, deep sleep 10 per 10% of max HP healed): 7030-7060
+  drain 1 HP per 10 moves (not your last) and count the binding down,
+  then YOUR CURSED x LOOSENS ITS GRIP. Character sheet 3705. Death,
+  K/N/S and a new game lift the curse (2930, 2950, 5520); a rune can't
+  hold one.
+- Tested: Python (cursed weapons encode, decode and draw right, 1 in 8
+  from level 3; attack penalty; drain never takes the last HP; binding
+  ends at 150 moves), VICE (equip message, character sheet, a bound
+  weapon refusing a swap, Glyph Lore warnings, two rests loosening a
+  binding with the drain applied, a backfiring cursed sword).
+  vicetest.py now uses ZY for its key pointer (KP clashed with the curse
+  penalty, QK with the colour table).
+- Weapon polish (STORY and ENDLESS): 280-286 split up; 282 names a weapon
+  RUSTY when its special roll is in the bottom quarter of its range and
+  FINE in the top quarter (the attack roll is folded into the depth
+  bonus, so the special roll decides); 284 shows NO COUNTER CUT for a
+  mace with 0 (also 7110 for a cursed one). CF marks a crit (6635) or a
+  backfire (6636, which now counts toward TOOK DMG); 1555-1556 put CRIT!
+  in front of the hit/kill message or replace it with CURSED x
+  BACKFIRES!; CF is cleared each turn (1880) and each attack (6590);
+  1595 cuts the message line at 40. 4060: EQP shows CURSED for a cursed
+  weapon. The sneak text is now +n SNEAK DMG (was DMG ON SNEAK HIT) so
+  RUSTY/FINE names fit 40 columns; the character sheet puts the effect on
+  its own line (3700). Checked in Python that every weapon message fits
+  40 columns; in VICE: the cursed EQP line, a FINE flail, the sheet at
+  Shadow Hand with a cursed rusty mace, a CRIT! kill, a backfire.
 - V27 is complete. Next: test V27 on hardware (TESTING.txt, New in V27).
+- Repo reorganised like c64circuits: the disk, README, LICENSE and devlog
+  at the top; src/ (listings, levels.txt, the character set, src/asm with
+  the machine code sources),
+  prg/ (built programs), sid/, assets/ (screenshots), tools/ (crunch,
+  pitlevels, basiccheck, vicetest and the build scripts, now run from the
+  repo folder: tools/buildprgs.sh, tools/build_d64.sh 27) and docs/
+  (roadmaps, demo devlog, TESTING). File names are unchanged. Rebuilding
+  from the repo gives byte-identical programs and disk. The music player
+  and tune sources are not in the repo; prg/musicpal.prg, musicntsc.prg
+  and the .sid files are.
+  Still only in the loader as DATA (no source file): the instructions
+  screen routine (1280) and the font copy (Eyvind Ebsen).
 

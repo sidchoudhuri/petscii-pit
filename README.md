@@ -2,85 +2,99 @@
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
 A C64 BASIC roguelike - Version 27
 
-Two ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending) and **ENDLESS** (a new random pit every level). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
+Two ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending) and **ENDLESS** (a new random pit every level). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
 
 ## Disk Image
 The game must be launched from disk (LOAD"*",8 and RUN) because the games, music and story levels are loaded separately
 
 [PETSCIIPIT.D64](petsciipit.d64) - Game disk image.
 
-&nbsp;&nbsp;&nbsp;|-- [PETSCIIPIT](petsciipitloader.prg) - Loader: title screen, menu, instructions, SID setup, runes
+&nbsp;&nbsp;&nbsp;|-- [PETSCIIPIT](prg/petsciipitloader.prg) - Loader: title screen, menu, instructions, SID setup, runes
 
-&nbsp;&nbsp;&nbsp;|-- [STORY](petsciipitstory.prg) - The STORY game
+&nbsp;&nbsp;&nbsp;|-- [STORY](prg/petsciipitstory.prg) - The STORY game
 
-&nbsp;&nbsp;&nbsp;|-- [ENDLESS](petsciipitendless.prg) - The ENDLESS game
+&nbsp;&nbsp;&nbsp;|-- [ENDLESS](prg/petsciipitendless.prg) - The ENDLESS game
 
-&nbsp;&nbsp;&nbsp;|-- [DEMO](petsciipitdemo.prg) - Self-playing demo
+&nbsp;&nbsp;&nbsp;|-- [DEMO](prg/petsciipitdemo.prg) - Self-playing demo
 
-&nbsp;&nbsp;&nbsp;|-- [SHOWCASE](glyphshowcase.prg) - Custom characters showcase
+&nbsp;&nbsp;&nbsp;|-- [SHOWCASE](prg/glyphshowcase.prg) - Custom characters showcase
 
-&nbsp;&nbsp;&nbsp;|-- [MUSICPAL](musicpal.prg) - PAL version of game music
+&nbsp;&nbsp;&nbsp;|-- [MUSICPAL](prg/musicpal.prg) - PAL version of game music
 
-&nbsp;&nbsp;&nbsp;|-- [MUSICNTSC](musicntsc.prg) - NTSC version of game music
+&nbsp;&nbsp;&nbsp;|-- [MUSICNTSC](prg/musicntsc.prg) - NTSC version of game music
 
-&nbsp;&nbsp;&nbsp;|-- [LEVELS](levels.prg) - The 100 STORY levels and the ending
+&nbsp;&nbsp;&nbsp;|-- [LEVELS](prg/levels.prg) - The 100 STORY levels and the ending
 
-&nbsp;&nbsp;&nbsp;|__ [LEVELIDX](levelidx.prg) - Where each STORY level sits on the disk
+&nbsp;&nbsp;&nbsp;|__ [LEVELIDX](prg/levelidx.prg) - Where each STORY level sits on the disk
 
 ## Source
 
-[PETSCIIPITLOADER.BAS](petsciipitloader.bas) - Loader source code
+[PETSCIIPITLOADER.BAS](src/petsciipitloader.bas) - Loader source code
 
-[PETSCIIPITSTORY.BAS](petsciipitstory.bas) - STORY game source code
+[PETSCIIPITSTORY.BAS](src/petsciipitstory.bas) - STORY game source code
 
-[PETSCIIPITENDLESS.BAS](petsciipitendless.bas) - ENDLESS game source code
+[PETSCIIPITENDLESS.BAS](src/petsciipitendless.bas) - ENDLESS game source code
 
-[PETSCIIPITDEMO.BAS](petsciipitdemo.bas) - Self-playing demo source code
+[PETSCIIPITDEMO.BAS](src/petsciipitdemo.bas) - Self-playing demo source code
 
-[GLYPHSHOWCASE.BAS](glyphshowcase.bas) - Custom characters showcase source code
+[GLYPHSHOWCASE.BAS](src/glyphshowcase.bas) - Custom characters showcase source code
 
-[LEVELS.TXT](levels.txt) - The STORY levels as text, built by [pitlevels.py](pitlevels.py)
+[LEVELS.TXT](src/levels.txt) - The STORY levels as text, built by [pitlevels.py](tools/pitlevels.py)
 
-[PETSCII-PIT.PF](petscii-pit.pf) - The custom character set
+[PETSCII-PIT.PF](src/petscii-pit.pf) - The custom character set
+
+[ASM](src/asm) - Machine code the loader installs: [screen wipes](src/asm/wipe.asm), [room reveal and level fill](src/asm/gfx.asm), [STORY level reading](src/asm/story.asm), [SID model check](src/asm/model.asm)
 
 ## Tools
 
-[crunch.py](crunch.py) - Strips spaces and REM text when building the .prg files, and checks nothing changed meaning
+[tools/crunch.py](tools/crunch.py) - Strips spaces and REM text when building the .prg files, and checks nothing changed meaning
 
 [tools/basiccheck.py](tools/basiccheck.py) - Checks the BASIC listings for missing jump targets and variable name clashes
 
 [tools/vicetest.py](tools/vicetest.py) - Scripted test runs of a test copy of the disk in VICE
 
+[tools/buildprgs.sh](tools/buildprgs.sh) - Builds the programs in prg/ from the listings in src/
+
+[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 27`
+
+[tools/levelspage.py](tools/levelspage.py) - Makes the story levels page ([m0n.de/story-levels](https://m0n.de/story-levels))
+
+[tools/makepf.py](tools/makepf.py), [tools/titlestrips.py](tools/titlestrips.py) - Make the character set file and the title-screen strips from the loader's glyph data
+
 ## Music
 
-[PETSCII-PIT-PAL.SID](petscii-pit-pal.sid) - PAL version of single .SID file with all three songs
+[PETSCII-PIT-PAL.SID](sid/petscii-pit-pal.sid) - PAL version of single .SID file with all three songs
 
-&nbsp;&nbsp;&nbsp;|-- [DUNGEONEERING-PAL.SID](dungeoneering-pal.sid) - PAL version of exploration .SID music
+&nbsp;&nbsp;&nbsp;|-- [DUNGEONEERING-PAL.SID](sid/dungeoneering-pal.sid) - PAL version of exploration .SID music
 
-&nbsp;&nbsp;&nbsp;|-- [ASSAILING-PAL.SID](assailing-pal.sid) - PAL version of fighting .SID music
+&nbsp;&nbsp;&nbsp;|-- [ASSAILING-PAL.SID](sid/assailing-pal.sid) - PAL version of fighting .SID music
 
-&nbsp;&nbsp;&nbsp;|__ [LAMENTING-PAL.SID](lamenting-pal.sid) - PAL version of gloomy .SID music
+&nbsp;&nbsp;&nbsp;|__ [LAMENTING-PAL.SID](sid/lamenting-pal.sid) - PAL version of gloomy .SID music
 
-[PETSCII-PIT-NTSC.SID](petscii-pit-ntsc.sid) - NTSC version of single .SID file with all three songs
+[PETSCII-PIT-NTSC.SID](sid/petscii-pit-ntsc.sid) - NTSC version of single .SID file with all three songs
 
-&nbsp;&nbsp;&nbsp;|-- [DUNGEONEERING-NTSC.SID](dungeoneering-ntsc.sid) - NTSC version of exploration .SID music
+&nbsp;&nbsp;&nbsp;|-- [DUNGEONEERING-NTSC.SID](sid/dungeoneering-ntsc.sid) - NTSC version of exploration .SID music
 
-&nbsp;&nbsp;&nbsp;|-- [ASSAILING-NTSC.SID](assailing-ntsc.sid) - NTSC version of fighting .SID music
+&nbsp;&nbsp;&nbsp;|-- [ASSAILING-NTSC.SID](sid/assailing-ntsc.sid) - NTSC version of fighting .SID music
 
-&nbsp;&nbsp;&nbsp;|__ [LAMENTING-NTSC.SID](lamenting-ntsc.sid) - NTSC version of gloomy .SID music
+&nbsp;&nbsp;&nbsp;|__ [LAMENTING-NTSC.SID](sid/lamenting-ntsc.sid) - NTSC version of gloomy .SID music
 
 [GRAND-MEDLEY](grand-medley) - The music medley disk ([pitmedley.d64](grand-medley/pitmedley.d64)) and the files that build it
+
+## Screenshots
+
+[ASSETS](assets) - V27 screenshots: the title, STORY and ENDLESS, battles and ambushes, skills, weapons, game over, the demo and the [disk directory](assets/18-disk-directory.png)
 
 ## Development Logs
 
 [Game development log](devlog.md)
 
-[Demo development log](devlogdemo.md)
+[Demo development log](docs/devlogdemo.md)
 
-[Testing checklist](TESTING.txt)
+[Testing checklist](docs/TESTING.txt)
 
 ## Roadmaps
 
-[Game roadmap](roadmap.md)
+[Game roadmap](docs/roadmap.md)
 
-[Demo roadmap](roadmapdemo.md)
+[Demo roadmap](docs/roadmapdemo.md)

@@ -16,6 +16,10 @@ usage (from Python):
                 keys="R" + "D"*20, setup='XP=150:TT=2:TN=2:PH=2', patches={...})
   run(d, [40e6, 60e6], "t1")
 
+loader_keys: the title-menu keys (default: the game's key, then N for "no
+rune"); when they run out the loader waits forever, so a title or menu
+screen stays up for its screenshot.
+
 Keys: one character per key press (a key only, never an empty press);
 "!" stands for RETURN.
 Patches are (old, new) pairs of whole listing text, applied to the test copy
@@ -50,20 +54,24 @@ def build_prg(bas_text, out):
                    check=True, stdout=subprocess.DEVNULL)
 
 
-def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=()):
+# The test lines use the variable ZY (key pointer) and K$ (key script);
+# a game that uses ZY or K$ itself needs these renamed.
+def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=(), loader_keys=None):
     os.makedirs(OUT, exist_ok=True)
     d = os.path.join(OUT, name)
     os.makedirs(d, exist_ok=True)
     # loader: menu key and the rune question come from a script
     pick = "E" if game == "ENDLESS" else "P"
-    ld = open(os.path.join(folder, "petsciipitloader.bas")).read()
+    sd = os.path.join(folder, "src") if os.path.isdir(os.path.join(folder, "src")) else folder
+    ld = open(os.path.join(sd, "petsciipitloader.bas")).read()
     ld = patch(ld, [
         ('500 GET A$:IF A$="" THEN 470', '500 GOSUB 9000:IF A$="" THEN 470'),
         ('580 FOR C9=-1 TO 0:GET A$:C9=(A$=""):NEXT C9:RETURN', '580 GOSUB 9000:RETURN'),
-    ]) + '9000 KP=KP+1:A$=MID$("%sN",KP,1):RETURN\n' % pick
+    ]) + ('9000 ZY=ZY+1:A$=MID$("%s",ZY,1):IF A$="" THEN ZY=ZY-1:GOTO 9000\n'
+           '9010 RETURN\n') % (pick + "N" if loader_keys is None else loader_keys)
     build_prg(ld, os.path.join(d, "loader.prg"))
     src = "petsciipitendless.bas" if game == "ENDLESS" else "petsciipitstory.bas"
-    g = open(os.path.join(folder, src)).read()
+    g = open(os.path.join(sd, src)).read()
     g = patch(g, [
         ("1760 T3=TI+20:FOR C9=-1 TO 0:GET A$:C9=(A$=\"\" AND TI<T3):NEXT C9:",
          "1760 T3=TI+20:GOSUB 9000:"),
@@ -73,10 +81,10 @@ def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=()):
          "4180 GOSUB 9020"),
         ("5540 GOSUB 4340", "5535 %s\n5540 GOSUB 4340" % (setup or "REM")),
     ] + list(patches))
-    g += ('9000 KP=KP+1:A$=MID$(K$,KP,1):IF A$="!" THEN A$=CHR$(13)\n'
+    g += ('9000 ZY=ZY+1:A$=MID$(K$,ZY,1):IF A$="!" THEN A$=CHR$(13)\n'
           '9010 RETURN\n'
           '9020 GOSUB 9000:IF A$<>"" THEN RETURN\n'
-          '9030 IF KP<=LEN(K$) THEN 9020\n'
+          '9030 IF ZY<=LEN(K$) THEN 9020\n'
           '9040 GOTO 9040\n')
     g = g.replace("\n5535 ", "\n5535 K$=\"%s\":" % keys, 1)
     build_prg(g, os.path.join(d, "game.prg"))
