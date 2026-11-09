@@ -203,3 +203,23 @@ New in V28
 [ ] All text still reads right: character sheet, skills, game over, rune
     screen, status messages (they now come from the text bank)
 [ ] Q to the title and back into a game (round trip) still works
+
+New in V29
+[ ] Title: A - ENTER THE ARENA (menu one row higher, all keys still work)
+[ ] Arena starts in CHAR's shop: 100 coins buys a weapon or a shield, not
+    both; RETURN leaves with nothing too
+[ ] Fights: LVL 1, 2, 3 ... on the HUD; W A D S moves; groups; F flees
+    (YOU FLED! -n GP); C shows the sheet (ARENA LEVEL) and comes back
+[ ] After a win: FIGHT n WON! HEALED n HP; bare-handed win: BARE-HANDED!
+    DOUBLE REWARDS; cursed weapon win: CURSED AND VICTORIOUS! +50%
+[ ] Weapon drop: FOUND x - KEEP IT? Y/N with NEW: +n ATK line; a cursed
+    one (IT WON'T LET GO!) can't be sold or swapped for one fight, then
+    YOUR CURSED x LOOSENS ITS GRIP
+[ ] Every 3rd fight: VISIT CHAR'S SHOP? Y/N; prices grow; NOT WHILE IT'S
+    BOUND. while a curse binds; his rune under CHAR'S RUNE:
+[ ] R on the title + an arena rune: back in the shop with the same stats
+    (game runes still start STORY / ENDLESS)
+[ ] Death: THE ARENA HAS CLAIMED YOU, reached level, fights won, XP, coins,
+    last rune; a key goes back to the title
+[ ] Q in a fight: QUIT GAME? Y goes to the title
+[ ] STORY and ENDLESS sheet: shield but no weapon shows on its own line

@@ -628,3 +628,27 @@
 - Bug fix: quitting to the title and then starting a game could crash to
   a garbled blue screen (also in V27). Coming back from a game now sets up
   the loader the same way as a fresh start.
+
+## Version 29: The Battle Arena
+- New on the title: A - ENTER THE ARENA. No exploring, just fights, one
+  after another on the battle screen, against harder and harder monsters.
+- You start as a level 5 thief would: 150 XP (BASIC BURGLAR), 25 health,
+  100 coins, in CHAR's shop. Buying is up to you, and 100 coins buys a
+  weapon or a shield, not both.
+- The fights are LEVEL 1, 2, 3 ... on screen; every 3 fights the monsters
+  are one pit level deeper. Groups count as one fight and pay for every
+  monster. Each win heals you a little, as going down stairs does.
+- Win with nothing equipped: double coins and XP (BARE-HANDED!). Win with
+  a cursed weapon in hand: +50% (CURSED AND VICTORIOUS!).
+- Monsters sometimes drop a weapon (1 in 4), always weaker than the same
+  weapon in CHAR's shop. About 1 in 8 is cursed, but arena curses are
+  milder: -1 attack, the special turned against you at half strength, no
+  health drain, and a binding curse only holds for the next fight.
+- Every 3 fights: VISIT CHAR'S SHOP? His stock grows with you: two
+  weapons, a shield, 1-3 draughts, and he buys your weapon. Each visit he
+  shows you a rune; R on the title brings you back to that shop with
+  everything you had.
+- F flees a fight: no reward, and you drop a tenth of your coins.
+- When the arena claims you, you see how far you got and your last rune.
+- Fix: the character sheet put the shield on the weapon's line when you
+  had a shield but no weapon (STORY and ENDLESS too).
