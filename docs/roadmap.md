@@ -2210,4 +2210,16 @@ Docs, TESTING.txt, d64 and zips with each step.
   40 columns; in VICE: the cursed EQP line, a FINE flail, the sheet at
   Shadow Hand with a cursed rusty mace, a CRIT! kill, a backfire.
 - V27 is complete. Next: test V27 on hardware (TESTING.txt, New in V27).
+- Repo reorganised like c64circuits: the disk, README, LICENSE and devlog
+  at the top; src/ (listings, levels.txt, the character set, src/asm with
+  the machine code sources, src/music with the music player and tune),
+  prg/ (built programs), sid/, assets/ (screenshots), tools/ (crunch,
+  pitlevels, basiccheck, vicetest and the build scripts, now run from the
+  repo folder: tools/buildprgs.sh, tools/build_d64.sh 27,
+  tools/build_music.sh) and docs/ (roadmaps, demo devlog, TESTING).
+  File names are unchanged. Rebuilding from the repo gives byte-identical
+  programs, music and disk. The .sid files were made with an earlier
+  player; tools/build_music.sh sids makes them with the current one.
+  Still only in the loader as DATA (no source file): the instructions
+  screen routine (1280) and the font copy (Eyvind Ebsen).
 

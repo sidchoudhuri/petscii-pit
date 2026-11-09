@@ -62,7 +62,8 @@ def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=(), loade
     os.makedirs(d, exist_ok=True)
     # loader: menu key and the rune question come from a script
     pick = "E" if game == "ENDLESS" else "P"
-    ld = open(os.path.join(folder, "petsciipitloader.bas")).read()
+    sd = os.path.join(folder, "src") if os.path.isdir(os.path.join(folder, "src")) else folder
+    ld = open(os.path.join(sd, "petsciipitloader.bas")).read()
     ld = patch(ld, [
         ('500 GET A$:IF A$="" THEN 470', '500 GOSUB 9000:IF A$="" THEN 470'),
         ('580 FOR C9=-1 TO 0:GET A$:C9=(A$=""):NEXT C9:RETURN', '580 GOSUB 9000:RETURN'),
@@ -70,7 +71,7 @@ def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=(), loade
            '9010 RETURN\n') % (pick + "N" if loader_keys is None else loader_keys)
     build_prg(ld, os.path.join(d, "loader.prg"))
     src = "petsciipitendless.bas" if game == "ENDLESS" else "petsciipitstory.bas"
-    g = open(os.path.join(folder, src)).read()
+    g = open(os.path.join(sd, src)).read()
     g = patch(g, [
         ("1760 T3=TI+20:FOR C9=-1 TO 0:GET A$:C9=(A$=\"\" AND TI<T3):NEXT C9:",
          "1760 T3=TI+20:GOSUB 9000:"),
