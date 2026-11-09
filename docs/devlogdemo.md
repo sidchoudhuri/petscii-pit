@@ -323,3 +323,12 @@ details differ.
   5 to 7. The AI's room tables grew to fit the eighth room.
 - Weapons roll their attack and special like the game's (the sword gets
   a crit chance); the AI still keeps whichever has the higher attack.
+
+## V28: Charpentier the Mage
+- Every 5th level has CHAR's shop, as in the game. The AI treats it like
+  any unvisited room; when it walks in, CHAR's screen shows for about
+  3 seconds with him pacing behind the counter.
+- If the AI is below half health and has the coins, it buys a draught
+  (DRINK UP, DELVER.) and one potion comes off his shelf.
+- The shop's corridor never joins the stairs room in the demo, so the AI
+  can't step on the stairs on its way there.
