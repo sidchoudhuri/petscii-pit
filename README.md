@@ -45,8 +45,6 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 [ASM](src/asm) - Machine code the loader installs: [screen wipes](src/asm/wipe.asm), [room reveal and level fill](src/asm/gfx.asm), [STORY level reading](src/asm/story.asm), [SID model check](src/asm/model.asm)
 
-[MUSIC](src/music) - The music: [player](src/music/player.asm), [tune](src/music/compose.py), [build](src/music/build.py), [.sid files](src/music/makesids.py)
-
 ## Tools
 
 [tools/crunch.py](tools/crunch.py) - Strips spaces and REM text when building the .prg files, and checks nothing changed meaning
@@ -58,8 +56,6 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 [tools/buildprgs.sh](tools/buildprgs.sh) - Builds the programs in prg/ from the listings in src/
 
 [tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 27`
-
-[tools/build_music.sh](tools/build_music.sh) - Builds the music programs (needs ACME), and the .sid files with `sids`
 
 [tools/levelspage.py](tools/levelspage.py) - Makes the story levels page ([m0n.de/story-levels](https://m0n.de/story-levels))
 

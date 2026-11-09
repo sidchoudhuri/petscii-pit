@@ -2212,14 +2212,14 @@ Docs, TESTING.txt, d64 and zips with each step.
 - V27 is complete. Next: test V27 on hardware (TESTING.txt, New in V27).
 - Repo reorganised like c64circuits: the disk, README, LICENSE and devlog
   at the top; src/ (listings, levels.txt, the character set, src/asm with
-  the machine code sources, src/music with the music player and tune),
+  the machine code sources),
   prg/ (built programs), sid/, assets/ (screenshots), tools/ (crunch,
   pitlevels, basiccheck, vicetest and the build scripts, now run from the
-  repo folder: tools/buildprgs.sh, tools/build_d64.sh 27,
-  tools/build_music.sh) and docs/ (roadmaps, demo devlog, TESTING).
-  File names are unchanged. Rebuilding from the repo gives byte-identical
-  programs, music and disk. The .sid files were made with an earlier
-  player; tools/build_music.sh sids makes them with the current one.
+  repo folder: tools/buildprgs.sh, tools/build_d64.sh 27) and docs/
+  (roadmaps, demo devlog, TESTING). File names are unchanged. Rebuilding
+  from the repo gives byte-identical programs and disk. The music player
+  and tune sources are not in the repo; prg/musicpal.prg, musicntsc.prg
+  and the .sid files are.
   Still only in the loader as DATA (no source file): the instructions
   screen routine (1280) and the font copy (Eyvind Ebsen).
 
