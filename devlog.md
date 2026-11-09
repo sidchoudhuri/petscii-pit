@@ -625,3 +625,6 @@
   weapon tables and all of the game's fixed text (character sheet, status
   messages, CHAR's lines) moved out of the games into memory under the
   BASIC ROM, freeing room for the shop.
+- Bug fix: quitting to the title and then starting a game could crash to
+  a garbled blue screen (also in V27). Coming back from a game now sets up
+  the loader the same way as a fresh start.
