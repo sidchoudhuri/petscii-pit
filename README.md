@@ -89,7 +89,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 ## Screenshots
 
-[ASSETS](assets) - V27 screenshots: the title, STORY and ENDLESS, battles and ambushes, skills, weapons, game over, the demo and the [disk directory](assets/18-disk-directory.png)
+[ASSETS](assets) - Screenshots: the V29 title and instructions, STORY and ENDLESS, battles and ambushes, skills, weapons, game over, the demo, the [disk directory](assets/18-disk-directory.png), CHAR's shop ([room](assets/19-char-shop-room.png), [screen](assets/20-char-shop.png)) and the [Battle Arena](assets/24-arena-start-shop.png)
 
 ## Development Logs
 
