@@ -222,4 +222,7 @@ New in V29
 [ ] Death: THE ARENA HAS CLAIMED YOU, reached level, fights won, XP, coins,
     last rune; a key goes back to the title
 [ ] Q in a fight: QUIT GAME? Y goes to the title
+[ ] Arena instructions: shown on a fresh start (not after a rune); I in a
+    fight or in the shop shows them and a key comes back; the title's I
+    screen ends with the ARENA line
 [ ] STORY and ENDLESS sheet: shield but no weapon shows on its own line

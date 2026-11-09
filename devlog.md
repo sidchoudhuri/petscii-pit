@@ -650,5 +650,8 @@
   everything you had.
 - F flees a fight: no reward, and you drop a tenth of your coins.
 - When the arena claims you, you see how far you got and your last rune.
+- The arena has its own instructions screen: it shows when you first walk
+  in, and I brings it back in a fight or in CHAR's shop. The game's I
+  screen points you there.
 - Fix: the character sheet put the shield on the weapon's line when you
   had a shield but no weapon (STORY and ENDLESS too).
