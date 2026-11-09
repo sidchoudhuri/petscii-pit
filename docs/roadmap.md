@@ -322,21 +322,21 @@ each piece.
   this doesn't interfere with the existing Grand Hallway text-detection
   logic, which only ever looks at corridor floor cells and never at
   void or wall cells.
-## Win Condition
+## Win Condition — IDEA (not done; STORY has its own ending at level 100)
 - Reaching Shadow Hand is required to win the game.
 - A specific dungeon level (not yet decided which) requires the player to
   modify the game itself in order to exit — a meta win condition.
 - Guaranteed hints appear at certain dungeon levels (not yet decided which),
   but their placement within the level is random each time.
 
-## Darkness Mechanic (Partial Rollout)
+## Darkness Mechanic (Partial Rollout) — SHELVED (not done)
 - The previously-discussed dynamic vision/darkness system (shelved for now),
   applied to certain parts of the dungeon rather than entire levels,
   starting at dungeon level 3.
 - When built, being in a dark area should also switch the music to
   "Lamenting" (add the condition to the mood check, `QT=` at line 6470).
 
-## Teleportation Circles
+## Teleportation Circles — PLANNED (idea, not designed yet)
 - Deeper in the dungeon: rooms containing only "O" characters and nothing
   else.
 - Stepping into one teleports the player to a matching circle on the other
@@ -427,6 +427,14 @@ each piece.
   costs about 5 bytes).
 - Both make the listing harder to read, so only if memory runs out again.
 
+## Bug Fix: Starting a Game After Quitting to the Title — FIXED (V28)
+- Coming back from a game restarted the loader at line 350 after CLR, so
+  its DATA reads began at the first DATA line again and the machine code
+  (room reveal, level fill, copy routine, text routines) got the wrong
+  bytes; line 370 also ran the SID check where the level fill now sits.
+  The next game crashed to a garbled blue screen (also in V27). Line 30
+  now goes to line 110, so everything is installed in order again.
+
 ## "R" - Rest Until Healed — IMPLEMENTED (V27, DEEP SLEEP; see V27 below)
 - A new key, separate from the existing SPACE (rest 10 turns, small
   fixed heal). R rests for as long as it takes to fully heal instead of
@@ -440,7 +448,7 @@ each piece.
   rested, similar to the existing 4-second SPACE pause)? Does the
   ambush check happen once, or does risk escalate the longer you rest?
 
-## Monsters Chasing Through Corridors
+## Monsters Chasing Through Corridors — IDEA (not done)
 - Currently, monsters are confined to their home room — one is
   confirmed reachable today (a monster taking a single step into a
   corridor while chasing, then going permanently inert there because
@@ -515,7 +523,7 @@ each piece.
   and on the character sheet, and kept when you equip it (WR).
 - The demo has all of this too.
 
-## Combat Difficulty / Balance
+## Combat Difficulty / Balance — PARTLY DONE (healing rebalanced, monster scaling and weapons reworked; the "too easy once armed" balance check is still open)
 - Update: monster scaling and weapon strength are now addressed — see
   "Monster Scaling, Groups, Character Levels, Random Weapons" above.
 - Once armed and at Basic Burglar, combat becomes too easy — you rarely
@@ -547,7 +555,7 @@ each piece.
 - Other kinds of potions besides healing (CHAR's shelf only has healing
   draughts for now). Types and effects to be decided later.
 
-## Named Treasures with Effects
+## Named Treasures with Effects — PLANNED (not designed yet)
 - Treasures are found in treasure chests and add buffs to the player.
 - CHAR can identify a treasure (see the vendor above).
 - Treasure types and their buffs: to be decided later.
@@ -562,7 +570,7 @@ each piece.
   themselves immediately, or is part of the risk not knowing whether
   a treasure is good or bad until you pick it up?
 
-## Unidentified Potions
+## Unidentified Potions — IDEA (not done)
 - Companion idea to the named-treasures item above, applied to potions
   instead: alongside the existing plain healing potions, add potions
   marked with "??" whose effect isn't known until you drink one — a
@@ -590,7 +598,7 @@ each piece.
   the specific rolled values for the weapon you're holding, not just
   a generic per-type description like they do now.
 
-## Custom Character Set for a Small Set of Glyphs
+## Custom Character Set for a Small Set of Glyphs — IMPLEMENTED (charset at $C800)
 - Goal: redefine only a handful of characters, not the whole 256-glyph
   set — specifically the player (`@`, into a little-man shape per an
   existing mockup), walls (`#`), floor (`.`), treasure (`$`), and the
@@ -683,7 +691,7 @@ each piece.
   already-revealed tile, not just walls: potions, treasure, stairs,
   weapons, visible monsters, and the player all switch to their real
   colors on the spot, in the same single screen pass.
-## Compilation Using MOSpeed — IN PROGRESS
+## Compilation Using MOSpeed — ON HOLD (compiled output too big to fit; see the last notes)
 - Goal: compile both `petsciipit.prg` (the main game) and `petsciipitdemo.prg`
   (the demo) from BASIC to native 6502 machine code using MOSpeed's web
   edition, for a speed boost without a full assembly rewrite. Both are
@@ -1064,7 +1072,7 @@ each piece.
 - Not started: waiting on a full plan with every changed line before any
   code is written.
 
-## Optimization Pass — IN PROGRESS
+## Optimization Pass — PARTLY DONE
 - Glyph setup as DATA/READ — IMPLEMENTED (game, demo, glyph showcase):
   the 11 custom glyphs are one DATA line each, written by a short READ
   loop instead of 88 POKEs. Same bytes; each program 533 bytes smaller.
@@ -1647,13 +1655,13 @@ each piece.
   6560-6580 after each fight round (2520), key help and fight start
   6660 (from 5940). JG=1 at start-up (5520).
 
-## Priority (decided)
+## Priority (decided) — DONE (V23-V24)
 1. Battle wipes (V23): tested, working.
 2. Battle Moves and Monster Tells (V23).
 3. Two Games: STORY and ENDLESS: steps 1-3 done (V24, waiting for
    testing), step 4 (notes and story features) when we decide.
 
-## Two Games: STORY and ENDLESS — PLANNED (after V23, priority 3)
+## Two Games: STORY and ENDLESS — IMPLEMENTED (V24)
 - Two games loaded from the loader instead of one:
   - STORY: 100 pre-made levels read from disk, all story features (runes
     found on the floor, notes in levels, more later). Ends at level 100
@@ -1747,7 +1755,7 @@ each piece.
 4. Notes and other story features, once we decide how to use the levels.
 Docs, TESTING.txt, d64 and zips with each step.
 
-## STORY Game, Steps 1-2 — IMPLEMENTED (V24, waiting for testing)
+## STORY Game, Steps 1-2 — IMPLEMENTED (V24)
 - Level 0 is the tutorial (STORY starts there; dying and K/N restart at
   level 1, so the tutorial is never repeated). Level 0 shows TUTORIAL in
   place of LVL on the HUD (310), on the character sheet (3640), the game
@@ -1838,7 +1846,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   pitlevels.py and dirlayout24.bin (the V23 build is build_d64_v23.sh).
   122 blocks free.
 
-## Serpent — IMPLEMENTED (V25, waiting for testing)
+## Serpent — IMPLEMENTED (V25)
 - New monster by Sid: SERPENT, glyph 84 / 212 (loader DATA line 190,
   110 now reads 24 glyphs; petscii-pit.pf). Green (5) after Keen Eyes.
   HP bonus 3, attack bonus 2, XP bonus 6, coin bonus 3, hit sound -5.
@@ -1869,8 +1877,8 @@ Docs, TESTING.txt, d64 and zips with each step.
   and 5910 use 4180; quitting to the title (2910, 3910, and the ending)
   goes through 6830. The game over S line is one PRINT with its colours
   picked by SD (2860; 2870 removed).
-- Decided not to do: shorter or moved messages (all the text is about
-  1 KB) and wipe presets in machine code (about 200 bytes after crunching,
+- Decided not to do (then): shorter or moved messages (all the text is about
+  1 KB; moved after all in V28, see Game Text in the Text Bank) and wipe presets in machine code (about 200 bytes after crunching,
   and no clean place left for the code).
 
 ## V26: Keyboard Stops, Message Colours, Rune Loading Fix — IMPLEMENTED
@@ -1908,7 +1916,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   moves. Half bind for 150 moves (rests count: 10, deep sleep 10 per 10%
   healed); after that it stays cursed but can be swapped.
 
-## More Weapon Ideas — LATER
+## More Weapon Ideas — LATER (curse lifting done in V28: CHAR does it)
 - Lift a curse for coins (coins have no use yet; fits the roaming vendor,
   or a shrine).
 - Weapons that work better or worse against certain monsters (a mace
@@ -2040,7 +2048,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   both are the same register. Game volume routines 5750-5760; loader 370
   and 1350 set the title volumes the same way.
 
-## SID Model Check (6581 / 8580) — TEST BUILD (V20)
+## SID Model Check (6581 / 8580) — IMPLEMENTED (V20; the SID setup screen shows 6581 or 8580)
 - The loader takes three readings of voice 3 on the chip at $D400 and the
   one at $D420 before it starts the title music (370), and shows them raw
   on row 21 (1950-1960): "#D400 A/B/C   #D420 A/B/C" (the $D420 group only
@@ -2158,7 +2166,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   these volumes, and the game's M, E and V write their changes back
   (5750-5770), so the loader shows them on return.
 
-## V27: Ambushes, Resting Dots, Deep Sleep, Denser Dungeons, Backtrack, Rolled Weapons — IMPLEMENTED (waiting for testing; V27 is complete)
+## V27: Ambushes, Resting Dots, Deep Sleep, Denser Dungeons, Backtrack, Rolled Weapons — IMPLEMENTED (V27, released)
 - An ambush (3490-3600, from the rest at 2630) can happen in a room or a
   corridor. The ambusher becomes the target (TG=BM=MN), the side and wipe
   direction are set from the player toward it, the fight-music check runs
