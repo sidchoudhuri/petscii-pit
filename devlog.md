@@ -621,6 +621,13 @@
   BACKTRACK (T) can take you back to it.
 - The demo meets CHAR too: the AI visits his shop like any other room,
   and buys a draught if it's below half health and can pay.
+- CHAR's shop has its own music, BARTERING: a short 3/4 loop (under 5
+  seconds) of plucked, harpsichord-like broken chords over a walking
+  bass, with a little tune on top. It plays on his shop screen and the
+  game's music picks up where it left off when you leave. Its notes live
+  under the BASIC ROM with the text bank, so the music player stays the
+  same size.
+- New looks for CHAR (now with feet) and the player.
 - Under the hood: room numbers moved into the fog map, the monster and
   weapon tables and all of the game's fixed text (character sheet, status
   messages, CHAR's lines) moved out of the games into memory under the
@@ -649,6 +656,10 @@
   shows you a rune; R on the title brings you back to that shop with
   everything you had.
 - F flees a fight: no reward, and you drop a tenth of your coins.
+- Music in the arena: BARTERING in CHAR's shop, silence between fights,
+  ASSAILING from the first blow of each fight, and LAMENTING when your
+  health drops below a quarter. The instructions screen and the
+  character sheet are silent.
 - When the arena claims you, you see how far you got and your last rune.
 - The arena has its own instructions screen: it shows when you first walk
   in, and I brings it back in a fight or in CHAR's shop. The game's I

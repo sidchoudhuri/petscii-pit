@@ -5,7 +5,9 @@ The bank lives in the RAM under the BASIC ROM at $B200 (2 KB, to $B9FF).
 Its source is src/texts.txt: one message per line, "NNN text", with {CODES}
 as in the listings and "^" for RETURN. The build attaches the bank to the end
 of the loader program (page aligned, 8 pages); the loader copies it to $B200
-at start (line 385). The games reach it through src/asm/text.asm:
+at start (line 386). Bartering's patterns (prg/musicshop.bin: a PAL page and
+an NTSC page) follow the bank and land at $BA00/$BB00; the attached block is
+12 pages, copied 3 x 4. The games reach the bank through src/asm/text.asm:
 
   PRINT "TEXT"            ->  SYS 1024,N          (message N ends with RETURN)
   PRINT "TEXT";X          ->  SYS 1024,N:PRINT X
@@ -17,14 +19,15 @@ is run again.
 
 usage: textbank.py convert <texts.txt> <game.bas> [<game.bas> ...]
          rewrites the games in place, adds new messages to texts.txt
-       textbank.py attach <texts.txt> <loader.prg>
-         appends the bank to the built loader program
+       textbank.py attach <texts.txt> <loader.prg> [<musicshop.bin>]
+         appends the bank (and Bartering's patterns) to the built loader program
 """
 import re, sys
 
 PRINT_MIN = 6      # shortest PRINT text (in bytes) worth moving
 MS_MIN = 9         # shortest status message worth moving
-PAGES = 8          # bank size in pages ($B200-$B9FF); the loader copies 2 x 4 (line 386)
+PAGES = 8          # bank size in pages ($B200-$B9FF)
+BLOCK = 12         # attached pages ($B200-$BDFF); the loader copies 3 x 4 (line 386)
 KW = ["PRINT", "GOSUB", "SYS", "THEN", "LEFT$", "MID$", "STR$", "CHR$", "PEEK"]
 
 
@@ -221,11 +224,15 @@ def petscii(msgs):
     return res
 
 
-def attach(texts, prg):
+def attach(texts, prg, shop=None):
     msgs = read_texts(texts)
     blob = b"".join(bytes([len(m)]) + m for m in petscii(msgs))
     assert len(blob) <= PAGES * 256, "text bank too big: %d bytes" % len(blob)
     blob += bytes(PAGES * 256 - len(blob))
+    if shop:
+        blob += open(shop, "rb").read()
+    assert len(blob) <= BLOCK * 256
+    blob += bytes(BLOCK * 256 - len(blob))
     d = bytearray(open(prg, "rb").read())
     load = d[0] | d[1] << 8
     end = load + len(d) - 2
@@ -264,4 +271,4 @@ if __name__ == "__main__":
     if sys.argv[1] == "convert":
         convert(sys.argv[2], sys.argv[3:])
     else:
-        attach(sys.argv[2], sys.argv[3])
+        attach(*sys.argv[2:5])
