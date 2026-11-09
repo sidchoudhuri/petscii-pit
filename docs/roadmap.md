@@ -394,8 +394,17 @@ each piece.
 - He sells weapons and shields, and buys old weapons. Shields must not make
   the thief overpowered.
 - He can identify treasures (see Named Treasures below).
-- Still to settle: counter glyph, how to talk again once in the room,
-  prices, shield strength, STORY levels 5/10/.../100, the demo.
+- Counter glyphs: 85 horizontal, 213 vertical (drawn by Sid):
+  0,0,238,255,255,119,0,0 / 28,60,60,56,28,60,60,56.
+- The room has 1 door; CHAR, his chests and potions are on the far side of
+  a counter that splits the room. Standard size to settle (proposed 9x7
+  with walls).
+- The shelf: always 2 chests, all on one side (they stand for what he
+  sells), and 1-3 potions on the other side (his actual stock of healing
+  draughts: buying one takes it off the shelf).
+- Still to settle: room size and the sideways layout (vertical counter),
+  how to talk again once in the room, prices, shield strength, STORY
+  levels 5/10/.../100, the demo.
 
 ## "R" - Rest Until Healed — IMPLEMENTED (V27, DEEP SLEEP; see V27 below)
 - A new key, separate from the existing SPACE (rest 10 turns, small
@@ -512,6 +521,10 @@ each piece.
 - Maps should feel slightly more dense than they currently do — more
   packed with rooms/corridors relative to the available space. Only a
   small increase, not a major overhaul of generation.
+
+## More Potion Types — LATER
+- Other kinds of potions besides healing (CHAR's shelf only has healing
+  draughts for now). Types and effects to be decided later.
 
 ## Named Treasures with Effects
 - Treasures are found in treasure chests and add buffs to the player.
