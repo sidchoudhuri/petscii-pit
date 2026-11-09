@@ -435,6 +435,11 @@ each piece.
   The next game crashed to a garbled blue screen (also in V27). Line 30
   now goes to line 110, so everything is installed in order again.
 
+## Bug Fix: Shield on the Weapon's Line — FIXED (V29)
+- With a shield but no weapon, the character sheet printed "WEAPON: NONE"
+  and the shield on one line (STORY and ENDLESS). The blank line for no
+  weapon now comes before the shield line (3701).
+
 ## "R" - Rest Until Healed — IMPLEMENTED (V27, DEEP SLEEP; see V27 below)
 - A new key, separate from the existing SPACE (rest 10 turns, small
   fixed heal). R rests for as long as it takes to fully heal instead of
@@ -1939,6 +1944,10 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Arena runes: checksum +31 (ENDLESS +23, STORY +29); the level field holds
   1 + 4 x shop visits + shield. R on the title starts ARENA in the shop.
 - Flee: always works, costs 10% of coins, no reward.
+- Its own instructions screen (lines 8000-8180), printed by ARENA itself
+  because the game's stored screen under the KERNAL ROM has no room for a
+  second one: shown on a fresh start, and with I in a fight or the shop.
+  The game's I screen (loader 995) points to it.
 - The original idea notes follow.
 - A third way to play: no exploring, just fights. You face harder and
   harder monsters one after another on the battle screen.
