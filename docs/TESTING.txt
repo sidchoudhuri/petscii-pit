@@ -204,7 +204,7 @@ New in V28
     screen, status messages (they now come from the text bank)
 [ ] Q to the title and back into a game (round trip) still works
 
-New in V29
+New in V28: the Battle Arena
 [ ] Title: A - ENTER THE ARENA (menu one row higher, all keys still work)
 [ ] Arena starts in CHAR's shop: 100 coins buys a weapon or a shield, not
     both; RETURN leaves with nothing too
