@@ -13,6 +13,9 @@ Packed level record (padded to whole 254-byte blocks):
   ..     NR bytes: room type RT% (1 entry, 2 stairs, 3 treasury, 4 room,
          5 apothecary)
   ..     2 bytes: hidden hole cell (lo, hi), $FFFF = none
+  ..     CHAR's shop: side (0 = none; 1 top, 2 bottom, 3 left, 4 right), then
+         if there is one its x, y (a 9x7 room, levels 5, 10 ... 100; the
+         game furnishes it, the map holds its walls, door and corridor)
   ..     notes: count, then per note: cell lo, cell hi, length 1, line 1,
          length 2, line 2 (screen codes, up to 39 characters a line)
   ..     fixed monsters: count, then per monster: cell lo, cell hi, type
@@ -65,6 +68,14 @@ def gen_level(lv, rng, rune=True, notes=()):
     ma = [0] * 1000
     rm = [0] * 1000
     nr = 5 + int(rng.random() * 3)
+    qb = 0
+    if lv > 0 and lv % 5 == 0:                         # CHAR's shop (petsciipitendless 4460)
+        nr = 5 + int(rng.random() * 2)
+        qb = 1 + int(rng.random() * 4)                 # 1 top, 2 bottom, 3 left, 4 right
+        xs = 1 + int(rng.random() * 30)
+        ys = 3 + int(rng.random() * 14)
+        xs = {3: 1, 4: 30}.get(qb, xs)
+        ys = {1: 3, 2: 16}.get(qb, ys)
     rooms = []
     for i in range(nr):
         for tr in range(2000):
@@ -75,6 +86,9 @@ def gen_level(lv, rng, rune=True, notes=()):
             ok = all(x1 + w1 + 1 < rx or rx + rw + 1 < x1 or
                      y1 + h1 + 1 < ry or ry + rh + 1 < y1
                      for rx, ry, rw, rh in rooms)
+            if (qb == 1 and y1 < 11) or (qb == 2 and y1 + h1 >= 16) or \
+               (qb == 3 and x1 < 11) or (qb == 4 and x1 + w1 >= 30):
+                ok = False                             # keep the shop's band clear
             if ok:
                 break
         else:
@@ -119,6 +133,35 @@ def gen_level(lv, rng, rune=True, notes=()):
             if rm[ix] == 0:
                 cwalls(ex, y)
             y += (ey > cy) - (ey < cy)
+    if qb:                                             # the shop room, its door and corridor (7400-7490)
+        for y in range(ys, ys + 7):
+            for x in range(xs, xs + 9):
+                inner = xs < x < xs + 8 and ys < y < ys + 6
+                ma[y * W + x] = FLOOR if inner else WALL
+                if inner:
+                    rm[y * W + x] = nr + 1
+        d1 = xs + 4 + 4 * (qb == 3) - 4 * (qb == 4)
+        d2 = ys + 3 + 3 * (qb == 1) - 3 * (qb == 2)
+        ma[d2 * W + d1] = FLOOR
+        best = min(range(nr), key=lambda k: (abs(centre(rooms[k])[0] - d1) + abs(centre(rooms[k])[1] - d2), k))
+        ex, ey = centre(rooms[best])
+        x, y = d1, d2
+
+        def step(x, y):
+            ix = y * W + x
+            ma[ix] = FLOOR
+            if rm[ix] == 0:
+                cwalls(x, y)
+        if qb > 2:
+            while x != ex:
+                x += (ex > x) - (ex < x)
+                step(x, y)
+        while y != ey:
+            y += (ey > y) - (ey < y)
+            step(x, y)
+        while x != ex:
+            x += (ex > x) - (ex < x)
+            step(x, y)
     sx, sy = centre(rooms[-1])
     ma[sy * W + sx] = STAIRS
     rt = [0] * (nr + 1)
@@ -171,7 +214,9 @@ def gen_level(lv, rng, rune=True, notes=()):
             if ma[ix] == FLOOR and ix != hz and (qx, qy) != centre(rooms[pr - 1]):
                 ma[ix] = RUNE
                 break
-    lvl = dict(lv=lv, nr=nr, rooms=rooms, rt=rt[1:], hole=hz, notes=nlist, monsters=[], names={}, ma=ma, made="generated")
+    shop = (qb, xs, ys) if qb else None
+    lvl = dict(lv=lv, nr=nr, rooms=rooms, rt=rt[1:], hole=hz, notes=nlist, monsters=[], names={}, ma=ma,
+               shop=shop, made="generated")
     return lvl if reachable(lvl) else None
 
 
@@ -330,6 +375,8 @@ def pack(l):
     out += bytes(l["rt"])
     h = l["hole"] if l["hole"] >= 0 else 0xFFFF
     out += bytes([h & 255, h >> 8])
+    sh = l.get("shop")
+    out += bytes(sh) if sh else b"\0"
     out.append(len(l["notes"]))
     for ix, (a, b) in l["notes"]:
         out += bytes([ix & 255, ix >> 8, len(a)]) + a + bytes([len(b)]) + b
@@ -358,6 +405,11 @@ def unpack(b):
     p += 4 * nr
     rt = list(b[p:p + nr]); p += nr
     h = b[p] | b[p + 1] << 8; p += 2
+    shop = None
+    if b[p]:
+        shop = tuple(b[p:p + 3]); p += 3
+    else:
+        p += 1
     notes = []
     k = b[p]; p += 1
     for _ in range(k):
@@ -377,7 +429,7 @@ def unpack(b):
     while len(cells) < 880:
         cells += [b[p] >> 4] * ((b[p] & 15) + 1)
         p += 1
-    return dict(nr=nr, rooms=rooms, rt=rt, hole=-1 if h == 0xFFFF else h,
+    return dict(nr=nr, rooms=rooms, rt=rt, hole=-1 if h == 0xFFFF else h, shop=shop,
                 notes=notes, monsters=mons, names=names, ma=[0] * 120 + cells)
 
 
@@ -479,6 +531,16 @@ def check(l):
     assert u["notes"] == [(ix, (bytes(a), bytes(b))) for ix, (a, b) in l["notes"]]
     assert u["monsters"] == l["monsters"]
     assert u["names"] == l["names"]
+    assert u["shop"] == l.get("shop")
+    if l.get("shop"):                                  # the shop door is reachable from the start
+        qb, xs, ys = l["shop"]
+        d = (ys + 3 + 3 * (qb == 1) - 3 * (qb == 2)) * W + xs + 4 + 4 * (qb == 3) - 4 * (qb == 4)
+        ma = list(l["ma"])
+        ma[d] = STAIRS
+        for c in range(1000):
+            if l["ma"][c] == STAIRS:
+                ma[c] = FLOOR
+        assert reachable(dict(l, ma=ma)), "shop not reachable on level %d" % l["lv"]
 
 
 def main():

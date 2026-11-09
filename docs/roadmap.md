@@ -384,7 +384,7 @@ each piece.
   floor. QP=1 makes the mood check (840) choose Lamenting; moving clears
   it (2440).
 
-## Roaming Vendor: CHAR — IN DESIGN (V28)
+## Roaming Vendor: CHAR — IMPLEMENTED (V28)
 - The vendor is a mage, Charpentier ("CHAR" for short).
 - Glyph: screen codes 89 and 217 (two frames, drawn by Sid in
   petscii-pit.pf): 24,24,60,62,88,28,36,0 / 24,24,60,124,26,56,36,0.
@@ -402,9 +402,13 @@ each piece.
 - The shelf: always 2 chests, all on one side (they stand for what he
   sells), and 1-3 potions on the other side (his actual stock of healing
   draughts: buying one takes it off the shelf).
-- Still to settle: room size and the sideways layout (vertical counter),
-  how to talk again once in the room, prices, shield strength, STORY
-  levels 5/10/.../100, the demo.
+- Built in V28: ENDLESS (generated every 5th level), STORY (levels
+  5/10/.../100: tools/pitlevels.py puts the room, door and corridor in the
+  level data, with the shop side and position in the level header; the game
+  furnishes it), and the demo (the AI visits the shop like any other room,
+  CHAR's screen shows for about 3 s, and it buys a draught when below half
+  health and it can pay; the shop's corridor never joins the stairs room, so
+  the AI can't descend on the way).
 
 ## Game Text in the Text Bank — IMPLEMENTED (V28)
 - Fixed text (character sheet, skills, game over, rune screen, status
