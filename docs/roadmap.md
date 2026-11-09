@@ -384,10 +384,18 @@ each piece.
   floor. QP=1 makes the mood check (840) choose Lamenting; moving clears
   it (2440).
 
-## Roaming Vendor
-- Starting at dungeon level 5, a chance to encounter a roaming vendor.
-- The vendor sells weapons and shields with buffs similar to the weapon
-  pickups above.
+## Roaming Vendor: CHAR — IN DESIGN (V28)
+- The vendor is a mage, Charpentier ("CHAR" for short).
+- Glyph: screen codes 89 and 217 (two frames, drawn by Sid in
+  petscii-pit.pf): 24,24,60,62,88,28,36,0 / 24,24,60,124,26,56,36,0.
+- He appears every 5 levels in his own room, standing behind a counter
+  with treasure chests and potions that can't be picked up. Entering the
+  room talks to him; you can talk to him from anywhere in the room.
+- He sells weapons and shields, and buys old weapons. Shields must not make
+  the thief overpowered.
+- He can identify treasures (see Named Treasures below).
+- Still to settle: counter glyph, how to talk again once in the room,
+  prices, shield strength, STORY levels 5/10/.../100, the demo.
 
 ## "R" - Rest Until Healed — IMPLEMENTED (V27, DEEP SLEEP; see V27 below)
 - A new key, separate from the existing SPACE (rest 10 turns, small
@@ -506,6 +514,9 @@ each piece.
   small increase, not a major overhaul of generation.
 
 ## Named Treasures with Effects
+- Treasures are found in treasure chests and add buffs to the player.
+- CHAR can identify a treasure (see the vendor above).
+- Treasure types and their buffs: to be decided later.
 - Beyond plain coin treasure, add specific named treasure items, each
   with its own effect — some good, some bad (a risk/reward or
   identify-the-unknown-item angle, similar in spirit to how weapons
