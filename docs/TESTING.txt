@@ -170,3 +170,18 @@ New in V27
 [ ] Sword: now and then a hit does double damage (crit)
 [ ] Rune with a weapon: the weapon comes back, special at its middle value
 [ ] Demo: still picks up and swaps weapons
+[ ] Cursed weapon (from level 3, about 1 in 8): equipping shows THE x IS
+    CURSED! (sometimes IT WON'T LET GO!); attack lower, special reversed
+[ ] Character sheet: CURSED - BOUND FOR n MOVES, or CAN BE SWAPPED
+[ ] While bound, walking onto another weapon: YOUR CURSED x WON'T LET GO
+[ ] HP slowly drops while cursed (1 every 10 moves), never to 0
+[ ] Resting counts down the binding; then YOUR CURSED x LOOSENS ITS GRIP
+    and the next weapon you find can replace it
+[ ] With Glyph Lore (300 XP): FOUND CURSED x KEEP IT? / NEW: ... - CURSED
+[ ] Dying (K, N or S) clears the curse
+[ ] Weapon names: some are RUSTY (low rolls) or FINE (high rolls)
+[ ] Sword crit: CRIT! HIT x FOR n / CRIT! KILLED x
+[ ] Cursed sword backfire: CURSED SWORD BACKFIRES! -TOOK nDMG
+[ ] Holding a cursed weapon, the EQP line ends in CURSED
+[ ] A mace with no counter cut shows NO COUNTER CUT
+[ ] Character sheet: weapon name and attack, effect on the next line
