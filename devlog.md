@@ -548,7 +548,7 @@
   after the 12th letter it shows DECIPHERING, PLEASE WAIT... while it
   checks the rune.
 
-## Version 27: Ambushes, Deep Sleep, Backtrack, Busier Levels and Rolled Weapons
+## Version 27: Ambushes, Deep Sleep, Backtrack, Busier Levels, Rolled and Cursed Weapons
 - Ambushes now throw you straight onto the battle screen, with the fight
   music, whether you were resting in a room or in a corridor. The rest is
   cut short and you get no heal (see DEEP SLEEP below for R). You still
@@ -582,3 +582,14 @@
   the EQP/NEW comparison and the character sheet show the actual rolls.
   A rune keeps the attack exactly; the special comes back as the middle
   value.
+- Cursed weapons: from level 3, about 1 weapon in 8 is cursed, and you
+  won't know until you equip it. A curse turns the weapon's special
+  against you (less dodge, a crit that backfires on you, weaker sneak
+  hits or more counter damage), takes 1-3 off its attack, and drains
+  1 HP every 10 moves (never your last). Half of them also bind to you:
+  IT WON'T LET GO! for 150 moves, and you can't swap it until then.
+  Resting counts (a rest is 10 moves, a deep sleep 10 moves for every
+  10% of health it heals), so you can sleep a curse off if you dare the
+  ambushes. Once it loosens its grip it is still cursed, but you can swap
+  it for the next weapon you find. Glyph Lore spots a curse before you
+  pick the weapon up.
