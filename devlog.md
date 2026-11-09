@@ -541,3 +541,44 @@
   PRESS C TO SEE IT AGAIN.
 - Notes and their text are light blue once your eyes adjust.
 - Fixed: entering a story rune on the title could give ?FILE NOT FOUND.
+- Runes are much harder to guess: made-up letters almost never work now.
+  Old runes from earlier test versions no longer work, and a rune saves
+  up to 1,023 coins.
+- The rune screen: RETURN takes you back to the title at any time, and
+  after the 12th letter it shows DECIPHERING, PLEASE WAIT... while it
+  checks the rune.
+
+## Version 27: Ambushes, Deep Sleep, Backtrack, Busier Levels and Rolled Weapons
+- Ambushes now throw you straight onto the battle screen, with the fight
+  music, whether you were resting in a room or in a corridor. The rest is
+  cut short and you get no heal (see DEEP SLEEP below for R). You still
+  move first.
+- Flee an ambush and the monster that jumped you is gone.
+- Fixed: an ambush used to play out over all 10 rest turns with calm music
+  and no chance to fight back, and in corridors the ambusher just stood
+  there.
+- Resting shows RESTING with the colour-cycling dots.
+- New skill for BASIC BURGLAR: DEEP SLEEP - press R to rest until you're
+  fully healed. The longer the sleep, the likelier an ambush: the usual
+  resting risk plus up to 25% more the more health you're missing
+  (Shadowstep makes it 25%). If something jumps you, you keep part of
+  the heal. R counts as a rest, so resting again still gets riskier.
+- The endless pit is a little busier: 6 to 8 rooms a level instead of 5
+  to 7, so more corridors, and the extra room can hold a monster or
+  treasure like any other. The story's levels don't change.
+- New skill for DELVER OF THE DEPTHS: BACKTRACK - press T to pick any room
+  you've found on this level and run straight there. It takes a turn, and
+  there's a small chance (10%, 3% with Shadowstep) something is waiting
+  for you when you arrive.
+- Weapons roll their stats: every weapon's attack and its special land
+  somewhere in a range, so two maces can differ. The sword finally has a
+  special: a chance to land a critical hit for double damage.
+    DAGGER  ATK 1-3  +5 to +15% dodge
+    SWORD   ATK 3-5  +5 to +15% crit
+    BLADE   ATK 2-4  +1 to +5 damage on a sneak hit
+    MACE    ATK 4-6  0 to -2 counter damage
+    FLAIL   ATK 7-9  +10 to +20% dodge
+  Deeper weapons still add their depth bonus on top. The pickup prompt,
+  the EQP/NEW comparison and the character sheet show the actual rolls.
+  A rune keeps the attack exactly; the special comes back as the middle
+  value.

@@ -372,7 +372,7 @@ each piece.
 - The vendor sells weapons and shields with buffs similar to the weapon
   pickups above.
 
-## "R" - Rest Until Healed
+## "R" - Rest Until Healed — IMPLEMENTED (V27, DEEP SLEEP; see V27 below)
 - A new key, separate from the existing SPACE (rest 10 turns, small
   fixed heal). R rests for as long as it takes to fully heal instead of
   a fixed duration.
@@ -404,7 +404,7 @@ each piece.
 - All of the above are open design questions to think through when we
   actually build this, not decided specifics yet.
 
-## Fast Travel ("T" key)
+## Fast Travel ("T" key) — IMPLEMENTED (V27, BACKTRACK; see V27 below)
 - Scoped to the current dungeon level only — levels aren't saved once
   you leave them (each one is generated fresh and discarded on
   descent), so traveling back to a previous level isn't part of this;
@@ -483,7 +483,7 @@ each piece.
   scaling issue above, and the first piece of this overall balance
   problem to actually get fixed.
 
-## Dungeon Density
+## Dungeon Density — IMPLEMENTED (V27)
 - Maps should feel slightly more dense than they currently do — more
   packed with rooms/corridors relative to the available space. Only a
   small increase, not a major overhaul of generation.
@@ -514,7 +514,7 @@ each piece.
   else)? Does this replace the existing plain potions, or exist
   alongside them as a separate, riskier pickup?
 
-## Weapons With Variable Stat Rolls
+## Weapons With Variable Stat Rolls — IMPLEMENTED (V27; see V27 below)
 - Currently each weapon type has fixed stats (e.g. Mace is always
   exactly +6 ATK, -1 counter damage). Planned change: each stat rolls
   within a range specific to that weapon type instead of being a fixed
@@ -1131,7 +1131,7 @@ each piece.
   | Startup setup | 40-400 -> 5570-6130 | 40-420 -> 6270-6830 |
   | AI move choice | — | 5870-6820 -> 2530-3480 |
 
-## Bug: No Fight Music After an Ambush — TO DO
+## Bug: No Fight Music After an Ambush — FIXED (V27, see Ambushes below)
 - Reported from hardware: fight music doesn't seem to start when a
   monster ambushes you while resting.
 - Likely causes, from the code (not fixed yet):
@@ -1151,7 +1151,7 @@ each piece.
 - "A MONSTER AMBUSHES YOU!" is now "A MONSTER AMBUSHED YOU!" (game line
   3810, demo line 4670).
 
-## Resting Shows Cycling Dots — PLANNED
+## Resting Shows Cycling Dots — IMPLEMENTED (V27)
 - While resting, show "RESTING ..." with the same color-cycling dots used
   for "PLEASE WAIT ..." during level builds (white, then the three greys,
   left to right), instead of the plain "RESTING..." message.
@@ -1826,8 +1826,38 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Notes: light grey before Keen Eyes, light blue (14) after (6770 and the
   reveal colour list 1517); note text is always light blue.
 - Glyph showcase shows the note in light blue.
+- Stronger runes (new format; runes from V19-V25 no longer work): coins
+  are saved up to 1,023 (10 bits instead of 14) and the checksum grew from
+  6 to 10 bits, modulo 1021 (game 6180-6190, constants 29 STORY and 23
+  ENDLESS; the high 4 checksum bits sit above the coins). The loader
+  (1270-1290, 1370) also rejects runes that couldn't happen: HP below 1
+  or above the maximum HP the rune's XP gives, and STORY levels above 100.
+  Random letters now pass about 1 time in 1,100 (was 1 in 30).
+- Rune screen: RETURN goes back to the title at any time (1210, hint
+  RETURN TO GO BACK); the 12th letter starts the check, which shows
+  DECIPHERING, PLEASE WAIT... (1180). Checked
+  in Python against the BASIC: 40,000 random saves decode back exactly.
+- Repo: the old single-game files petsciipit.bas and petsciipit.prg are
+  removed (replaced by petsciipitendless in V24).
 
-## Monster Battles — MAYBE
+## Battle Arena — PLANNED (idea, not designed yet)
+- A third way to play: no exploring, just fights. You face harder and
+  harder monsters one after another on the battle screen.
+- Uses the battle screen, the battle moves and the monster tells as they
+  are; no map, no level build.
+- To decide when we design it:
+  - where it lives: its own program on the disk (like STORY and ENDLESS,
+    a new title-menu key) or a mode inside ENDLESS
+  - how the monsters ramp up (one step per win, waves, the same depth
+    scaling as the pit's levels) and when bosses or groups appear
+  - what carries between fights: HP (heal a little after each win?),
+    XP, titles and skills, weapons (bought or dropped?)
+  - what coins are for here
+  - the score: wins in a row / deepest round, shown on game over; is a
+    rune or a saved best score wanted?
+  - music: Assailing all the way, or a change as rounds get harder
+
+
 - Per-monster quirks: each monster reacts differently to the moves (the
   leech drains you if you guard too long, the golem shrugs off jabs, the
   guard counters heavy strikes). Mostly data, like the MZ% tables.
@@ -2052,3 +2082,81 @@ Docs, TESTING.txt, d64 and zips with each step.
   them to that mode's defaults. The game (5500) and demo (6300) start at
   these volumes, and the game's M, E and V write their changes back
   (5750-5770), so the loader shows them on return.
+
+## V27: Ambushes, Resting Dots, Deep Sleep, Denser Dungeons, Backtrack, Rolled Weapons — IMPLEMENTED (waiting for testing; V27 is complete)
+- An ambush (3490-3600, from the rest at 2630) can happen in a room or a
+  corridor. The ambusher becomes the target (TG=BM=MN), the side and wipe
+  direction are set from the player toward it, the fight-music check runs
+  (740) and the battle screen opens (5920). 2630 then skips the 10 rest
+  turns and the heal and goes to the end of the turn (2520), so you move
+  first (no free hit).
+- 1125: the monster you are fighting takes its turns even outside a lit
+  room (monster turns skip anything in a corridor otherwise), so a
+  corridor ambusher fights back. No monster ever walks the corridors.
+- Fleeing removes the ambusher like any fled monster (6140).
+- Also fixes the old bug: an ambush in a room ran all 10 rest turns with
+  the monster hitting and no key; in a corridor nothing happened.
+- Resting: 2550 prints RESTING and 2570 cycles the PLEASE WAIT dots
+  (1740-1750) every 8 jiffies through the 4-second wait.
+- STORY and ENDLESS only; the demo is unchanged.
+- DEEP SLEEP (Basic Burglar, XP 150): R rests until healed. 1870 lets R
+  through (it used to drop every key but movement and SPACE). 1890 sets RR
+  (1 for R with XP>=150, else 0; R before then is a plain rest) and goes
+  to 2525, which refuses at full HP without using a turn. The rest code is
+  shared: 2560 waits 4 s plus up to 4 s by HP missing; 2595 adds
+  INT(25*missing/PM)% to the ambush chance (after the resting-again
+  build-up, before the 90% cap); 2610 Shadowstep makes it a flat 25%;
+  2630 an ambush first heals a random 0 to half the missing HP; 2700
+  heals to full. Character sheet line 3765. Instructions screen
+  unchanged (a skill, shown on the character sheet).
+- Denser dungeons (ENDLESS and the demo): 6-8 rooms a level instead of
+  5-7 (ENDLESS 4460, demo 5250). The extra room is like any other (one
+  more monster on average, potions and treasure can land there). Room
+  arrays grew from 7 to 8 (ENDLESS 5390-5400; demo 6170-6190, and the
+  demo AI's AJ%(8,8), PV%(8), Q%(9)). Simulated over 3,000 levels: room
+  squares 16% -> 19% of the map, no failed room placements. STORY levels
+  are fixed and unchanged.
+- Tested before release with new tools (tools/basiccheck.py: jump targets,
+  two-letter variable clashes, variables read but never set, on every
+  listing; tools/vicetest.py: scripted runs of a throwaway test copy in
+  VICE). Found and fixed the R key being ignored (1870). Checked in VICE:
+  ambush in a room and in a corridor opens the battle screen, both sides
+  hit (the corridor ambusher too), winning and fleeing return to the map
+  with the ambusher gone; R heals to full, refuses at full health, is a
+  plain rest before 150 XP; RESTING ... dots; full ENDLESS maps draw; the
+  demo plays through to level 5 with 6-8 rooms.
+- Test tools added to the repo in tools/: basiccheck.py (static checks on
+  every listing) and vicetest.py (scripted VICE runs of a test copy).
+- BACKTRACK (Delver of the Depths, XP 300): T opens a list of the rooms
+  found on this level (RV%), numbered, the current room in dark grey
+  (6880-6950, opened like the C screen). A number runs you to the free
+  floor square nearest the middle of that room (6960-7020: MA% floor,
+  that room, not the hidden hole, no monster); RETURN goes back with no
+  turn. The move goes through the normal end-of-move code (2290), so it
+  costs a turn and updates the room name, Keen Eyes and music. 2435: 10%
+  ambush on arrival (3% with Shadowstep), same as the V27 rest ambush.
+  If the room has no free square: NO SPACE TO LAND THERE, no turn.
+  1805 sends T there (XP>=300; otherwise T is ignored). Character sheet
+  3775: BACKTRACK - T RUNS TO A FOUND ROOM (the longer wording wrapped).
+  STORY and ENDLESS; tutorial and demo unchanged. Tested in VICE: list in
+  both games, landing in a room, ambush on arrival, RETURN, T before 300
+  XP, full room message, character sheet at Shadow Hand.
+- Rolled weapons (STORY, ENDLESS, demo): the weapon table now holds the
+  lowest attack, the special's kind (1 dodge, 2 crit, 3 sneak, 4 counter),
+  its lowest value and how many values it can roll (SK%, SM%, SN%), plus
+  the four effect texts (SU$). A dropped weapon (2170; demo 2150) is
+  stored in MA% as 19 + type + 10 x (depth bonus + attack roll 0-2) +
+  1000 x special roll; the map drawing and gfx.asm only look at the last
+  digit, so they are unchanged. Pickup (3940; demo 4920) decodes it; WS
+  holds the equipped weapon's special roll, WR its attack bonus (attack
+  roll folded in, so the rune keeps it). 280 sets WD, WK (crit), WX, WM
+  and the effect text from the roll. Crit: 6635 doubles your damage
+  (demo 2055). Rune load (6240) gives the middle special roll. Old V26
+  runes holding a weapon come back with its attack 1-2 lower (the table
+  now starts at the lowest roll); runes were never released.
+- Tested: Python (every weapon, roll and depth encodes, decodes and draws
+  as the right glyph; texts fit the message line), VICE (pickup, the
+  EQP/NEW comparison, the character sheet; the demo picks up and compares
+  rolled weapons with forced drops).
+- V27 is complete. Next: test V27 on hardware (TESTING.txt, New in V27).
+
