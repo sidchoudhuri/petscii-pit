@@ -13,6 +13,7 @@ for r in rows:
     if r['notes'] != '0': tags.append('<span class="tag note">%s note%s</span>' % (r['notes'], 's' * (r['notes'] != '1')))
     if r['hole'] == '1': tags.append('<span class="tag hole">hole</span>')
     if r['rune'] == '1': tags.append('<span class="tag rune">rune</span>')
+    if r.get('shop') == '1': tags.append('<span class="tag shop">CHAR&rsquo;s shop</span>')
     blk = '%s block%s' % (r['blocks'], 's' * (r['blocks'] != '1'))
     seed = 'seed %s' % r['seed'] if r['made'] == 'generated' else 'drawn in levels.txt'
     cards.append(f'''<figure class="lvl" id="l{lv}" tabindex="0" aria-label="{'Tutorial' if lv == 0 else 'Level %d' % lv}">
@@ -22,7 +23,7 @@ tot = len(rows)
 nb = {}
 for r in rows: nb[r['blocks']] = nb.get(r['blocks'], 0) + 1
 blocks = sum(int(r['blocks']) for r in rows) + 1
-holes = sum(r['hole'] == '1' for r in rows); runes = sum(r['rune'] == '1' for r in rows)
+holes = sum(r['hole'] == '1' for r in rows); runes = sum(r['rune'] == '1' for r in rows); shops = sum(r.get('shop') == '1' for r in rows)
 notes = sum(int(r['notes']) for r in rows)
 bsum = ', '.join('<b>%d</b> in %s block%s' % (nb[k], k, 's' * (k != '1')) for k in sorted(nb))
 style = '''
@@ -56,13 +57,14 @@ figcaption b { font-family: var(--display); font-weight: 400; font-size: 14px; c
 .tag { font-size: 11px; padding: 1px 6px; border: 1px solid var(--line); text-transform: uppercase; letter-spacing: .08em; }
 .tag.rune, .tag.note { color: var(--white); }
 .tag.hand { color: var(--green); border-color: var(--green); }
+.tag.shop { color: #b98cd6; border-color: #b98cd6; }
 @media (prefers-reduced-motion: no-preference) { .lvl { transition: border-color .15s; } .lvl:hover { border-color: var(--dim); } }
 '''
 body = f'''<header>
 <h1>PETSCII PIT · STORY LEVELS</h1>
 <p>All 100 levels for the STORY game, drawn with the game's own characters in Keen Eyes colors. The player marks the start. Hidden holes are shown as a grey O so they can be reviewed. In game they look like the floor. Monsters are placed at random each time a level loads, except where a level fixes them (the tutorial's goblin). Click a map to enlarge it.</p>
-<div class="facts"><span><b>{tot-1}</b> levels and the tutorial</span><span>{bsum}</span><span><b>{blocks}</b> blocks for the levels file</span><span><b>{notes}</b> notes</span><span><b>{holes}</b> with a hole</span><span><b>{runes}</b> with a floor rune</span></div>
-<div class="legend"><span><i>yellow steps</i> stairs</span><span><i>green flask</i> potion</span><span><i>orange chest</i> treasure</span><span><i>light green stone</i> rune</span><span><i>light blue scroll</i> note</span><span><i>grey O</i> hidden hole</span><span>change a level with levels.txt: seed, rune off, note, or draw it by hand</span></div>
+<div class="facts"><span><b>{tot-1}</b> levels and the tutorial</span><span>{bsum}</span><span><b>{blocks}</b> blocks for the levels file</span><span><b>{notes}</b> notes</span><span><b>{holes}</b> with a hole</span><span><b>{runes}</b> with a floor rune</span><span><b>{shops}</b> with CHAR&rsquo;s shop</span></div>
+<div class="legend"><span><i>yellow steps</i> stairs</span><span><i>green flask</i> potion</span><span><i>orange chest</i> treasure</span><span><i>light green stone</i> rune</span><span><i>light blue scroll</i> note</span><span><i>grey O</i> hidden hole</span><span><i>purple mage</i> CHAR&rsquo;s shop, levels 5, 10 ... 100 (1-3 draughts in the game)</span><span>change a level with levels.txt: seed, rune off, note, or draw it by hand</span></div>
 </header>
 <main>
 {''.join(cards)}

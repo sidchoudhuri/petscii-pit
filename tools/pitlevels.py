@@ -492,6 +492,9 @@ PAL = [(0, 0, 0), (255, 255, 255), (136, 57, 50), (103, 182, 189), (139, 63, 150
 # after Keen Eyes (50 XP): screen code and colour for each cell type
 LOOK = {BLANK: (32, 0), FLOOR: (159, 11), WALL: (102, 12), POTION: (158, 5), CHEST: (132, 8),
         RUNE: (166, 13), NOTE: (167, 14), STAIRS: (190, 7), CWALL: (102, 11)}
+# CHAR's shop room (petsciipitendless 7410): chests, draughts (two shown), counter, CHAR
+SHOP = "$$BB321BBBMBBBCCCCCCC..............$BBV...$BBV...1BMV...2BBV...3BBV..."
+SHOPLOOK = {"$": (132, 8), "1": (158, 5), "2": (158, 5), "C": (85, 9), "V": (213, 9), "M": (89, 4)}
 MLOOK = {1: (83, 5), 2: (88, 7), 3: (90, 8), 4: (84, 5), 5: (86, 10), 6: (91, 2), 7: (65, 4)}
 
 
@@ -516,13 +519,29 @@ def render(l, charset, scale=2):
         put(l["hole"], 87, 15)                 # shown here so it can be reviewed
     for ix, t, g in l["monsters"]:
         put(ix, *MLOOK[t])
+    if l.get("shop"):                          # CHAR's shop, furnished as the game does (7410-7430)
+        qb, xs, ys = l["shop"]
+        t = SHOP[35:] if qb > 2 else SHOP[:35]
+        for r in range(5):
+            for x in range(7):
+                ch = t[r * 7 + x]
+                yy = ys + 1 + (4 - r if qb == 2 else r)
+                xx = xs + 1 + (6 - x if qb == 4 else x)
+                code, col = SHOPLOOK.get(ch, (159, 11))
+                put(yy * W + xx, code, col)
     rx, ry, rw, rh = l["rooms"][0]
     put((ry + rh // 2) * W + rx + rw // 2, 128, 3)
     return img.resize((320 * scale, 200 * scale), Image.NEAREST)
 
 
 def charset(here):
-    return open(os.path.join(here, "petscii-pit-note.pf"), "rb").read()
+    cs = bytearray(open(os.path.join(here, "petscii-pit-note.pf"), "rb").read())
+    pf = os.path.join(here, "..", "src", "petscii-pit.pf")   # CHAR and his counter
+    if os.path.exists(pf):
+        new = open(pf, "rb").read()
+        for c in (85, 89, 213, 217):
+            cs[c * 8:c * 8 + 8] = new[c * 8:c * 8 + 8]
+    return bytes(cs)
 
 
 def check(l):
@@ -577,12 +596,13 @@ def main():
     prg, where = levels_prg(levels, opts)
     open(os.path.join(out, "levels.prg"), "wb").write(prg)
     with open(os.path.join(out, "stats.csv"), "w") as f:
-        f.write("level,rooms,hole,rune,notes,bytes,blocks,seed,made\n")
+        f.write("level,rooms,hole,rune,notes,bytes,blocks,seed,made,shop\n")
         for l, (first, n) in zip(levels, where):
             check(l)
             render(l, cs, 1).save(os.path.join(out, "level-%03d.png" % l["lv"]))
-            f.write("%d,%d,%d,%d,%d,%d,%d,%d,%s\n" % (l["lv"], l["nr"], l["hole"] >= 0, RUNE in l["ma"],
-                                                    len(l["notes"]), len(pack(l)), n, l["seed"], l["made"]))
+            f.write("%d,%d,%d,%d,%d,%d,%d,%d,%s,%d\n" % (l["lv"], l["nr"], l["hole"] >= 0, RUNE in l["ma"],
+                                                       len(l["notes"]), len(pack(l)), n, l["seed"], l["made"],
+                                                       bool(l.get("shop"))))
     print("levels.prg: %d bytes, %d blocks; levels of 1 block: %d, 2 blocks: %d" % (
         len(prg), -(-(len(prg) - 2) // 254), sum(1 for _, n in where[:101] if n == 1),
         sum(1 for _, n in where[:101] if n == 2)))
