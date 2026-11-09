@@ -65,7 +65,7 @@ New in V23 (battle moves)
 [ ] Instructions screen shows FIGHT: W HEAVY, A JAB, S GUARD, F FLEE
 
 New in V24 (STORY and ENDLESS)
-[ ] Title menu: P - PLAY THE STORY, E - PLAY THE ENDLESS PIT, rows line up
+[ ] Title menu: P - PLAY THE STORY, E - THE ENDLESS PIT, rows line up
 [ ] P: ENTERING THE TUTORIAL; HUD shows TUTORIAL instead of LVL; 7 rooms
     named ENTRY WAY, APOTHECARY, TREASURY, DORMITORY, GOBLIN ROOM, STUDY,
     STAIRWAY TO LEVEL 1; the stairs lead to level 1
