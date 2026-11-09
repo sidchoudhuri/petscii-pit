@@ -387,7 +387,7 @@ each piece.
 ## Roaming Vendor: CHAR — IMPLEMENTED (V28)
 - The vendor is a mage, Charpentier ("CHAR" for short).
 - Glyph: screen codes 89 and 217 (two frames, drawn by Sid in
-  petscii-pit.pf): 24,24,60,62,88,28,36,0 / 24,24,60,124,26,56,36,0.
+  petscii-pit.pf): 24,24,60,62,88,28,36,102 / 24,24,60,124,26,56,36,102.
 - He appears every 5 levels in his own room, standing behind a counter
   with treasure chests and potions that can't be picked up. Entering the
   room talks to him; you can talk to him from anywhere in the room.

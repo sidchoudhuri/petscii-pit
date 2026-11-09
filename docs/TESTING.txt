@@ -200,6 +200,10 @@ New in V28
 [ ] No monsters walk into the shop; no ambush inside; T lists it once found
 [ ] STORY levels 10, 50, 100 have the shop too
 [ ] Demo: reaches a shop level and shows CHAR for about 3 seconds
+[ ] Shop music (BARTERING) on the shop screen, PAL and NTSC, one SID and
+    two; leaving brings back what played before (fight music in a fight,
+    silence when the music was resting); music off (M) stays off
+[ ] New CHAR (feet) and player glyphs on the map, shop and battle screens
 [ ] All text still reads right: character sheet, skills, game over, rune
     screen, status messages (they now come from the text bank)
 [ ] Q to the title and back into a game (round trip) still works
@@ -225,4 +229,8 @@ New in V28: the Battle Arena
 [ ] Arena instructions: shown on a fresh start (not after a rune); I in a
     fight or in the shop shows them and a key comes back; the title's I
     screen ends with the ARENA line
+[ ] Arena music: BARTERING in the shop, silence between fights and on the
+    YOU FLED / ON TO LEVEL / VISIT CHAR'S SHOP prompts, fight music from
+    the first blow, LAMENTING below a quarter health, silence on the
+    instructions, the sheet and the death screen; M off and on again
 [ ] STORY and ENDLESS sheet: shield but no weapon shows on its own line
