@@ -70,6 +70,9 @@ def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=(), loade
     ]) + ('9000 ZY=ZY+1:A$=MID$("%s",ZY,1):IF A$="" THEN ZY=ZY-1:GOTO 9000\n'
            '9010 RETURN\n') % (pick + "N" if loader_keys is None else loader_keys)
     build_prg(ld, os.path.join(d, "loader.prg"))
+    subprocess.run([sys.executable, os.path.join(TOOLS, "textbank.py"), "attach",
+                    os.path.join(sd, "texts.txt"), os.path.join(d, "loader.prg")],
+                   check=True, stdout=subprocess.DEVNULL)
     src = "petsciipitendless.bas" if game == "ENDLESS" else "petsciipitstory.bas"
     g = open(os.path.join(sd, src)).read()
     g = patch(g, [
