@@ -1931,8 +1931,8 @@ Docs, TESTING.txt, d64 and zips with each step.
 ## Battle Arena — IMPLEMENTED (V28)
 - Its own program (ARENA, title key A, src/petsciipitarena.bas), built from
   ENDLESS's battle, shop, title and rune code; no map.
-- Start: 150 XP, 25 health, 100 coins, in CHAR's shop (buying optional; his
-  weapons cost 15 x attack + 35, so 100 coins buys a weapon or a shield).
+- Start: 150 XP, 25 health, 125 coins, in CHAR's shop (buying optional; his
+  weapons cost 15 x attack + 35; 100 was too few, raised to 125).
 - Fight n shows as LEVEL n; game depth = 5 + (n-1)/3. Monsters, groups,
   XP and coins use the game's rules for that depth. A win heals 10% of max
   health. Bare-handed win x2 rewards, cursed win x1.5.
