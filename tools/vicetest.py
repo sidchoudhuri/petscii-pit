@@ -81,7 +81,7 @@ def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=(), loade
          "4180 GOSUB 9020"),
         ("5540 GOSUB 4340", "5535 %s\n5540 GOSUB 4340" % (setup or "REM")),
     ] + list(patches))
-    g += ('9000 ZY=ZY+1:A$=MID$(K$,ZY,1):IF A$="!" THEN A$=CHR$(13)\n'
+    g += ('9000 A$="":IF ZY<LEN(K$) THEN ZY=ZY+1:A$=MID$(K$,ZY,1):IF A$="!" THEN A$=CHR$(13)\n'
           '9010 RETURN\n'
           '9020 GOSUB 9000:IF A$<>"" THEN RETURN\n'
           '9030 IF ZY<=LEN(K$) THEN 9020\n'

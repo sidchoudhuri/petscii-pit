@@ -6,8 +6,9 @@
 ;
 ; SYS 1824 FILL:   draw every map cell (rows 3-24) on the $C000 screen from
 ;                  the MA% array, in black, so nothing shows until revealed.
-; SYS 1398 REVEAL: for a rectangle (start cell, width, height), set the fog
-;                  bytes at $C400 to 1 and colour each cell by its character
+; SYS 1398 REVEAL: for a rectangle (start cell, width, height), set bit 7
+;                  (seen) of the fog bytes at $C400, keeping the room number
+;                  in bits 0-3, and colour each cell by its character
 ;                  from the colour list. Characters not in the list (the
 ;                  player, a monster) keep their colour.
 
@@ -137,10 +138,9 @@ reveal  lda rlo
         sta scr
         sta col
         sta src
-        lda rhi
-        clc
-        adc #$c0
+        lda rhi         ; screen page ($C0 + high byte of the start cell)
         sta scr+1
+        clc
         adc #$04
         sta src+1       ; fog $C400
         adc #$14
@@ -148,7 +148,8 @@ reveal  lda rlo
         lda rh
         sta cnt
 row     ldy #0
-rcell   lda #1
+rcell   lda (src),y     ; fog byte: bit 7 = seen, bits 0-3 = room number
+        ora #$80
         sta (src),y
         lda (scr),y
         ldx #NP-1
@@ -156,7 +157,7 @@ rcell   lda #1
         beq +
         dex
         bpl -
-        jmp rnext
+        bmi rnext
 +       lda pcol,x
         sta (col),y
 rnext   iny
@@ -178,10 +179,11 @@ add40   lda 0,x
         bcc +
         inc 1,x
 +       rts
+        nop             ; keeps the colour list at 1492
 pchr    !fill NP,0      ; colour list characters
 pcol    !fill NP,0      ; colour list colours
 rlo     !byte 0         ; start cell low
-rhi     !byte 0         ; start cell high
+rhi     !byte 0         ; screen page of the start cell ($C0 + high byte)
 rw      !byte 0         ; width
 rh      !byte 0         ; height
 enda
