@@ -435,7 +435,7 @@ each piece.
   The next game crashed to a garbled blue screen (also in V27). Line 30
   now goes to line 110, so everything is installed in order again.
 
-## Bug Fix: Shield on the Weapon's Line — FIXED (V29)
+## Bug Fix: Shield on the Weapon's Line — FIXED (V28)
 - With a shield but no weapon, the character sheet printed "WEAPON: NONE"
   and the shield on one line (STORY and ENDLESS). The blank line for no
   weapon now comes before the shield line (3701).
@@ -1928,7 +1928,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   against golems, a dagger against leeches...).
 - Weapons that wear out with use and need replacing or repairing.
 
-## Battle Arena — IMPLEMENTED (V29)
+## Battle Arena — IMPLEMENTED (V28)
 - Its own program (ARENA, title key A, src/petsciipitarena.bas), built from
   ENDLESS's battle, shop, title and rune code; no map.
 - Start: 150 XP, 25 health, 100 coins, in CHAR's shop (buying optional; his

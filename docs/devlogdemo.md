@@ -332,6 +332,5 @@ details differ.
   (DRINK UP, DELVER.) and one potion comes off his shelf.
 - The shop's corridor never joins the stairs room in the demo, so the AI
   can't step on the stairs on its way there.
-
-## V29
-- No changes to the demo. The title has a new line, A - ENTER THE ARENA.
+- The title has a new line, A - ENTER THE ARENA; nothing else changed
+  for the demo.

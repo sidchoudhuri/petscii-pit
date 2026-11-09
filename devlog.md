@@ -600,7 +600,7 @@
   CURSED), and a mace with no counter cut says NO COUNTER CUT instead of
   -0 COUNTER DMG.
 
-## Version 28: Charpentier the Mage
+## Version 28: Charpentier the Mage and the Battle Arena
 - Meet CHAR. Every 5th level (5, 10, 15 ...) in both STORY and ENDLESS
   there is a shop: one door, a counter across the middle, and behind it
   Charpentier the mage, his two chests and his shelf of 1-3 healing
@@ -629,7 +629,7 @@
   a garbled blue screen (also in V27). Coming back from a game now sets up
   the loader the same way as a fresh start.
 
-## Version 29: The Battle Arena
+### The Battle Arena
 - New on the title: A - ENTER THE ARENA. No exploring, just fights, one
   after another on the battle screen, against harder and harder monsters.
 - You start as a level 5 thief would: 150 XP (BASIC BURGLAR), 25 health,

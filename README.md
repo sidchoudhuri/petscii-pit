@@ -1,6 +1,6 @@
 # PETSCII-Pit & Self-Playing Demo
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
-A C64 BASIC roguelike - Version 29
+A C64 BASIC roguelike - Version 28
 
 Three ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending), **ENDLESS** (a new random pit every level) and the **ARENA** (fights only, harder and harder monsters). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop: weapons, shields, draughts, curse lifting. In the arena CHAR opens his shop every 3 fights. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
 
@@ -61,7 +61,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 [tools/buildprgs.sh](tools/buildprgs.sh) - Builds the programs in prg/ from the listings in src/
 
-[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 29`
+[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 28`
 
 [tools/levelspage.py](tools/levelspage.py) - Makes the story levels page ([m0n.de/story-levels](https://m0n.de/story-levels))
 
@@ -89,7 +89,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 ## Screenshots
 
-[ASSETS](assets) - Screenshots: the V29 title and instructions, STORY and ENDLESS, battles and ambushes, skills, weapons, game over, the demo, the [disk directory](assets/18-disk-directory.png), CHAR's shop ([room](assets/19-char-shop-room.png), [screen](assets/20-char-shop.png)) and the [Battle Arena](assets/24-arena-start-shop.png)
+[ASSETS](assets) - Screenshots: the V28 title and instructions, STORY and ENDLESS, battles and ambushes, skills, weapons, game over, the demo, the [disk directory](assets/18-disk-directory.png), CHAR's shop ([room](assets/19-char-shop-room.png), [screen](assets/20-char-shop.png)) and the [Battle Arena](assets/24-arena-start-shop.png)
 
 ## Development Logs
 
