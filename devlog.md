@@ -628,6 +628,8 @@
   under the BASIC ROM with the text bank, so the music player stays the
   same size.
 - New looks for CHAR (now with feet) and the player.
+- Title menu wording: E - THE ENDLESS PIT and R - RESUME YOUR DESCENT; the
+  rune screen's heading matches (RESUME YOUR DESCENT).
 - Under the hood: room numbers moved into the fog map, the monster and
   weapon tables and all of the game's fixed text (character sheet, status
   messages, CHAR's lines) moved out of the games into memory under the
