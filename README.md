@@ -1,8 +1,8 @@
 # PETSCII-Pit & Self-Playing Demo
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
-A C64 BASIC roguelike - Version 28
+A C64 BASIC roguelike - Version 29
 
-Two ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending) and **ENDLESS** (a new random pit every level). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop: weapons, shields, draughts, curse lifting. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
+Three ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending) and **ENDLESS** (a new random pit every level). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop: weapons, shields, draughts, curse lifting. The **ARENA** is fights only: harder and harder monsters, with CHAR's shop every 3 fights. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
 
 ## Disk Image
 The game must be launched from disk (LOAD"*",8 and RUN) because the games, music and story levels are loaded separately
@@ -14,6 +14,8 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 &nbsp;&nbsp;&nbsp;|-- [STORY](prg/petsciipitstory.prg) - The STORY game
 
 &nbsp;&nbsp;&nbsp;|-- [ENDLESS](prg/petsciipitendless.prg) - The ENDLESS game
+
+&nbsp;&nbsp;&nbsp;|-- [ARENA](prg/petsciipitarena.prg) - The Battle Arena: fights only, CHAR's shop every 3 fights
 
 &nbsp;&nbsp;&nbsp;|-- [DEMO](prg/petsciipitdemo.prg) - Self-playing demo
 
@@ -34,6 +36,8 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 [PETSCIIPITSTORY.BAS](src/petsciipitstory.bas) - STORY game source code
 
 [PETSCIIPITENDLESS.BAS](src/petsciipitendless.bas) - ENDLESS game source code
+
+[PETSCIIPITARENA.BAS](src/petsciipitarena.bas) - Battle Arena source code
 
 [PETSCIIPITDEMO.BAS](src/petsciipitdemo.bas) - Self-playing demo source code
 
@@ -57,7 +61,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 [tools/buildprgs.sh](tools/buildprgs.sh) - Builds the programs in prg/ from the listings in src/
 
-[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 28`
+[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 29`
 
 [tools/levelspage.py](tools/levelspage.py) - Makes the story levels page ([m0n.de/story-levels](https://m0n.de/story-levels))
 

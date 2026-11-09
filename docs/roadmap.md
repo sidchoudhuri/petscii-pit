@@ -1923,7 +1923,23 @@ Docs, TESTING.txt, d64 and zips with each step.
   against golems, a dagger against leeches...).
 - Weapons that wear out with use and need replacing or repairing.
 
-## Battle Arena — PLANNED (idea, not designed yet)
+## Battle Arena — IMPLEMENTED (V29)
+- Its own program (ARENA, title key A, src/petsciipitarena.bas), built from
+  ENDLESS's battle, shop, title and rune code; no map.
+- Start: 150 XP, 25 health, 100 coins, in CHAR's shop (buying optional; his
+  weapons cost 15 x attack + 35, so 100 coins buys a weapon or a shield).
+- Fight n shows as LEVEL n; game depth = 5 + (n-1)/3. Monsters, groups,
+  XP and coins use the game's rules for that depth. A win heals 10% of max
+  health. Bare-handed win x2 rewards, cursed win x1.5.
+- Drops: 1 in 4 after a win, weapon depth bonus 0 to depth/3-1 (CHAR's
+  start at depth/3); 1 in 8 cursed: -1 attack, special reversed at half,
+  no drain, half bind for the next fight only.
+- CHAR every 3 fights (VISIT CHAR'S SHOP? Y/N): 2 weapons, shield
+  1..3 (stronger every 4 depths), 1-3 draughts at 5 x depth, sells for half.
+- Arena runes: checksum +31 (ENDLESS +23, STORY +29); the level field holds
+  1 + 4 x shop visits + shield. R on the title starts ARENA in the shop.
+- Flee: always works, costs 10% of coins, no reward.
+- The original idea notes follow.
 - A third way to play: no exploring, just fights. You face harder and
   harder monsters one after another on the battle screen.
 - Uses the battle screen, the battle moves and the monster tells as they
