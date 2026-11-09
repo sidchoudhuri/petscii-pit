@@ -69,7 +69,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 ## Music
 
-[PETSCII-PIT-PAL.SID](sid/petscii-pit-pal.sid) - PAL version of single .SID file with all three songs
+[PETSCII-PIT-PAL.SID](sid/petscii-pit-pal.sid) - PAL version of single .SID file with all four songs
 
 &nbsp;&nbsp;&nbsp;|-- [DUNGEONEERING-PAL.SID](sid/dungeoneering-pal.sid) - PAL version of exploration .SID music
 
@@ -79,7 +79,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 [BARTERING-PAL.SID](sid/bartering-pal.sid) - PAL version of CHAR's shop .SID music
 
-[PETSCII-PIT-NTSC.SID](sid/petscii-pit-ntsc.sid) - NTSC version of single .SID file with all three songs
+[PETSCII-PIT-NTSC.SID](sid/petscii-pit-ntsc.sid) - NTSC version of single .SID file with all four songs
 
 &nbsp;&nbsp;&nbsp;|-- [DUNGEONEERING-NTSC.SID](sid/dungeoneering-ntsc.sid) - NTSC version of exploration .SID music
 
