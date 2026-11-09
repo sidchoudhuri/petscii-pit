@@ -642,8 +642,7 @@
 - New on the title: A - ENTER THE ARENA. No exploring, just fights, one
   after another on the battle screen, against harder and harder monsters.
 - You start as a level 5 thief would: 150 XP (BASIC BURGLAR), 25 health,
-  100 coins, in CHAR's shop. Buying is up to you, and 100 coins buys a
-  weapon or a shield, not both.
+  125 coins, in CHAR's shop. Buying is up to you.
 - The fights are LEVEL 1, 2, 3 ... on screen; every 3 fights the monsters
   are one pit level deeper. Groups count as one fight and pay for every
   monster. Each win heals you a little, as going down stairs does.
