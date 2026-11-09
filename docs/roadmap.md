@@ -344,6 +344,23 @@ each piece.
 - Glyph decided: PETSCII 113 (screen code 81 for our POKE-based rendering —
   worth a visual check on real hardware once built).
 
+## One-Way Corridors — PLANNED (idea, not designed yet)
+- Corridors you can walk through in one direction only, so the way back to
+  a room is cut off and you have to find another route (or use Backtrack,
+  teleportation circles or the stairs).
+- Pairs with Teleportation Circles above: both change how you move around
+  a level, and a one-way corridor can be the only way to reach a circle.
+- To decide when we design it:
+  - how it looks: an arrow glyph on the corridor floor (which screen code,
+    never 0-63), or a door that shuts behind you
+  - whether you can see the direction before you step in (Keen Eyes?)
+  - how many per level, and from which level
+  - ENDLESS only, or also some STORY levels (pitlevels.py would need a
+    one-way command in levels.txt)
+  - every room must still be reachable from the start (the generator
+    checks this)
+  - monsters and Backtrack: do they ignore the direction?
+
 ## Hidden Holes / Trap Tiles — IMPLEMENTED
 - From dungeon level 5, a level may have one hole: 20% chance on level 5,
   40% on 6, 60% on 7, 80% on 8, and always from level 9. Never more than
