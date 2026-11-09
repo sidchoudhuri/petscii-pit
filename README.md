@@ -1,8 +1,8 @@
 # PETSCII-Pit & Self-Playing Demo
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
-A C64 BASIC roguelike - Version 27
+A C64 BASIC roguelike - Version 28
 
-Two ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending) and **ENDLESS** (a new random pit every level). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
+Two ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending) and **ENDLESS** (a new random pit every level). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop: weapons, shields, draughts, curse lifting. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
 
 ## Disk Image
 The game must be launched from disk (LOAD"*",8 and RUN) because the games, music and story levels are loaded separately
@@ -41,9 +41,11 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 [LEVELS.TXT](src/levels.txt) - The STORY levels as text, built by [pitlevels.py](tools/pitlevels.py)
 
+[TEXTS.TXT](src/texts.txt) - The games' fixed text (status messages, character sheet, CHAR's lines), built into the loader by [textbank.py](tools/textbank.py)
+
 [PETSCII-PIT.PF](src/petscii-pit.pf) - The custom character set
 
-[ASM](src/asm) - Machine code the loader installs: [screen wipes](src/asm/wipe.asm), [room reveal and level fill](src/asm/gfx.asm), [STORY level reading](src/asm/story.asm), [SID model check](src/asm/model.asm)
+[ASM](src/asm) - Machine code the loader installs: [screen wipes](src/asm/wipe.asm), [room reveal and level fill](src/asm/gfx.asm), [STORY level reading](src/asm/story.asm), [SID model check](src/asm/model.asm), [game text printing](src/asm/text.asm)
 
 ## Tools
 
@@ -55,7 +57,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 [tools/buildprgs.sh](tools/buildprgs.sh) - Builds the programs in prg/ from the listings in src/
 
-[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 27`
+[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 28`
 
 [tools/levelspage.py](tools/levelspage.py) - Makes the story levels page ([m0n.de/story-levels](https://m0n.de/story-levels))
 

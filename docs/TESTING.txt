@@ -185,3 +185,21 @@ New in V27
 [ ] Holding a cursed weapon, the EQP line ends in CURSED
 [ ] A mace with no counter cut shows NO COUNTER CUT
 [ ] Character sheet: weapon name and attack, effect on the next line
+
+New in V28
+[ ] Level 5 (STORY and ENDLESS): CHAR's shop on a map edge, one door,
+    counter across the middle, 2 chests and 1-3 draughts on the shelf
+[ ] Walking in opens the shop screen; CHAR paces and switches frames
+[ ] SPACE or R in the shop room, or bumping the counter, opens it again
+[ ] Buy each ware: weapon (EQUIPPED stats match), shield (character sheet
+    SHIELD: -n DMG TAKEN), draught (full health, one leaves the shelf),
+    lift curse, sell weapon (coins go up)
+[ ] Not enough coins: BRING MORE COIN.  Full health + draught: YOU LOOK HALE.
+[ ] Bound by a curse: weapons and selling say LIFT THAT CURSE!
+[ ] Shield: hits take 1-3 less, never below 1; dying (K, N, S) removes it
+[ ] No monsters walk into the shop; no ambush inside; T lists it once found
+[ ] STORY levels 10, 50, 100 have the shop too
+[ ] Demo: reaches a shop level and shows CHAR for about 3 seconds
+[ ] All text still reads right: character sheet, skills, game over, rune
+    screen, status messages (they now come from the text bank)
+[ ] Q to the title and back into a game (round trip) still works

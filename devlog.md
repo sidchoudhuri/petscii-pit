@@ -556,7 +556,7 @@
 - Flee an ambush and the monster that jumped you is gone.
 - Fixed: an ambush used to play out over all 10 rest turns with calm music
   and no chance to fight back, and in corridors the ambusher just stood
-  there.
+  BACKTRACK (T) can take you back to it.
 - Resting shows RESTING with the colour-cycling dots.
 - New skill for BASIC BURGLAR: DEEP SLEEP - press R to rest until you're
   fully healed. The longer the sleep, the likelier an ambush: the usual
@@ -599,3 +599,29 @@
   BACKFIRES!), the EQP line marks a cursed weapon (EQP: MACE +4 ATK -
   CURSED), and a mace with no counter cut says NO COUNTER CUT instead of
   -0 COUNTER DMG.
+
+## Version 28: Charpentier the Mage
+- Meet CHAR. Every 5th level (5, 10, 15 ...) in both STORY and ENDLESS
+  there is a shop: one door, a counter across the middle, and behind it
+  Charpentier the mage, his two chests and his shelf of 1-3 healing
+  draughts. Walk in and he greets you; SPACE (or R) anywhere in the room,
+  or bumping the counter, talks to him again.
+- His shop has its own screen: the chest, draught, counter and CHAR
+  himself drawn large on the left, pacing and fidgeting while you shop.
+  Press 1-6 to buy, RETURN to leave.
+    1, 2  two weapons (never cursed), 15 coins per point of attack
+    3     a shield: takes 1-3 off every hit (never below 1), 40/80/120
+    4     a draught from his shelf: full health, 5 coins per level
+    5     lift a curse, 10 coins per level
+    6     sell your weapon for half (a cursed one is worth nothing)
+  He won't trade weapons while a curse still binds you: LIFT THAT CURSE!
+- Shields show on the character sheet (SHIELD: -2 DMG TAKEN) and are lost
+  when you die, like a curse.
+- No monsters, items or ambushes in the shop. Once you have found it,
+  BACKTRACK (T) can take you back to it.
+- The demo meets CHAR too: the AI visits his shop like any other room,
+  and buys a draught if it's below half health and can pay.
+- Under the hood: room numbers moved into the fog map, the monster and
+  weapon tables and all of the game's fixed text (character sheet, status
+  messages, CHAR's lines) moved out of the games into memory under the
+  BASIC ROM, freeing room for the shop.
