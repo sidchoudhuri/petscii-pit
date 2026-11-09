@@ -2,7 +2,7 @@
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
 A C64 BASIC roguelike - Version 29
 
-Three ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending) and **ENDLESS** (a new random pit every level). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop: weapons, shields, draughts, curse lifting. The **ARENA** is fights only: harder and harder monsters, with CHAR's shop every 3 fights. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
+Three ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending), **ENDLESS** (a new random pit every level) and the **ARENA** (fights only, harder and harder monsters). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop: weapons, shields, draughts, curse lifting. In the arena CHAR opens his shop every 3 fights. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
 
 ## Disk Image
 The game must be launched from disk (LOAD"*",8 and RUN) because the games, music and story levels are loaded separately
