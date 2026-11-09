@@ -210,8 +210,9 @@ New in V28
 
 New in V28: the Battle Arena
 [ ] Title: A - ENTER THE ARENA (menu one row higher, all keys still work)
-[ ] Arena starts in CHAR's shop with 125 coins; RETURN leaves with nothing
-    too
+[ ] Arena starts in CHAR's shop with 100 coins: only daggers (65), blades
+    (80) and swords (95) on the first visit, so a weapon or the shield
+    (40), never both; RETURN leaves with nothing too
 [ ] Fights: LVL 1, 2, 3 ... on the HUD; W A D S moves; groups; F flees
     (YOU FLED! -n GP); C shows the sheet (ARENA LEVEL) and comes back
 [ ] After a win: FIGHT n WON! HEALED n HP; bare-handed win: BARE-HANDED!
