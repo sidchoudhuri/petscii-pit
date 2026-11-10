@@ -77,7 +77,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 &nbsp;&nbsp;&nbsp;|__ [LAMENTING-PAL.SID](sid/lamenting-pal.sid) - PAL version of gloomy .SID music
 
-[BARTERING-PAL.SID](sid/bartering-pal.sid) - PAL version of CHAR's shop .SID music
+&nbsp;&nbsp;&nbsp;|__ [BARTERING-PAL.SID](sid/bartering-pal.sid) - PAL version of CHAR's shop .SID music
 
 [PETSCII-PIT-NTSC.SID](sid/petscii-pit-ntsc.sid) - NTSC version of single .SID file with all four songs
 
@@ -87,7 +87,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 &nbsp;&nbsp;&nbsp;|__ [LAMENTING-NTSC.SID](sid/lamenting-ntsc.sid) - NTSC version of gloomy .SID music
 
-[BARTERING-NTSC.SID](sid/bartering-ntsc.sid) - NTSC version of CHAR's shop .SID music
+&nbsp;&nbsp;&nbsp;|__ [BARTERING-NTSC.SID](sid/bartering-ntsc.sid) - NTSC version of CHAR's shop .SID music
 
 [GRAND-MEDLEY](grand-medley) - The music medley disk ([pitmedley.d64](grand-medley/pitmedley.d64)) and the files that build it
 
