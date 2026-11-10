@@ -1927,6 +1927,11 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Weapons that work better or worse against certain monsters (a mace
   against golems, a dagger against leeches...).
 - Weapons that wear out with use and need replacing or repairing.
+- Glyphs for weapons: a small picture for each weapon type (dagger, sword,
+  blade, mace, flail) and the shield, shown on the map where a weapon
+  lies, in CHAR's shop next to his stock, and on the character sheet.
+  Needs free glyph slots (never screen codes 0-63) and their reversed
+  frames.
 
 ## Battle Arena — IMPLEMENTED (V28)
 - Its own program (ARENA, title key A, src/petsciipitarena.bas), built from

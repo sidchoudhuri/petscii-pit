@@ -627,8 +627,9 @@
   game's music picks up where it left off when you leave. Its notes live
   under the BASIC ROM with the text bank, so the music player stays the
   same size.
-- New looks for CHAR (now with feet) and the player, on the map, in the
-  shop and in the title animation. The shop drew the counter after CHAR,
+- New looks for CHAR (now with feet) and the player (walking and
+  fighting), on the map, in fights, in the shop, in the title animation
+  and in the glyph showcase. The shop drew the counter after CHAR,
   and its blank top row cut off his feet until he moved; CHAR is now drawn
   last.
 - The shop calls him CHARPENTIER "CHAR" THE MAGE, and under the counter
