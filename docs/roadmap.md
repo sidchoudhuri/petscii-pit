@@ -1927,11 +1927,10 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Weapons that work better or worse against certain monsters (a mace
   against golems, a dagger against leeches...).
 - Weapons that wear out with use and need replacing or repairing.
-- Glyphs for weapons: a small picture for each weapon type (dagger, sword,
-  blade, mace, flail) and the shield, shown on the map where a weapon
-  lies, in CHAR's shop next to his stock, and on the character sheet.
-  Needs free glyph slots (never screen codes 0-63) and their reversed
-  frames.
+- Glyphs for weapons — DONE (V28): dagger 104, sword 105, blade 106, mace
+  107, flail 108, shield 109. Shown on the map where a weapon lies, in
+  CHAR's shop next to his stock, and at the end of the weapon and shield
+  lines on the character sheet.
 
 ## Battle Arena — IMPLEMENTED (V28)
 - Its own program (ARENA, title key A, src/petsciipitarena.bas), built from
@@ -2154,8 +2153,9 @@ Docs, TESTING.txt, d64 and zips with each step.
   | 166 | rune | | 102 | wall (ROM checkerboard) |
   | | | | 87 | hole (ROM) |
 
-  Weapons use the ROM characters / = < * % (47, 61, 60, 42, 37), not
-  redefined.
+  Weapons (V28): 104 dagger, 105 sword, 106 blade, 107 mace, 108 flail,
+  109 shield (loader DATA 236; 232-237 kept free for second frames).
+  Before V28 they used the ROM characters / = < * % (47, 61, 60, 42, 37).
 - petscii-pit.pf: the whole character set exactly as the loader builds it
   (raw 2048 bytes, screen-code order, no header: ROM uppercase/graphics
   set + the glyph DATA + solid block at 94), for PETSCII editors. Kept in

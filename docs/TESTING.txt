@@ -205,6 +205,9 @@ New in V28
     silence when the music was resting); music off (M) stays off
 [ ] New CHAR (feet) and player glyphs on the map, shop and battle screens
     and in the title animation; CHAR has his feet as soon as the shop opens
+[ ] Weapon glyphs on the map (dropped weapons), next to CHAR's weapons,
+    shield and sell line, and at the end of the sheet's weapon and shield
+    lines
 [ ] Shop: CHARPENTIER "CHAR" THE MAGE; I and C (shown under the counter
     after a blank line) open the instructions and the character sheet,
     and any key comes back to the same stock (STORY, ENDLESS, arena)

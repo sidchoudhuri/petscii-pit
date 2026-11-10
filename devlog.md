@@ -632,6 +632,11 @@
   and in the glyph showcase. The shop drew the counter after CHAR,
   and its blank top row cut off his feet until he moved; CHAR is now drawn
   last.
+- Weapons have their own glyphs: dagger, sword, blade, mace and flail on
+  the map where they lie, next to CHAR's stock, and on the character
+  sheet, plus a shield glyph in the shop and on the sheet. Until now they
+  were the ROM characters / = < * %, which broke the rule of never using
+  screen codes 0-63 as glyphs.
 - The shop calls him CHARPENTIER "CHAR" THE MAGE, and under the counter
   it shows I - INSTRUCTIONS and C - CHARACTER SHEET, so you can check your
   health before buying a draught (STORY, ENDLESS and the arena).
