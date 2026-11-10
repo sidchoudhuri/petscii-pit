@@ -387,7 +387,16 @@ each piece.
 ## Roaming Vendor: CHAR — IMPLEMENTED (V28)
 - The vendor is a mage, Charpentier ("CHAR" for short).
 - Glyph: screen codes 89 and 217 (two frames, drawn by Sid in
-  petscii-pit.pf): 24,24,60,62,88,28,36,102 / 24,24,60,124,26,56,36,102.
+  petscii-pit.pf): 24,24,60,62,88,28,36,102 / 24,24,60,124,26,56,36,102
+  (V28: feet added on the bottom row).
+- Shop screen: CHARPENTIER "CHAR" / THE MAGE; each item has its glyph
+  left of its number (weapon glyphs, shield 109, potion 158, your own
+  weapon on SELL); under the counter, after a blank line, I INSTRUCTIONS
+  and C CHARACTER SHEET (STORY, ENDLESS, arena) so you can check your
+  health before buying a draught. CHAR is drawn after the counter (the
+  counter's blank top row used to cut off his feet until he moved).
+- Music: "Bartering" plays on his screen (see below); leaving brings back
+  whatever played before.
 - He appears every 5 levels in his own room, standing behind a counter
   with treasure chests and potions that can't be picked up. Entering the
   room talks to him; you can talk to him from anywhere in the room.
@@ -1023,6 +1032,24 @@ each piece.
 - The music player moved down one page to $9700 to fit the new song
   (POKE 56,151); every SYS/POKE address dropped by 256. New entry:
   POKE 780,0 or 1 then SYS 38690 sets happy or sad.
+
+## Shop Music: "Bartering" — IMPLEMENTED (V28)
+- Fourth song, for CHAR's shop: a 3/4 loop of 4 bars, 4.8 seconds
+  (shorter than Assailing). Dm - Bb - Gm - A: plucked, harpsichord-like
+  broken chords (new PLUCK instrument), a walking bass and a short tune on
+  top. No drums.
+- SYS 38694 (jump table +38) starts it, like the fight song: from a mood
+  song the mood song's place is saved, and SYS 38681 (resume) goes back.
+  Fight and shop are the odd songs (1 and 3), so the player's checks use
+  AND #1.
+- Memory: the player had 21 bytes free. Bartering's patterns live under
+  the BASIC ROM ($BA00 PAL, $BB00 NTSC), attached to the loader after the
+  text bank (prg/musicshop.bin, 12 pages copied 3 x 4); the music IRQ
+  switches the BASIC ROM out while it plays. The stop routine moved into
+  the free space below the jump table ($96BF).
+- Stand-alone files: sid/bartering-pal.sid / -ntsc.sid, and
+  petscii-pit-pal.sid / -ntsc.sid now hold all four songs (loaded at
+  $8F00, since four songs no longer fit below $A000 at $9600).
 
 ## BLITZ! Compilation — PLANNED
 - Goal: compile the game (and the demo) with the BLITZ! BASIC compiler.
@@ -1950,6 +1977,12 @@ Docs, TESTING.txt, d64 and zips with each step.
 - Arena runes: checksum +31 (ENDLESS +23, STORY +29); the level field holds
   1 + 4 x shop visits + shield. R on the title starts ARENA in the shop.
 - Flee: always works, costs 10% of coins, no reward.
+- Music: Bartering in CHAR's shop, silence between fights (and on the
+  YOU FLED / ON TO LEVEL / VISIT CHAR'S SHOP prompts), Assailing from the
+  first blow of each fight, Lamenting below a quarter health, silence on
+  the instructions, the character sheet and the death screen (lines
+  820-826: QS is the wanted state, QA the one playing).
+- In CHAR's shop, I shows the arena instructions and C the character sheet.
 - Its own instructions screen (lines 8000-8180), printed by ARENA itself
   because the game's stored screen under the KERNAL ROM has no room for a
   second one: shown on a fresh start, and with I in a fight or the shop.
@@ -2139,7 +2172,8 @@ Docs, TESTING.txt, d64 and zips with each step.
   (letters, digits, punctuation): text needs them. Text may only use
   those, the reverse space (160, HUD bars and sliders) and the ROM
   checkerboard (102). No other reverse text.
-- Screen codes in use (loader glyph DATA 120-230):
+- Screen codes in use (loader glyph DATA 120-236; V28 new looks for the
+  walking frames 129/130 and the fighting glyph 144):
 
   | Code | Glyph | | Code | Glyph |
   |---|---|---|---|---|
@@ -2151,7 +2185,9 @@ Docs, TESTING.txt, d64 and zips with each step.
   | 159 | floor | | 65 / 193 | golem |
   | 190 | stairs | | 94 | solid block (title strips, "~") |
   | 166 | rune | | 102 | wall (ROM checkerboard) |
-  | | | | 87 | hole (ROM) |
+  | 167 | note scroll | | 87 | hole (ROM) |
+  | 89 / 217 | CHAR, 2 frames (V28) | | 84 / 212 | serpent |
+  | 85 / 213 | CHAR's counter (V28) | | | |
 
   Weapons (V28): 104 dagger, 105 sword, 106 blade, 107 mace, 108 flail,
   109 shield (loader DATA 236; 232-237 kept free for second frames).

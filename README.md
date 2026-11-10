@@ -2,14 +2,14 @@
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
 A C64 BASIC roguelike - Version 28
 
-Three ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending), **ENDLESS** (a new random pit every level) and the **ARENA** (fights only, harder and harder monsters). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop: weapons, shields, draughts, curse lifting. In the arena CHAR opens his shop every 3 fights. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
+Three ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending), **ENDLESS** (a new random pit every level) and the **ARENA** (fights only, harder and harder monsters). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop to his own music: weapons, shields, draughts, curse lifting, with your character sheet a key away. In the arena CHAR opens his shop every 3 fights. Each weapon has its own glyph. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
 
 ## Disk Image
 The game must be launched from disk (LOAD"*",8 and RUN) because the games, music and story levels are loaded separately
 
 [PETSCIIPIT.D64](petsciipit.d64) - Game disk image.
 
-&nbsp;&nbsp;&nbsp;|-- [PETSCIIPIT](prg/petsciipitloader.prg) - Loader: title screen, menu, instructions, SID setup, runes
+&nbsp;&nbsp;&nbsp;|-- [PETSCIIPIT](prg/petsciipitloader.prg) - Loader: title screen, menu, instructions, SID setup, runes; it also carries the game text and the notes of CHAR's shop music ([musicshop.bin](prg/musicshop.bin))
 
 &nbsp;&nbsp;&nbsp;|-- [STORY](prg/petsciipitstory.prg) - The STORY game
 
