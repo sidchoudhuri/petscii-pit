@@ -626,7 +626,9 @@
   bass, with a little tune on top. It plays on his shop screen and the
   game's music picks up where it left off when you leave. Its notes live
   under the BASIC ROM with the text bank, so the music player stays the
-  same size.
+  same size. The PETSCII Pit .sid files now hold all four songs, and
+  BARTERING has its own .sid too (PAL and NTSC, also on m0n.de's WebSid
+  and SIDlab).
 - New looks for CHAR (now with feet) and the player (walking and
   fighting), on the map, in fights, in the shop, in the title animation
   and in the glyph showcase. The shop drew the counter after CHAR,
@@ -634,7 +636,8 @@
   last.
 - Weapons have their own glyphs: dagger, sword, blade, mace and flail on
   the map where they lie, next to CHAR's stock, and on the character
-  sheet, plus a shield glyph in the shop and on the sheet. Until now they
+  sheet, plus a shield glyph in the shop and on the sheet, and the potion
+  glyph next to the draught in the shop. Until now they
   were the ROM characters / = < * %, which broke the rule of never using
   screen codes 0-63 as glyphs.
 - The shop calls him CHARPENTIER "CHAR" THE MAGE, and under the counter
