@@ -627,7 +627,13 @@
   game's music picks up where it left off when you leave. Its notes live
   under the BASIC ROM with the text bank, so the music player stays the
   same size.
-- New looks for CHAR (now with feet) and the player.
+- New looks for CHAR (now with feet) and the player, on the map, in the
+  shop and in the title animation. The shop drew the counter after CHAR,
+  and its blank top row cut off his feet until he moved; CHAR is now drawn
+  last.
+- The shop calls him CHARPENTIER "CHAR" THE MAGE, and under the counter
+  it shows I - INSTRUCTIONS and C - CHARACTER SHEET, so you can check your
+  health before buying a draught (STORY, ENDLESS and the arena).
 - Title menu wording: E - THE ENDLESS PIT and R - RESUME YOUR DESCENT; the
   rune screen's heading matches (RESUME YOUR DESCENT).
 - Under the hood: room numbers moved into the fog map, the monster and
