@@ -204,6 +204,10 @@ New in V28
     two; leaving brings back what played before (fight music in a fight,
     silence when the music was resting); music off (M) stays off
 [ ] New CHAR (feet) and player glyphs on the map, shop and battle screens
+    and in the title animation; CHAR has his feet as soon as the shop opens
+[ ] Shop: CHARPENTIER "CHAR" THE MAGE; I and C (shown under the counter
+    after a blank line) open the instructions and the character sheet,
+    and any key comes back to the same stock (STORY, ENDLESS, arena)
 [ ] All text still reads right: character sheet, skills, game over, rune
     screen, status messages (they now come from the text bank)
 [ ] Q to the title and back into a game (round trip) still works
