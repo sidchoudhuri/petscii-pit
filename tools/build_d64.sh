@@ -9,7 +9,7 @@ T="$(dirname "$0")"
 rm -rf petsciipit.d64 _levels
 python3 "$T/pitlevels.py" build _levels >/dev/null
 cp _levels/levels.prg prg/levels.prg
-c1541 -format "petscii pit,$1" d64 petsciipit.d64 -write prg/petsciipitloader.prg petsciipit -write prg/petsciipitstory.prg story -write prg/petsciipitendless.prg endless -write prg/petsciipitdemo.prg demo -write prg/glyphshowcase.prg showcase -write prg/musicpal.prg musicpal -write prg/musicntsc.prg musicntsc -write prg/levels.prg levels >/dev/null
+c1541 -format "petscii pit,$1" d64 petsciipit.d64 -write prg/petsciipitloader.prg petsciipit -write prg/petsciipitstory.prg story -write prg/petsciipitendless.prg endless -write prg/petsciipitarena.prg arena -write prg/petsciipitdemo.prg demo -write prg/glyphshowcase.prg showcase -write prg/musicpal.prg musicpal -write prg/musicntsc.prg musicntsc -write prg/levels.prg levels >/dev/null
 python3 "$T/pitlevels.py" index petsciipit.d64
 mv levelidx.prg prg/levelidx.prg
 c1541 -attach petsciipit.d64 -write prg/levelidx.prg levelidx >/dev/null

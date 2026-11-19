@@ -70,6 +70,10 @@ def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=(), loade
     ]) + ('9000 ZY=ZY+1:A$=MID$("%s",ZY,1):IF A$="" THEN ZY=ZY-1:GOTO 9000\n'
            '9010 RETURN\n') % (pick + "N" if loader_keys is None else loader_keys)
     build_prg(ld, os.path.join(d, "loader.prg"))
+    subprocess.run([sys.executable, os.path.join(TOOLS, "textbank.py"), "attach",
+                    os.path.join(sd, "texts.txt"), os.path.join(d, "loader.prg"),
+                    os.path.join(folder, "prg", "musicshop.bin")],
+                   check=True, stdout=subprocess.DEVNULL)
     src = "petsciipitendless.bas" if game == "ENDLESS" else "petsciipitstory.bas"
     g = open(os.path.join(sd, src)).read()
     g = patch(g, [
@@ -81,7 +85,7 @@ def make_disk(folder, name, game="ENDLESS", keys="", setup="", patches=(), loade
          "4180 GOSUB 9020"),
         ("5540 GOSUB 4340", "5535 %s\n5540 GOSUB 4340" % (setup or "REM")),
     ] + list(patches))
-    g += ('9000 ZY=ZY+1:A$=MID$(K$,ZY,1):IF A$="!" THEN A$=CHR$(13)\n'
+    g += ('9000 A$="":IF ZY<LEN(K$) THEN ZY=ZY+1:A$=MID$(K$,ZY,1):IF A$="!" THEN A$=CHR$(13)\n'
           '9010 RETURN\n'
           '9020 GOSUB 9000:IF A$<>"" THEN RETURN\n'
           '9030 IF ZY<=LEN(K$) THEN 9020\n'

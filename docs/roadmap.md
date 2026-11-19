@@ -322,27 +322,44 @@ each piece.
   this doesn't interfere with the existing Grand Hallway text-detection
   logic, which only ever looks at corridor floor cells and never at
   void or wall cells.
-## Win Condition
+## Win Condition — IDEA (not done; STORY has its own ending at level 100)
 - Reaching Shadow Hand is required to win the game.
 - A specific dungeon level (not yet decided which) requires the player to
   modify the game itself in order to exit — a meta win condition.
 - Guaranteed hints appear at certain dungeon levels (not yet decided which),
   but their placement within the level is random each time.
 
-## Darkness Mechanic (Partial Rollout)
+## Darkness Mechanic (Partial Rollout) — SHELVED (not done)
 - The previously-discussed dynamic vision/darkness system (shelved for now),
   applied to certain parts of the dungeon rather than entire levels,
   starting at dungeon level 3.
 - When built, being in a dark area should also switch the music to
   "Lamenting" (add the condition to the mood check, `QT=` at line 6470).
 
-## Teleportation Circles
+## Teleportation Circles — PLANNED (idea, not designed yet)
 - Deeper in the dungeon: rooms containing only "O" characters and nothing
   else.
 - Stepping into one teleports the player to a matching circle on the other
   side of the dungeon level.
 - Glyph decided: PETSCII 113 (screen code 81 for our POKE-based rendering —
   worth a visual check on real hardware once built).
+
+## One-Way Corridors — PLANNED (idea, not designed yet)
+- Corridors you can walk through in one direction only, so the way back to
+  a room is cut off and you have to find another route (or use Backtrack,
+  teleportation circles or the stairs).
+- Pairs with Teleportation Circles above: both change how you move around
+  a level, and a one-way corridor can be the only way to reach a circle.
+- To decide when we design it:
+  - how it looks: an arrow glyph on the corridor floor (which screen code,
+    never 0-63), or a door that shuts behind you
+  - whether you can see the direction before you step in (Keen Eyes?)
+  - how many per level, and from which level
+  - ENDLESS only, or also some STORY levels (pitlevels.py would need a
+    one-way command in levels.txt)
+  - every room must still be reachable from the start (the generator
+    checks this)
+  - monsters and Backtrack: do they ignore the direction?
 
 ## Hidden Holes / Trap Tiles — IMPLEMENTED
 - From dungeon level 5, a level may have one hole: 20% chance on level 5,
@@ -367,10 +384,70 @@ each piece.
   floor. QP=1 makes the mood check (840) choose Lamenting; moving clears
   it (2440).
 
-## Roaming Vendor
-- Starting at dungeon level 5, a chance to encounter a roaming vendor.
-- The vendor sells weapons and shields with buffs similar to the weapon
-  pickups above.
+## Roaming Vendor: CHAR — IMPLEMENTED (V28)
+- The vendor is a mage, Charpentier ("CHAR" for short).
+- Glyph: screen codes 89 and 217 (two frames, drawn by Sid in
+  petscii-pit.pf): 24,24,60,62,88,28,36,102 / 24,24,60,124,26,56,36,102
+  (V28: feet added on the bottom row).
+- Shop screen: CHARPENTIER "CHAR" / THE MAGE; each item has its glyph
+  left of its number (weapon glyphs, shield 109, potion 158, your own
+  weapon on SELL); under the counter, after a blank line, I INSTRUCTIONS
+  and C CHARACTER SHEET (STORY, ENDLESS, arena) so you can check your
+  health before buying a draught. CHAR is drawn after the counter (the
+  counter's blank top row used to cut off his feet until he moved).
+- Music: "Bartering" plays on his screen (see below); leaving brings back
+  whatever played before.
+- He appears every 5 levels in his own room, standing behind a counter
+  with treasure chests and potions that can't be picked up. Entering the
+  room talks to him; you can talk to him from anywhere in the room.
+- He sells weapons and shields, and buys old weapons. Shields must not make
+  the thief overpowered.
+- He can identify treasures (see Named Treasures below).
+- Counter glyphs: 85 horizontal, 213 vertical (drawn by Sid):
+  0,0,238,255,255,119,0,0 / 28,60,60,56,28,60,60,56.
+- The room has 1 door; CHAR, his chests and potions are on the far side of
+  a counter that splits the room. Standard size to settle (proposed 9x7
+  with walls).
+- The shelf: always 2 chests, all on one side (they stand for what he
+  sells), and 1-3 potions on the other side (his actual stock of healing
+  draughts: buying one takes it off the shelf).
+- Built in V28: ENDLESS (generated every 5th level), STORY (levels
+  5/10/.../100: tools/pitlevels.py puts the room, door and corridor in the
+  level data, with the shop side and position in the level header; the game
+  furnishes it), and the demo (the AI visits the shop like any other room,
+  CHAR's screen shows for about 3 s, and it buys a draught when below half
+  health and it can pay; the shop's corridor never joins the stairs room, so
+  the AI can't descend on the way).
+
+## Game Text in the Text Bank — IMPLEMENTED (V28)
+- Fixed text (character sheet, skills, game over, rune screen, status
+  messages, CHAR's shop) moved out of ENDLESS and STORY into a text bank
+  in the RAM under the BASIC ROM at $B200 (2 KB, about 1.7 KB used).
+- Source: src/texts.txt (one message per line, "^" = RETURN). The build
+  attaches the bank to the end of the loader program; the loader copies it
+  to $B200 (line 386). tools/textbank.py does the conversion and the attach.
+- src/asm/text.asm at $0400: SYS 1024,N prints message N, SYS 1027,N
+  fetches it; line 98 turns the fetched text into MS$.
+- Freed about 1 KB in ENDLESS and 0.7 KB in STORY.
+
+## More Memory If Needed — IDEAS (not done)
+- Shorten long variable names in the busiest lines.
+- Merge short one-statement lines into their neighbours (each line number
+  costs about 5 bytes).
+- Both make the listing harder to read, so only if memory runs out again.
+
+## Bug Fix: Starting a Game After Quitting to the Title — FIXED (V28)
+- Coming back from a game restarted the loader at line 350 after CLR, so
+  its DATA reads began at the first DATA line again and the machine code
+  (room reveal, level fill, copy routine, text routines) got the wrong
+  bytes; line 370 also ran the SID check where the level fill now sits.
+  The next game crashed to a garbled blue screen (also in V27). Line 30
+  now goes to line 110, so everything is installed in order again.
+
+## Bug Fix: Shield on the Weapon's Line — FIXED (V28)
+- With a shield but no weapon, the character sheet printed "WEAPON: NONE"
+  and the shield on one line (STORY and ENDLESS). The blank line for no
+  weapon now comes before the shield line (3701).
 
 ## "R" - Rest Until Healed — IMPLEMENTED (V27, DEEP SLEEP; see V27 below)
 - A new key, separate from the existing SPACE (rest 10 turns, small
@@ -385,7 +462,7 @@ each piece.
   rested, similar to the existing 4-second SPACE pause)? Does the
   ambush check happen once, or does risk escalate the longer you rest?
 
-## Monsters Chasing Through Corridors
+## Monsters Chasing Through Corridors — IDEA (not done)
 - Currently, monsters are confined to their home room — one is
   confirmed reachable today (a monster taking a single step into a
   corridor while chasing, then going permanently inert there because
@@ -460,7 +537,7 @@ each piece.
   and on the character sheet, and kept when you equip it (WR).
 - The demo has all of this too.
 
-## Combat Difficulty / Balance
+## Combat Difficulty / Balance — PARTLY DONE (healing rebalanced, monster scaling and weapons reworked; the "too easy once armed" balance check is still open)
 - Update: monster scaling and weapon strength are now addressed — see
   "Monster Scaling, Groups, Character Levels, Random Weapons" above.
 - Once armed and at Basic Burglar, combat becomes too easy — you rarely
@@ -488,7 +565,14 @@ each piece.
   packed with rooms/corridors relative to the available space. Only a
   small increase, not a major overhaul of generation.
 
-## Named Treasures with Effects
+## More Potion Types — LATER
+- Other kinds of potions besides healing (CHAR's shelf only has healing
+  draughts for now). Types and effects to be decided later.
+
+## Named Treasures with Effects — PLANNED (not designed yet)
+- Treasures are found in treasure chests and add buffs to the player.
+- CHAR can identify a treasure (see the vendor above).
+- Treasure types and their buffs: to be decided later.
 - Beyond plain coin treasure, add specific named treasure items, each
   with its own effect — some good, some bad (a risk/reward or
   identify-the-unknown-item angle, similar in spirit to how weapons
@@ -500,7 +584,7 @@ each piece.
   themselves immediately, or is part of the risk not knowing whether
   a treasure is good or bad until you pick it up?
 
-## Unidentified Potions
+## Unidentified Potions — IDEA (not done)
 - Companion idea to the named-treasures item above, applied to potions
   instead: alongside the existing plain healing potions, add potions
   marked with "??" whose effect isn't known until you drink one — a
@@ -528,7 +612,7 @@ each piece.
   the specific rolled values for the weapon you're holding, not just
   a generic per-type description like they do now.
 
-## Custom Character Set for a Small Set of Glyphs
+## Custom Character Set for a Small Set of Glyphs — IMPLEMENTED (charset at $C800)
 - Goal: redefine only a handful of characters, not the whole 256-glyph
   set — specifically the player (`@`, into a little-man shape per an
   existing mockup), walls (`#`), floor (`.`), treasure (`$`), and the
@@ -621,7 +705,7 @@ each piece.
   already-revealed tile, not just walls: potions, treasure, stairs,
   weapons, visible monsters, and the player all switch to their real
   colors on the spot, in the same single screen pass.
-## Compilation Using MOSpeed — IN PROGRESS
+## Compilation Using MOSpeed — ON HOLD (compiled output too big to fit; see the last notes)
 - Goal: compile both `petsciipit.prg` (the main game) and `petsciipitdemo.prg`
   (the demo) from BASIC to native 6502 machine code using MOSpeed's web
   edition, for a speed boost without a full assembly rewrite. Both are
@@ -949,6 +1033,24 @@ each piece.
   (POKE 56,151); every SYS/POKE address dropped by 256. New entry:
   POKE 780,0 or 1 then SYS 38690 sets happy or sad.
 
+## Shop Music: "Bartering" — IMPLEMENTED (V28)
+- Fourth song, for CHAR's shop: a 3/4 loop of 4 bars, 4.8 seconds
+  (shorter than Assailing). Dm - Bb - Gm - A: plucked, harpsichord-like
+  broken chords (new PLUCK instrument), a walking bass and a short tune on
+  top. No drums.
+- SYS 38694 (jump table +38) starts it, like the fight song: from a mood
+  song the mood song's place is saved, and SYS 38681 (resume) goes back.
+  Fight and shop are the odd songs (1 and 3), so the player's checks use
+  AND #1.
+- Memory: the player had 21 bytes free. Bartering's patterns live under
+  the BASIC ROM ($BA00 PAL, $BB00 NTSC), attached to the loader after the
+  text bank (prg/musicshop.bin, 12 pages copied 3 x 4); the music IRQ
+  switches the BASIC ROM out while it plays. The stop routine moved into
+  the free space below the jump table ($96BF).
+- Stand-alone files: sid/bartering-pal.sid / -ntsc.sid, and
+  petscii-pit-pal.sid / -ntsc.sid now hold all four songs (loaded at
+  $8F00, since four songs no longer fit below $A000 at $9600).
+
 ## BLITZ! Compilation — PLANNED
 - Goal: compile the game (and the demo) with the BLITZ! BASIC compiler.
   Moving the music player out of BASIC memory to $C000-$CFFF comes
@@ -1002,7 +1104,7 @@ each piece.
 - Not started: waiting on a full plan with every changed line before any
   code is written.
 
-## Optimization Pass — IN PROGRESS
+## Optimization Pass — PARTLY DONE
 - Glyph setup as DATA/READ — IMPLEMENTED (game, demo, glyph showcase):
   the 11 custom glyphs are one DATA line each, written by a short READ
   loop instead of 88 POKEs. Same bytes; each program 533 bytes smaller.
@@ -1585,13 +1687,13 @@ each piece.
   6560-6580 after each fight round (2520), key help and fight start
   6660 (from 5940). JG=1 at start-up (5520).
 
-## Priority (decided)
+## Priority (decided) — DONE (V23-V24)
 1. Battle wipes (V23): tested, working.
 2. Battle Moves and Monster Tells (V23).
 3. Two Games: STORY and ENDLESS: steps 1-3 done (V24, waiting for
    testing), step 4 (notes and story features) when we decide.
 
-## Two Games: STORY and ENDLESS — PLANNED (after V23, priority 3)
+## Two Games: STORY and ENDLESS — IMPLEMENTED (V24)
 - Two games loaded from the loader instead of one:
   - STORY: 100 pre-made levels read from disk, all story features (runes
     found on the floor, notes in levels, more later). Ends at level 100
@@ -1685,7 +1787,7 @@ each piece.
 4. Notes and other story features, once we decide how to use the levels.
 Docs, TESTING.txt, d64 and zips with each step.
 
-## STORY Game, Steps 1-2 — IMPLEMENTED (V24, waiting for testing)
+## STORY Game, Steps 1-2 — IMPLEMENTED (V24)
 - Level 0 is the tutorial (STORY starts there; dying and K/N restart at
   level 1, so the tutorial is never repeated). Level 0 shows TUTORIAL in
   place of LVL on the HUD (310), on the character sheet (3640), the game
@@ -1776,7 +1878,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   pitlevels.py and dirlayout24.bin (the V23 build is build_d64_v23.sh).
   122 blocks free.
 
-## Serpent — IMPLEMENTED (V25, waiting for testing)
+## Serpent — IMPLEMENTED (V25)
 - New monster by Sid: SERPENT, glyph 84 / 212 (loader DATA line 190,
   110 now reads 24 glyphs; petscii-pit.pf). Green (5) after Keen Eyes.
   HP bonus 3, attack bonus 2, XP bonus 6, coin bonus 3, hit sound -5.
@@ -1807,8 +1909,8 @@ Docs, TESTING.txt, d64 and zips with each step.
   and 5910 use 4180; quitting to the title (2910, 3910, and the ending)
   goes through 6830. The game over S line is one PRINT with its colours
   picked by SD (2860; 2870 removed).
-- Decided not to do: shorter or moved messages (all the text is about
-  1 KB) and wipe presets in machine code (about 200 bytes after crunching,
+- Decided not to do (then): shorter or moved messages (all the text is about
+  1 KB; moved after all in V28, see Game Text in the Text Bank) and wipe presets in machine code (about 200 bytes after crunching,
   and no clean place left for the code).
 
 ## V26: Keyboard Stops, Message Colours, Rune Loading Fix — IMPLEMENTED
@@ -1846,14 +1948,46 @@ Docs, TESTING.txt, d64 and zips with each step.
   moves. Half bind for 150 moves (rests count: 10, deep sleep 10 per 10%
   healed); after that it stays cursed but can be swapped.
 
-## More Weapon Ideas — LATER
+## More Weapon Ideas — LATER (curse lifting done in V28: CHAR does it)
 - Lift a curse for coins (coins have no use yet; fits the roaming vendor,
   or a shrine).
 - Weapons that work better or worse against certain monsters (a mace
   against golems, a dagger against leeches...).
 - Weapons that wear out with use and need replacing or repairing.
+- Glyphs for weapons — DONE (V28): dagger 104, sword 105, blade 106, mace
+  107, flail 108, shield 109. Shown on the map where a weapon lies, in
+  CHAR's shop next to his stock, and at the end of the weapon and shield
+  lines on the character sheet.
 
-## Battle Arena — PLANNED (idea, not designed yet)
+## Battle Arena — IMPLEMENTED (V28)
+- Its own program (ARENA, title key A, src/petsciipitarena.bas), built from
+  ENDLESS's battle, shop, title and rune code; no map.
+- Start: 150 XP, 25 health, 100 coins, in CHAR's shop (buying optional; his
+  weapons cost 15 x attack + 35). The first visit only stocks a dagger,
+  blade or sword at their weakest (65 / 80 / 95), so 100 coins always buys
+  a weapon, or the 40-coin shield, never both.
+- Fight n shows as LEVEL n; game depth = 5 + (n-1)/3. Monsters, groups,
+  XP and coins use the game's rules for that depth. A win heals 10% of max
+  health. Bare-handed win x2 rewards, cursed win x1.5.
+- Drops: 1 in 4 after a win, weapon depth bonus 0 to depth/3-1 (CHAR's
+  start at depth/3); 1 in 8 cursed: -1 attack, special reversed at half,
+  no drain, half bind for the next fight only.
+- CHAR every 3 fights (VISIT CHAR'S SHOP? Y/N): 2 weapons, shield
+  1..3 (stronger every 4 depths), 1-3 draughts at 5 x depth, sells for half.
+- Arena runes: checksum +31 (ENDLESS +23, STORY +29); the level field holds
+  1 + 4 x shop visits + shield. R on the title starts ARENA in the shop.
+- Flee: always works, costs 10% of coins, no reward.
+- Music: Bartering in CHAR's shop, silence between fights (and on the
+  YOU FLED / ON TO LEVEL / VISIT CHAR'S SHOP prompts), Assailing from the
+  first blow of each fight, Lamenting below a quarter health, silence on
+  the instructions, the character sheet and the death screen (lines
+  820-826: QS is the wanted state, QA the one playing).
+- In CHAR's shop, I shows the arena instructions and C the character sheet.
+- Its own instructions screen (lines 8000-8180), printed by ARENA itself
+  because the game's stored screen under the KERNAL ROM has no room for a
+  second one: shown on a fresh start, and with I in a fight or the shop.
+  The game's I screen (loader 995) points to it.
+- The original idea notes follow.
 - A third way to play: no exploring, just fights. You face harder and
   harder monsters one after another on the battle screen.
 - Uses the battle screen, the battle moves and the monster tells as they
@@ -1978,7 +2112,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   both are the same register. Game volume routines 5750-5760; loader 370
   and 1350 set the title volumes the same way.
 
-## SID Model Check (6581 / 8580) — TEST BUILD (V20)
+## SID Model Check (6581 / 8580) — IMPLEMENTED (V20; the SID setup screen shows 6581 or 8580)
 - The loader takes three readings of voice 3 on the chip at $D400 and the
   one at $D420 before it starts the title music (370), and shows them raw
   on row 21 (1950-1960): "#D400 A/B/C   #D420 A/B/C" (the $D420 group only
@@ -2038,7 +2172,8 @@ Docs, TESTING.txt, d64 and zips with each step.
   (letters, digits, punctuation): text needs them. Text may only use
   those, the reverse space (160, HUD bars and sliders) and the ROM
   checkerboard (102). No other reverse text.
-- Screen codes in use (loader glyph DATA 120-230):
+- Screen codes in use (loader glyph DATA 120-236; V28 new looks for the
+  walking frames 129/130 and the fighting glyph 144):
 
   | Code | Glyph | | Code | Glyph |
   |---|---|---|---|---|
@@ -2050,10 +2185,13 @@ Docs, TESTING.txt, d64 and zips with each step.
   | 159 | floor | | 65 / 193 | golem |
   | 190 | stairs | | 94 | solid block (title strips, "~") |
   | 166 | rune | | 102 | wall (ROM checkerboard) |
-  | | | | 87 | hole (ROM) |
+  | 167 | note scroll | | 87 | hole (ROM) |
+  | 89 / 217 | CHAR, 2 frames (V28) | | 84 / 212 | serpent |
+  | 85 / 213 | CHAR's counter (V28) | | | |
 
-  Weapons use the ROM characters / = < * % (47, 61, 60, 42, 37), not
-  redefined.
+  Weapons (V28): 104 dagger, 105 sword, 106 blade, 107 mace, 108 flail,
+  109 shield (loader DATA 236; 232-237 kept free for second frames).
+  Before V28 they used the ROM characters / = < * % (47, 61, 60, 42, 37).
 - petscii-pit.pf: the whole character set exactly as the loader builds it
   (raw 2048 bytes, screen-code order, no header: ROM uppercase/graphics
   set + the glyph DATA + solid block at 94), for PETSCII editors. Kept in
@@ -2096,7 +2234,7 @@ Docs, TESTING.txt, d64 and zips with each step.
   these volumes, and the game's M, E and V write their changes back
   (5750-5770), so the loader shows them on return.
 
-## V27: Ambushes, Resting Dots, Deep Sleep, Denser Dungeons, Backtrack, Rolled Weapons — IMPLEMENTED (waiting for testing; V27 is complete)
+## V27: Ambushes, Resting Dots, Deep Sleep, Denser Dungeons, Backtrack, Rolled Weapons — IMPLEMENTED (V27, released)
 - An ambush (3490-3600, from the rest at 2630) can happen in a room or a
   corridor. The ambusher becomes the target (TG=BM=MN), the side and wipe
   direction are set from the player toward it, the fight-music check runs

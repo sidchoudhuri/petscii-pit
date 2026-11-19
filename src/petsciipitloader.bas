@@ -1,6 +1,6 @@
 10 REM PETSCII PIT LOADER - HTTPS://M0NDE.ITCH.IO
 20 POKE 53280,0:POKE 53281,0:IF PEEK(56)<>149 THEN POKE 55,0:POKE 56,149:CLR
-30 IF PEEK(38643)=82 THEN POKE 38643,0:POKE 45,PEEK(174):POKE 46,PEEK(175):CLR:GOTO 350
+30 IF PEEK(38643)=82 THEN POKE 38643,0:POKE 45,PEEK(174):POKE 46,PEEK(175):CLR:GOTO 110
 40 DV=PEEK(186):IF DV<8 THEN DV=8
 50 IF QM=0 THEN QM=1:F$="MUSICPAL":IF PEEK(678)=0 THEN F$="MUSICNTSC"
 60 IF QM=1 THEN QM=2:POKE 53280,0:POKE 53281,0:PRINT CHR$(147);"{WHT}LOADING PETSCII PIT ...":LOAD F$,DV,1
@@ -8,8 +8,8 @@
 80 REM QUICK MEMCOPY FOR THE FONT - EYVIND EBSEN
 90 POKE 88,0:POKE 89,208:POKE 90,0:POKE 91,216:POKE 781,9:POKE 782,0:SYS 41964
 100 POKE 1,PEEK(1) OR 4:POKE 56334,PEEK(56334) OR 1
-110 FOR I=1 TO 24:READ IX:IX=51200+IX*8:FOR X=0 TO 7:READ Y:POKE IX+X,Y:NEXT X,I
-120 DATA 128,28,20,46,58,50,28,20,54,144,28,148,110,61,53,28,22,51,129,28,20,46,90,82,28,52,102,130,56,40,116,90,74,56,44,102:REM PLAYER
+110 FOR I=1 TO 34:READ IX:IX=51200+IX*8:FOR X=0 TO 7:READ Y:POKE IX+X,Y:NEXT X,I
+120 DATA 128,28,20,46,58,50,28,20,54,144,28,148,110,61,53,28,23,49,129,28,20,46,90,82,28,52,38,130,56,40,116,90,74,56,44,100:REM PLAYER
 130 DATA 159,0,96,6,0,0,48,3,0:REM FLOOR
 140 DATA 158,24,24,24,60,122,122,52,0:REM POTION
 150 DATA 132,0,62,75,127,69,69,127,0:REM CHEST
@@ -21,6 +21,8 @@
 210 DATA 90,36,36,88,127,24,24,54,0,218,36,36,25,90,124,24,108,0:REM IMP
 220 DATA 91,8,24,92,58,24,60,126,0,219,8,24,58,92,24,60,126,0:REM CULTIST
 230 DATA 166,24,60,110,102,110,110,126,0,167,126,98,62,42,62,39,63,0:REM RUNE (GLYPH LORE), NOTE SCROLL. BELOW: SCREEN CODE 94 (PI) = SOLID BLOCK FOR THE TITLE
+235 DATA 89,24,24,60,62,88,28,36,102,217,24,24,60,124,26,56,36,102,85,0,0,238,255,255,119,0,0,213,28,60,60,56,28,60,60,56:REM CHAR THE MAGE (TWO FRAMES), SHOP COUNTER (HORIZONTAL, VERTICAL)
+236 DATA 104,0,2,4,40,16,40,0,0,105,0,96,48,24,10,4,10,0,106,0,6,14,28,88,32,80,0,107,32,112,248,124,56,20,2,0,108,21,10,21,10,21,32,64,0,109,0,126,78,78,36,36,24,0:REM WEAPONS: DAGGER, SWORD, BLADE, MACE, FLAIL, SHIELD
 240 FOR X=0 TO 7:POKE 51952+X,255:NEXT X
 250 REM ML: INSTRUCTIONS 1280/1344, BATTLE 38144 (DATA 1010), WIPES 1536 (1730), SID MODEL 1824 (2000), THEN FILL 1824/REVEAL 1398 (2700). SID: 38643 RETURN FLAG, 38644 FOUND, 38645-50 MODEL, 38651 MUSIC CHIP, 38652 MODE, 38653 START MOOD
 260 FOR I=55552 TO 55669:POKE I,0:NEXT I:FOR I=1280 TO 1397:READ X:POKE I,X:NEXT I:FOR I=38144 TO 38338:READ X:POKE I,X:NEXT I:FOR I=55808 TO 56217:POKE I,0:NEXT I:FOR I=1536 TO 1810:READ X:POKE I,X:NEXT I:FOR I=1824 TO 1944:READ X:POKE I,X:NEXT I
@@ -36,15 +38,18 @@
 360 POKE 53265,11:POKE 56576,(PEEK(56576) AND 252):POKE 53272,3:POKE 648,192:POKE 53280,0:POKE 53281,0
 370 POKE 1824,0:SYS 1828:FOR I=0 TO 2:POKE 38645+I,PEEK(1825+I):NEXT I:POKE 1824,32:SYS 1828:FOR I=0 TO 2:POKE 38648+I,PEEK(1825+I):NEXT I:POKE 38653,0:SYS 38662:POKE 38644,PEEK(38693)*-(PEEK(38652)=0)-PEEK(38644)*(PEEK(38652)>0):GOSUB 2400:GOSUB 590:POKE 53265,27
 380 FOR I=1398 TO 1521:READ X:POKE I,X:NEXT I:FOR I=1824 TO 2042:READ X:POKE I,X:NEXT I:FOR I=38349 TO 38399:READ X:POKE I,X:NEXT I
+385 FOR I=45056 TO 45346:READ X:POKE I,X:NEXT I:FOR I=1024 TO 1132:READ X:POKE I,X:NEXT I
+386 S=PEEK(46)-12:FOR I=0 TO 8 STEP 4:POKE 38351,S+I:POKE 38352,178+I:SYS 38356:NEXT I:REM TEXT BANK AND SHOP MUSIC (ATTACHED BY TOOLS/TEXTBANK.PY) TO 45568
 390 DIM T$(3,7),C$(7):FOR I=0 TO 7:C$(I)=CHR$(VAL(MID$("005005155155152152151151",I*3+1,3))):NEXT I
-400 REM TITLE GLYPHS: PLAYER (STAND, WALK, WALK, FIGHT), LEECH, GOBLIN, IMP, SERPENT, GUARD, CULTIST, GOLEM (TWO FRAMES EACH), READY-MADE AT 1400-1710 (~ = SOLID BLOCK)
+400 REM TITLE GLYPHS: PLAYER (STAND, WALK, WALK, FIGHT), LEECH, GOBLIN, IMP, SERPENT, GUARD, CULTIST, GOLEM, CHAR (TWO FRAMES EACH), READY-MADE AT 1400-1710 (~ = SOLID BLOCK)
 410 GOSUB 1400:POKE 648,196:GOSUB 590:POKE 648,192:BF=0:GOTO 470
 460 POKE 648,196:GOSUB 590:POKE 648,192:GOSUB 590:POKE 53272,3:POKE 53265,27:BF=0
-470 OF=OF+2:IF OF>80 THEN OF=OF-80
+470 OF=OF+2:IF OF>90 THEN OF=OF-90
 480 S=(OF/4)AND 3:BF=1-BF:POKE 648,192+4*BF:POKE 214,1:POKE 211,0:SYS 58732
 490 PRINT C$(0);MID$(T$(S,0),OF,40);C$(1);MID$(T$(S,1),OF,40);C$(2);MID$(T$(S,2),OF,40);C$(3);MID$(T$(S,3),OF,40);C$(4);MID$(T$(S,4),OF,40);C$(5);MID$(T$(S,5),OF,40);C$(6);MID$(T$(S,6),OF,40);C$(7);MID$(T$(S,7),OF,40);:POKE 53272,3+16*BF
 500 GET A$:IF A$="" THEN 470
 510 IF A$="P" OR A$="E" THEN PE=-(A$="E"):GOSUB 1360:ON -(A$="Y") GOTO 1150:POKE 38339,0:F$=LEFT$("ENDLESS",7*PE)+LEFT$("STORY",5-5*PE):L$=LEFT$("DESCENDING TO LEVEL 1",21*PE)+LEFT$("ENTERING THE TUTORIAL",21-21*PE)+", PLEASE WAIT ":GOTO 570
+515 IF A$="A" THEN POKE 38339,0:F$="ARENA":L$="ENTERING THE ARENA, PLEASE WAIT ":GOTO 570
 520 IF A$="D" THEN F$="DEMO":L$="DESCENDING TO LEVEL 1, PLEASE WAIT ":GOTO 570
 530 IF A$="G" THEN F$="SHOWCASE":L$="LOADING GLYPH SHOWCASE ":GOTO 570
 540 IF A$="I" THEN POKE 53272,3:POKE 648,192:ON -(PEEK(38654)<>80 OR PEEK(38655)<>80) GOSUB 1340:POKE 53265,11:SYS 1280:POKE 53272,163:POKE 53265,27:GOSUB 580:GOTO 460
@@ -52,16 +57,17 @@
 560 ON -(A$="R")-2*(A$="S")-3*(A$="Q") GOTO 1150,2100,1380:GOTO 470
 570 SYS 38665:POKE 53272,3:POKE 648,192:ON -(PEEK(38654)<>80 OR PEEK(38655)<>80) GOSUB 1340:D$=CHR$(5)+"."+CHR$(155)+"."+CHR$(152)+".":POKE 646,1:PRINT CHR$(147);"{WHT}";L$;D$;:POKE 53265,27:ON -(F$="STORY") GOTO 1350:LOAD F$,DV
 580 FOR C9=-1 TO 0:GET A$:C9=(A$=""):NEXT C9:RETURN
-590 POKE 646,1:PRINT CHR$(147):POKE 214,10:POKE 211,12:SYS 58732:PRINT "{WHT}PETSCII PIT V27"
-600 POKE 214,11:POKE 211,15:SYS 58732:PRINT "{GRY2}BY M0NDE"
-610 POKE 214,13:POKE 211,10:SYS 58732:PRINT "{WHT}P {GRY1}-{GRY2} PLAY THE STORY":POKE 214,14:POKE 211,10:SYS 58732:PRINT "{WHT}E {GRY1}-{GRY2} PLAY THE ENDLESS PIT"
-620 POKE 214,15:POKE 211,10:SYS 58732:PRINT "{WHT}R {GRY1}-{GRY2} RESUME THE DESCENT":POKE 214,16:POKE 211,10:SYS 58732:PRINT "{WHT}D {GRY1}-{GRY2} WATCH THE DEMO"
+590 POKE 646,1:PRINT CHR$(147):POKE 214,9:POKE 211,12:SYS 58732:PRINT "{WHT}PETSCII PIT V28"
+600 POKE 214,10:POKE 211,15:SYS 58732:PRINT "{GRY2}BY M0NDE"
+610 POKE 214,12:POKE 211,10:SYS 58732:PRINT "{WHT}P {GRY1}-{GRY2} PLAY THE STORY":POKE 214,13:POKE 211,10:SYS 58732:PRINT "{WHT}E {GRY1}-{GRY2} THE ENDLESS PIT"
+615 POKE 214,14:POKE 211,10:SYS 58732:PRINT "{WHT}A {GRY1}-{GRY2} ENTER THE ARENA"
+620 POKE 214,15:POKE 211,10:SYS 58732:PRINT "{WHT}R {GRY1}-{GRY2} RESUME YOUR DESCENT":POKE 214,16:POKE 211,10:SYS 58732:PRINT "{WHT}D {GRY1}-{GRY2} WATCH THE DEMO"
 630 POKE 214,17:POKE 211,10:SYS 58732:PRINT "{WHT}G {GRY1}-{GRY2} GLYPH SHOWCASE"
 640 POKE 214,18:POKE 211,10:SYS 58732:PRINT "{WHT}I {GRY1}-{GRY2} INSTRUCTIONS"
 650 POKE 214,19:POKE 211,10:SYS 58732:PRINT "{WHT}C {GRY1}-{GRY2} CREDITS":POKE 214,21:POKE 211,10:SYS 58732:PRINT "{WHT}Q {GRY1}-{GRY2} QUIT"
 660 POKE 214,20:POKE 211,10:SYS 58732:PRINT "{WHT}S {GRY1}-{GRY2} SID SETUP (";MID$(STR$(PEEK(38644)),2);LEFT$(" SIDS",4-(PEEK(38644)>1));" FOUND)"
 670 POKE 214,22:POKE 211,18:SYS 58732:PRINT "{GRY1}";MID$("NTSC PAL",1+5*PEEK(678),4):POKE 214,23:POKE 211,9:SYS 58732:PRINT "{GRY1}HTTPS://M0NDE.ITCH.IO":RETURN
-680 POKE 646,1:PRINT CHR$(147);"{WHT}PETSCII PIT V27"
+680 POKE 646,1:PRINT CHR$(147);"{WHT}PETSCII PIT V28"
 690 REM CREDITS
 700 PRINT:PRINT "{WHT}DESIGN, CODE, AND GRAPHICS BY M0NDE"
 710 PRINT:PRINT "{WHT}MUSIC: {GRY2}PETSCII PIT - DUNGEONEERING,"
@@ -73,7 +79,7 @@
 770 PRINT
 780 REM END OF CREDITS
 790 PRINT:PRINT:PRINT "{WHT}PRESS ANY KEY":RETURN
-800 POKE 646,1:PRINT CHR$(147);"{WHT}PETSCII PIT V27 - HTTPS://M0NDE.ITCH.IO"
+800 POKE 646,1:PRINT CHR$(147);"{WHT}PETSCII PIT V28 - HTTPS://M0NDE.ITCH.IO"
 810 PRINT:PRINT "{WHT}WASD {GRY2}OR {WHT}CURSOR KEYS {GRY1}-{GRY2} MOVE"
 820 PRINT "{WHT}WALK INTO A MONSTER {GRY1}-{GRY2} ATTACK"
 830 PRINT "{WHT}WALK INTO A POTION {GRY1}-{GRY2} HEAL"
@@ -93,7 +99,8 @@
 970 PRINT "{GRY2}EARN {WHT}XP{GRY2} FOR THIEF TITLES AND SKILLS"
 980 PRINT "{WHT}MONSTERS{GRY2} DROP {WHT}WEAPONS{GRY2} AT LV2 / 50XP"
 990 PRINT "{GRY2}WALK OVER TO {WHT}EQUIP{GRY2} OR COMPARE"
-1000 PRINT:PRINT "{WHT}";MID$("NTSC PAL",1+5*PEEK(678),4);LEFT$(" 2SID",-5*(PEEK(38693)=2));" - PRESS ANY KEY TO CONTINUE":RETURN
+995 PRINT "{WHT}ARENA{GRY2}: PRESS {WHT}I{GRY2} INSIDE IT FOR ITS RULES"
+1000 PRINT "{WHT}";MID$("NTSC PAL",1+5*PEEK(678),4);LEFT$(" 2SID",-5*(PEEK(38693)=2));" - PRESS ANY KEY TO CONTINUE":RETURN
 1010 DATA 141,209,149,142,210,149,165,87,133,89,133,91,133,93,166,88
 1020 DATA 138,24,109,3,6,133,90,138,109,205,149,133,92,138,109,206
 1030 DATA 149,133,94,138,105,216,133,88,160,0,76,218,6,0,0,0
@@ -107,8 +114,8 @@
 1110 DATA 129,149,173,146,149,24,105,40,141,146,149,141,152,149,144,6
 1120 DATA 238,147,149,238,153,149,206,189,149,208,197,96,0,0,0,0
 1130 DATA 0,0,0
-1140 REM RESUME THE DESCENT: READ A 12-CHARACTER DESCENT RUNE, CHECK IT, PASS LEVEL, XP, HP, COINS, WEAPON TO THE GAME AT 38339-38348
-1150 POKE 53272,3:POKE 648,192:POKE 646,1:PRINT CHR$(147);"{WHT}RESUME THE DESCENT":PRINT:PRINT "{GRY2}SPEAK YOUR DESCENT RUNE:":W$="":Z$="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+1140 REM RESUME YOUR DESCENT: READ A 12-CHARACTER DESCENT RUNE, CHECK IT, PASS LEVEL, XP, HP, COINS, WEAPON TO THE GAME AT 38339-38348 (CHECKSUM +23 ENDLESS, +29 STORY, +31 ARENA)
+1150 POKE 53272,3:POKE 648,192:POKE 646,1:PRINT CHR$(147);"{WHT}RESUME YOUR DESCENT":PRINT:PRINT "{GRY2}SPEAK YOUR DESCENT RUNE:":W$="":Z$="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 1160 POKE 214,6:POKE 211,0:SYS 58732:PRINT "{GRY1}RETURN TO GO BACK"
 1170 X$=W$+"............":POKE 214,4:POKE 211,0:SYS 58732:PRINT "{WHT}";LEFT$(X$,4);"{GRY1}-{WHT}";MID$(X$,5,4);"{GRY1}-{WHT}";MID$(X$,9,4)
 1180 IF LEN(W$)=12 THEN POKE 214,8:POKE 211,0:SYS 58732:PRINT "{GRY2}DECIPHERING, PLEASE WAIT...":GOTO 1240
@@ -122,10 +129,11 @@
 1260 H0=H0-(J<5)*D*M:H1=H1-(J>4 AND J<9)*D*M:H2=H2-(J>8)*D*M:NEXT J
 1270 L=H0-128*INT(H0/128):T=INT(H0/128):W=T-8*INT(T/8):T=INT(T/8):RW=T-16*INT(T/16):K=INT(T/16)
 1280 XX=H1-32768*INT(H1/32768):PH=INT(H1/32768)*64+H2-64*INT(H2/64):CC=INT(H2/64):K=K+64*INT(CC/1024):CC=CC-1024*INT(CC/1024)
-1290 CK=L*7+XX*3+PH*5+CC*11+W*13+RW*17:C1=CK+23-1021*INT((CK+23)/1021):C2=CK+29-1021*INT((CK+29)/1021):GOSUB 1370:IF (C1<>K AND C2<>K) OR L<1 OR W>5 OR PH<1 OR PH>M OR (C2=K AND L>100) THEN 1330
+1290 CK=L*7+XX*3+PH*5+CC*11+W*13+RW*17:C1=CK+23-1021*INT((CK+23)/1021):C2=CK+29-1021*INT((CK+29)/1021):C3=CK+31-1021*INT((CK+31)/1021):GOSUB 1370:IF (C1<>K AND C2<>K AND C3<>K) OR L<1 OR W>5 OR PH<1 OR PH>M OR (C2=K AND L>100) THEN 1330
 1300 POKE 38340,L:POKE 38341,XX-256*INT(XX/256):POKE 38342,INT(XX/256):POKE 38343,PH-256*INT(PH/256):POKE 38344,INT(PH/256)
 1310 POKE 38345,CC-256*INT(CC/256):POKE 38346,INT(CC/256):POKE 38347,W:POKE 38348,RW:POKE 38339,82
-1320 F$=LEFT$("STORY",-5*(C2=K))+LEFT$("ENDLESS",-7*(C2<>K)):L$="DESCENDING TO LEVEL "+MID$(STR$(L),2)+", PLEASE WAIT ":GOTO 570
+1320 F$=LEFT$("STORY",-5*(C2=K))+LEFT$("ENDLESS",-7*(C1=K))+LEFT$("ARENA",-5*(C3=K)):L$="DESCENDING TO LEVEL "+MID$(STR$(L),2)+", PLEASE WAIT ":IF C3=K THEN L$="ENTERING THE ARENA, PLEASE WAIT "
+1325 GOTO 570
 1330 POKE 214,8:POKE 211,0:SYS 58732:PRINT "{GRY2}THE PIT DOES NOT KNOW THAT RUNE.":T=TI+60:FOR C9=-1 TO 0:C9=(TI<T):NEXT C9:POKE 198,0:PRINT:PRINT "{WHT}PRESS ANY KEY":GOSUB 580:GOTO 1150
 1340 POKE 53265,11:GOSUB 800:SYS 1344:POKE 38654,80:POKE 38655,80:RETURN
 1350 FOR I=37684 TO 37929:READ X:POKE I,X:NEXT I:LOAD"STORY",DV
@@ -133,38 +141,38 @@
 1370 N=INT((SQR(1+XX*.16)-1)/2):N=N-(25*(N+1)*(N+2)<=XX):N=N+(25*N*(N+1)>XX):M=10+2.5*N*(N+1):RETURN
 1380 POKE 53272,3:POKE 648,192:POKE 214,21:POKE 211,9:SYS 58732:PRINT "{WHT}QUIT PETSCII PIT? Y/N";:GOSUB 580:IF A$="Y" THEN SYS 38665:SYS 64738
 1390 GOTO 460
-1400 T$(0,0)="   ~~~      ~~                  ~  ~                 ~~         ~       ~~  ~~     ~~~      ~~                  ~  ~    "
-1410 T$(0,1)="   ~ ~     ~~          ~        ~  ~       ~~~     ~~~~  ~     ~~       ~~  ~~     ~ ~     ~~          ~        ~  ~    "
-1420 T$(0,2)="  ~ ~~~    ~~ ~~~      ~~~     ~ ~~      ~~~~ ~    ~~~~ ~    ~ ~~~    ~~~~~~~     ~ ~~~    ~~ ~~~      ~~~     ~ ~~     "
-1430 T$(0,3)="  ~~~ ~    ~ ~~ ~~     ~~ ~    ~~~~~~~  ~~~~~~~    ~~~~~~     ~~~ ~   ~~~~~       ~~~ ~    ~ ~~ ~~     ~~ ~    ~~~~~~~  "
-1440 T$(0,4)="  ~~  ~    ~~~   ~   ~~~~~       ~~     ~~   ~      ~~~        ~~       ~~~       ~~  ~    ~~~   ~   ~~~~~       ~~     "
-1450 T$(0,5)="   ~~~      ~~~ ~~     ~~        ~~     ~~ ~         ~~       ~~~~      ~ ~        ~~~      ~~~ ~~     ~~        ~~     "
-1460 T$(0,6)="   ~ ~        ~~~     ~~~~      ~~ ~~   ~~~~~       ~~~~     ~~~~~~    ~~ ~~~      ~ ~        ~~~     ~~~~      ~~ ~~   "
-1470 T$(0,7)="  ~~ ~~                                  ~~~                           ~~  ~~     ~~ ~~                                 "
-1480 T$(1,0)="   ~~~                          ~  ~                 ~~  ~      ~         ~~       ~~~                          ~  ~    "
-1490 T$(1,1)="   ~ ~        ~~~      ~        ~  ~        ~~~      ~~ ~      ~~     ~~  ~~       ~ ~        ~~~      ~        ~  ~    "
-1500 T$(1,2)="  ~ ~~~     ~~~ ~~     ~~~       ~~  ~    ~~~~ ~  ~~~~~~~     ~~~ ~   ~~~~~~~~    ~ ~~~     ~~~ ~~     ~~~       ~~  ~  "
-1510 T$(1,3)=" ~ ~~ ~    ~~~   ~   ~ ~~      ~ ~~ ~    ~~~~~~~  ~~~~~      ~ ~~~       ~~~~~   ~ ~~ ~    ~~~   ~   ~ ~~      ~ ~~ ~   "
-1520 T$(1,4)=" ~ ~  ~    ~ ~~ ~~    ~~~~~    ~~~~~    ~~~   ~   ~~~~~        ~~        ~~~     ~ ~  ~    ~ ~~ ~~    ~~~~~    ~~~~~    "
-1530 T$(1,5)="   ~~~     ~~ ~~~      ~~        ~~     ~~    ~    ~ ~~       ~~~~       ~ ~       ~~~     ~~ ~~~      ~~        ~~     "
-1540 T$(1,6)="  ~~ ~     ~~         ~~~~     ~~ ~~    ~~~~        ~~~~     ~~~~~~     ~~ ~~     ~~ ~     ~~         ~~~~     ~~ ~~    "
-1550 T$(1,7)=" ~~  ~~     ~~                           ~~                             ~~ ~~    ~~  ~~     ~~                          "
-1560 T$(2,0)="  ~~~       ~~                  ~  ~                 ~~         ~       ~~  ~~    ~~~       ~~                  ~  ~    "
-1570 T$(2,1)="  ~ ~      ~~          ~        ~  ~       ~~~     ~~~~  ~     ~~       ~~  ~~    ~ ~      ~~          ~        ~  ~    "
-1580 T$(2,2)=" ~~~ ~     ~~ ~~~      ~~~     ~ ~~      ~~~~ ~    ~~~~ ~    ~ ~~~    ~~~~~~~    ~~~ ~     ~~ ~~~      ~~~     ~ ~~     "
-1590 T$(2,3)=" ~ ~~ ~    ~ ~~ ~~     ~~ ~    ~~~~~~~  ~~~~~~~    ~~~~~~     ~~~ ~   ~~~~~      ~ ~~ ~    ~ ~~ ~~     ~~ ~    ~~~~~~~  "
-1600 T$(2,4)=" ~  ~ ~    ~~~   ~   ~~~~~       ~~     ~~   ~      ~~~        ~~       ~~~      ~  ~ ~    ~~~   ~   ~~~~~       ~~     "
-1610 T$(2,5)="  ~~~       ~~~ ~~     ~~        ~~     ~~ ~         ~~       ~~~~      ~ ~       ~~~       ~~~ ~~     ~~        ~~     "
-1620 T$(2,6)="  ~ ~~        ~~~     ~~~~      ~~ ~~   ~~~~~       ~~~~     ~~~~~~    ~~ ~~~     ~ ~~        ~~~     ~~~~      ~~ ~~   "
-1630 T$(2,7)=" ~~  ~~                                  ~~~                           ~~  ~~    ~~  ~~                                 "
-1640 T$(3,0)="   ~~~                          ~  ~                 ~~  ~      ~         ~~       ~~~                          ~  ~    "
-1650 T$(3,1)="~  ~ ~        ~~~      ~        ~  ~        ~~~      ~~ ~      ~~     ~~  ~~    ~  ~ ~        ~~~      ~        ~  ~    "
-1660 T$(3,2)=" ~~ ~~~     ~~~ ~~     ~~~       ~~  ~    ~~~~ ~  ~~~~~~~     ~~~ ~   ~~~~~~~~   ~~ ~~~     ~~~ ~~     ~~~       ~~  ~  "
-1670 T$(3,3)="  ~~~~ ~   ~~~   ~   ~ ~~      ~ ~~ ~    ~~~~~~~  ~~~~~      ~ ~~~       ~~~~~    ~~~~ ~   ~~~   ~   ~ ~~      ~ ~~ ~   "
-1680 T$(3,4)="  ~~ ~ ~   ~ ~~ ~~    ~~~~~    ~~~~~    ~~~   ~   ~~~~~        ~~        ~~~      ~~ ~ ~   ~ ~~ ~~    ~~~~~    ~~~~~    "
-1690 T$(3,5)="   ~~~     ~~ ~~~      ~~        ~~     ~~    ~    ~ ~~       ~~~~       ~ ~       ~~~     ~~ ~~~      ~~        ~~     "
-1700 T$(3,6)="   ~ ~~    ~~         ~~~~     ~~ ~~    ~~~~        ~~~~     ~~~~~~     ~~ ~~      ~ ~~    ~~         ~~~~     ~~ ~~    "
-1710 T$(3,7)="  ~~  ~~    ~~                           ~~                             ~~ ~~     ~~  ~~    ~~                          ":RETURN
+1400 T$(0,0)="   ~~~      ~~                  ~  ~                 ~~         ~       ~~  ~~     ~~        ~~~      ~~                  ~  ~    "
+1410 T$(0,1)="   ~ ~     ~~          ~        ~  ~       ~~~     ~~~~  ~     ~~       ~~  ~~     ~~        ~ ~     ~~          ~        ~  ~    "
+1420 T$(0,2)="  ~ ~~~    ~~ ~~~      ~~~     ~ ~~      ~~~~ ~    ~~~~ ~    ~ ~~~    ~~~~~~~     ~~~~      ~ ~~~    ~~ ~~~      ~~~     ~ ~~     "
+1430 T$(0,3)="  ~~~ ~    ~ ~~ ~~     ~~ ~    ~~~~~~~  ~~~~~~~    ~~~~~~     ~~~ ~   ~~~~~       ~~~~~     ~~~ ~    ~ ~~ ~~     ~~ ~    ~~~~~~~  "
+1440 T$(0,4)="  ~~  ~    ~~~   ~   ~~~~~       ~~     ~~   ~      ~~~        ~~       ~~~      ~ ~~       ~~  ~    ~~~   ~   ~~~~~       ~~     "
+1450 T$(0,5)="   ~~~      ~~~ ~~     ~~        ~~     ~~ ~         ~~       ~~~~      ~ ~        ~~~       ~~~      ~~~ ~~     ~~        ~~     "
+1460 T$(0,6)="   ~ ~        ~~~     ~~~~      ~~ ~~   ~~~~~       ~~~~     ~~~~~~    ~~ ~~~     ~  ~       ~ ~        ~~~     ~~~~      ~~ ~~   "
+1470 T$(0,7)="  ~~ ~~                                  ~~~                           ~~  ~~    ~~  ~~     ~~ ~~                                 "
+1480 T$(1,0)="   ~~~                          ~  ~                 ~~  ~      ~         ~~       ~~        ~~~                          ~  ~    "
+1490 T$(1,1)="   ~ ~        ~~~      ~        ~  ~        ~~~      ~~ ~      ~~     ~~  ~~       ~~        ~ ~        ~~~      ~        ~  ~    "
+1500 T$(1,2)="  ~ ~~~     ~~~ ~~     ~~~       ~~  ~    ~~~~ ~  ~~~~~~~     ~~~ ~   ~~~~~~~~    ~~~~      ~ ~~~     ~~~ ~~     ~~~       ~~  ~  "
+1510 T$(1,3)=" ~ ~~ ~    ~~~   ~   ~ ~~      ~ ~~ ~    ~~~~~~~  ~~~~~      ~ ~~~       ~~~~~   ~~~~~     ~ ~~ ~    ~~~   ~   ~ ~~      ~ ~~ ~   "
+1520 T$(1,4)=" ~ ~  ~    ~ ~~ ~~    ~~~~~    ~~~~~    ~~~   ~   ~~~~~        ~~        ~~~       ~~ ~    ~ ~  ~    ~ ~~ ~~    ~~~~~    ~~~~~    "
+1530 T$(1,5)="   ~~~     ~~ ~~~      ~~        ~~     ~~    ~    ~ ~~       ~~~~       ~ ~      ~~~        ~~~     ~~ ~~~      ~~        ~~     "
+1540 T$(1,6)="  ~~ ~     ~~         ~~~~     ~~ ~~    ~~~~        ~~~~     ~~~~~~     ~~ ~~     ~  ~      ~~ ~     ~~         ~~~~     ~~ ~~    "
+1550 T$(1,7)="  ~  ~~     ~~                           ~~                             ~~ ~~    ~~  ~~     ~  ~~     ~~                          "
+1560 T$(2,0)="  ~~~       ~~                  ~  ~                 ~~         ~       ~~  ~~     ~~       ~~~       ~~                  ~  ~    "
+1570 T$(2,1)="  ~ ~      ~~          ~        ~  ~       ~~~     ~~~~  ~     ~~       ~~  ~~     ~~       ~ ~      ~~          ~        ~  ~    "
+1580 T$(2,2)=" ~~~ ~     ~~ ~~~      ~~~     ~ ~~      ~~~~ ~    ~~~~ ~    ~ ~~~    ~~~~~~~     ~~~~     ~~~ ~     ~~ ~~~      ~~~     ~ ~~     "
+1590 T$(2,3)=" ~ ~~ ~    ~ ~~ ~~     ~~ ~    ~~~~~~~  ~~~~~~~    ~~~~~~     ~~~ ~   ~~~~~       ~~~~~    ~ ~~ ~    ~ ~~ ~~     ~~ ~    ~~~~~~~  "
+1600 T$(2,4)=" ~  ~ ~    ~~~   ~   ~~~~~       ~~     ~~   ~      ~~~        ~~       ~~~      ~ ~~      ~  ~ ~    ~~~   ~   ~~~~~       ~~     "
+1610 T$(2,5)="  ~~~       ~~~ ~~     ~~        ~~     ~~ ~         ~~       ~~~~      ~ ~        ~~~      ~~~       ~~~ ~~     ~~        ~~     "
+1620 T$(2,6)="  ~ ~~        ~~~     ~~~~      ~~ ~~   ~~~~~       ~~~~     ~~~~~~    ~~ ~~~     ~  ~      ~ ~~        ~~~     ~~~~      ~~ ~~   "
+1630 T$(2,7)=" ~~  ~                                   ~~~                           ~~  ~~    ~~  ~~    ~~  ~                                  "
+1640 T$(3,0)="   ~~~                          ~  ~                 ~~  ~      ~         ~~       ~~        ~~~                          ~  ~    "
+1650 T$(3,1)="~  ~ ~        ~~~      ~        ~  ~        ~~~      ~~ ~      ~~     ~~  ~~       ~~     ~  ~ ~        ~~~      ~        ~  ~    "
+1660 T$(3,2)=" ~~ ~~~     ~~~ ~~     ~~~       ~~  ~    ~~~~ ~  ~~~~~~~     ~~~ ~   ~~~~~~~~    ~~~~     ~~ ~~~     ~~~ ~~     ~~~       ~~  ~  "
+1670 T$(3,3)="  ~~~~ ~   ~~~   ~   ~ ~~      ~ ~~ ~    ~~~~~~~  ~~~~~      ~ ~~~       ~~~~~   ~~~~~      ~~~~ ~   ~~~   ~   ~ ~~      ~ ~~ ~   "
+1680 T$(3,4)="  ~~ ~ ~   ~ ~~ ~~    ~~~~~    ~~~~~    ~~~   ~   ~~~~~        ~~        ~~~       ~~ ~     ~~ ~ ~   ~ ~~ ~~    ~~~~~    ~~~~~    "
+1690 T$(3,5)="   ~~~     ~~ ~~~      ~~        ~~     ~~    ~    ~ ~~       ~~~~       ~ ~      ~~~        ~~~     ~~ ~~~      ~~        ~~     "
+1700 T$(3,6)="   ~ ~~~   ~~         ~~~~     ~~ ~~    ~~~~        ~~~~     ~~~~~~     ~~ ~~     ~  ~       ~ ~~~   ~~         ~~~~     ~~ ~~    "
+1710 T$(3,7)="  ~~   ~    ~~                           ~~                             ~~ ~~    ~~  ~~     ~~   ~    ~~                          ":RETURN
 1720 REM SCREEN TRANSITIONS AT 1536: 1536 KIND (0 ROWS, 1 COLUMNS, 2 SHUTTER), 1537 REVERSE, 1538 0 BLACK 1 COLOURS 2 RED 3 CHARS+COLOURS, 1539 BUFFER PAGE, 1540 STEPS PER FRAME. SYS 1541 SAVES COLOURS TO THE BUFFER, SYS 1575 RUNS IT
 1730 DATA 0,0,0,160,5,173,3,6,133,90,169,216,133,88,169,0
 1740 DATA 133,87,133,89,162,4,160,0,177,87,145,89,200,208,249,230
@@ -239,13 +247,13 @@
 2570 SYS 38668:POKE SI+1,150:POKE SI+0,0:POKE SI+4,17:FOR DL=1 TO 15:NEXT DL:POKE SI+1,200:FOR DL=1 TO 15:NEXT DL:POKE SI+4,16:POKE 38671,0:RETURN
 2580 POKE SI+1,90:POKE SI+4,17:FOR DL=1 TO 80:NEXT DL:POKE SI+4,16:POKE 38671,0:RETURN
 2600 POKE 214,R:POKE 211,C:SYS 58732:RETURN
-2690 REM ROOM REVEAL AT 1398 (124 BYTES WITH ITS COLOUR LIST), THEN LEVEL FILL AT 1824 (219 BYTES WITH ITS CHARACTER TABLES). SOURCE: GFX.ASM. THEN 38349-38399: WIPE SETTINGS AND 1 KB COPY (WIPE.ASM)
-2700 DATA 173,238,5,133,89,133,91,133,87,173,239,5,24,105,192,133
-2710 DATA 90,105,4,133,88,105,20,133,92,173,241,5,133,93,160,0
-2720 DATA 169,1,145,87,177,89,162,12,221,212,5,240,6,202,16,248
-2730 DATA 76,174,5,189,225,5,145,91,200,204,240,5,208,226,162,87
-2740 DATA 32,200,5,162,89,32,200,5,162,91,32,200,5,198,93,208
-2750 DATA 205,96,181,0,24,105,40,149,0,144,2,246,1,96,0,0
+2690 REM ROOM REVEAL AT 1398 (124 BYTES WITH ITS COLOUR LIST; SETS BIT 7 OF THE FOG BYTES, ROOM NUMBER IN BITS 0-3), THEN LEVEL FILL AT 1824 (219 BYTES WITH ITS CHARACTER TABLES). SOURCE: GFX.ASM. THEN 38349-38399: WIPE SETTINGS AND 1 KB COPY (WIPE.ASM)
+2700 DATA 173,238,5,133,89,133,91,133,87,173,239,5,133,90,24,105
+2710 DATA 4,133,88,105,20,133,92,173,241,5,133,93,160,0,177,87
+2720 DATA 9,128,145,87,177,89,162,12,221,212,5,240,5,202,16,248
+2730 DATA 48,5,189,225,5,145,91,200,204,240,5,208,225,162,87,32
+2740 DATA 199,5,162,89,32,199,5,162,91,32,199,5,198,93,208,204
+2750 DATA 96,181,0,24,105,40,149,0,144,2,246,1,96,234,0,0
 2760 DATA 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 2770 DATA 0,0,0,0,0,0,0,0,0,0,0,0,165,47,133,87
 2780 DATA 165,48,133,88,165,88,197,50,144,8,208,41,165,87,197,49
@@ -265,6 +273,15 @@
 2920 DATA 53,133,1,173,207,149,133,88,173,208,149,133,90,169,0,133
 2930 DATA 87,133,89,162,4,168,177,87,145,89,200,208,249,230,88,230
 2940 DATA 90,202,208,242,169,55,133,1,88,96
+2941 REM MONSTER, WEAPON AND TITLE TABLES FOR THE GAMES, PUT AT 45056 (RAM UNDER BASIC); THE GAMES COPY THEM TO 50176 AND READ THEM WITH PEEK
+2942 DATA 83,5,0,0,0,0,148,5,76,69,69,67,72,83,5,0,0,0,0,148,5,76,69,69,67,72,88,7,1,0,2,1,138,6,71,79,66,76,73,78,90,8,2,1,4,2,128,3,73,77
+2943 DATA 80,84,5,3,2,6,3,123,7,83,69,82,80,69,78,84,86,10,3,1,6,3,118,5,71,85,65,82,68,91,2,4,2,8,4,108,7,67,85,76,84,73,83,84,65,4,6,2,12,6
+2944 DATA 98,5,71,79,76,69,77,104,14,1,1,5,11,6,68,65,71,71,69,82,104,14,1,1,5,11,6,68,65,71,71,69,82,105,12,3,2,5,11,5,83,87,79,82,68,106,3,2,3,1
+2945 DATA 5,5,66,76,65,68,69,107,9,4,4,0,3,4,77,65,67,69,108,10,7,1,10,11,5,70,76,65,73,76,7,37,32,68,79,68,71,69,6,37,32,67,82,73,84,10,32,83,78,69
+2946 DATA 65,75,32,68,77,71,12,32,67,79,85,78,84,69,82,32,68,77,71,9,65,76,76,69,89,32,82,65,84,13,66,65,83,73,67,32,66,85,82,71,76,65,82,20,68,69,76,86,69,82
+2947 DATA 32,79,70,32,84,72,69,32,68,69,80,84,72,83,14,83,75,73,76,76,69,68,32,83,75,69,69,86,69,11,83,72,65,68,79,87,32,72,65,78,68
+2948 DATA 76,20,4,76,23,4,172,128,4,240,8,185,128,4,136,145,51,208,248,96,169,1,44,169,0,133,90,32,253,174,32,158,183,169,0,133,87,169,178,133,88,165,1,133,89,41,254,133,1,160,0,202,240,13,177,87:REM TEXT ROUTINES (TEXT.ASM) AT 1024
+2949 DATA 56,101,87,133,87,144,244,230,88,176,240,177,87,141,128,4,170,240,9,200,177,87,153,128,4,202,208,247,165,89,133,1,165,90,240,16,160,0,204,128,4,240,9,185,129,4,32,210,255,200,208,242,96
 2950 REM STORY LEVEL READING (STORY.ASM), INSTALLED AT 37684 JUST BEFORE STORY LOADS (1350)
 2960 DATA 76,69,147,76,132,147,0,196,0,0,0,0,0,0,0,0
 2970 DATA 0,162,2,32,198,255,32,207,255,141,60,147,32,207,255,141

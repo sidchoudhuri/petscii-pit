@@ -65,7 +65,7 @@ New in V23 (battle moves)
 [ ] Instructions screen shows FIGHT: W HEAVY, A JAB, S GUARD, F FLEE
 
 New in V24 (STORY and ENDLESS)
-[ ] Title menu: P - PLAY THE STORY, E - PLAY THE ENDLESS PIT, rows line up
+[ ] Title menu: P - PLAY THE STORY, E - THE ENDLESS PIT, rows line up
 [ ] P: ENTERING THE TUTORIAL; HUD shows TUTORIAL instead of LVL; 7 rooms
     named ENTRY WAY, APOTHECARY, TREASURY, DORMITORY, GOBLIN ROOM, STUDY,
     STAIRWAY TO LEVEL 1; the stairs lead to level 1
@@ -185,3 +185,60 @@ New in V27
 [ ] Holding a cursed weapon, the EQP line ends in CURSED
 [ ] A mace with no counter cut shows NO COUNTER CUT
 [ ] Character sheet: weapon name and attack, effect on the next line
+
+New in V28
+[ ] Level 5 (STORY and ENDLESS): CHAR's shop on a map edge, one door,
+    counter across the middle, 2 chests and 1-3 draughts on the shelf
+[ ] Walking in opens the shop screen; CHAR paces and switches frames
+[ ] SPACE or R in the shop room, or bumping the counter, opens it again
+[ ] Buy each ware: weapon (EQUIPPED stats match), shield (character sheet
+    SHIELD: -n DMG TAKEN), draught (full health, one leaves the shelf),
+    lift curse, sell weapon (coins go up)
+[ ] Not enough coins: BRING MORE COIN.  Full health + draught: YOU LOOK HALE.
+[ ] Bound by a curse: weapons and selling say LIFT THAT CURSE!
+[ ] Shield: hits take 1-3 less, never below 1; dying (K, N, S) removes it
+[ ] No monsters walk into the shop; no ambush inside; T lists it once found
+[ ] STORY levels 10, 50, 100 have the shop too
+[ ] Demo: reaches a shop level and shows CHAR for about 3 seconds
+[ ] Shop music (BARTERING) on the shop screen, PAL and NTSC, one SID and
+    two; leaving brings back what played before (fight music in a fight,
+    silence when the music was resting); music off (M) stays off
+[ ] New CHAR (feet) and player glyphs on the map, shop and battle screens
+    and in the title animation; CHAR has his feet as soon as the shop opens
+[ ] Weapon glyphs on the map (dropped weapons), next to CHAR's weapons,
+    shield, draught (potion glyph) and sell line, and at the end of the sheet's weapon and shield
+    lines
+[ ] Shop: CHARPENTIER "CHAR" THE MAGE; I and C (shown under the counter
+    after a blank line) open the instructions and the character sheet,
+    and any key comes back to the same stock (STORY, ENDLESS, arena)
+[ ] All text still reads right: character sheet, skills, game over, rune
+    screen, status messages (they now come from the text bank)
+[ ] Q to the title and back into a game (round trip) still works
+
+New in V28: the Battle Arena
+[ ] Title: A - ENTER THE ARENA (menu one row higher, all keys still work)
+[ ] Arena starts in CHAR's shop with 100 coins: only daggers (65), blades
+    (80) and swords (95) on the first visit, so a weapon or the shield
+    (40), never both; RETURN leaves with nothing too
+[ ] Fights: LVL 1, 2, 3 ... on the HUD; W A D S moves; groups; F flees
+    (YOU FLED! -n GP); C shows the sheet (ARENA LEVEL) and comes back
+[ ] After a win: FIGHT n WON! HEALED n HP; bare-handed win: BARE-HANDED!
+    DOUBLE REWARDS; cursed weapon win: CURSED AND VICTORIOUS! +50%
+[ ] Weapon drop: FOUND x - KEEP IT? Y/N with NEW: +n ATK line; a cursed
+    one (IT WON'T LET GO!) can't be sold or swapped for one fight, then
+    YOUR CURSED x LOOSENS ITS GRIP
+[ ] Every 3rd fight: VISIT CHAR'S SHOP? Y/N; prices grow; NOT WHILE IT'S
+    BOUND. while a curse binds; his rune under CHAR'S RUNE:
+[ ] R on the title + an arena rune: back in the shop with the same stats
+    (game runes still start STORY / ENDLESS)
+[ ] Death: THE ARENA HAS CLAIMED YOU, reached level, fights won, XP, coins,
+    last rune; a key goes back to the title
+[ ] Q in a fight: QUIT GAME? Y goes to the title
+[ ] Arena instructions: shown on a fresh start (not after a rune); I in a
+    fight or in the shop shows them and a key comes back; the title's I
+    screen ends with the ARENA line
+[ ] Arena music: BARTERING in the shop, silence between fights and on the
+    YOU FLED / ON TO LEVEL / VISIT CHAR'S SHOP prompts, fight music from
+    the first blow, LAMENTING below a quarter health, silence on the
+    instructions, the sheet and the death screen; M off and on again
+[ ] STORY and ENDLESS sheet: shield but no weapon shows on its own line

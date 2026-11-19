@@ -556,7 +556,7 @@
 - Flee an ambush and the monster that jumped you is gone.
 - Fixed: an ambush used to play out over all 10 rest turns with calm music
   and no chance to fight back, and in corridors the ambusher just stood
-  there.
+  BACKTRACK (T) can take you back to it.
 - Resting shows RESTING with the colour-cycling dots.
 - New skill for BASIC BURGLAR: DEEP SLEEP - press R to rest until you're
   fully healed. The longer the sleep, the likelier an ambush: the usual
@@ -599,3 +599,88 @@
   BACKFIRES!), the EQP line marks a cursed weapon (EQP: MACE +4 ATK -
   CURSED), and a mace with no counter cut says NO COUNTER CUT instead of
   -0 COUNTER DMG.
+
+## Version 28: Charpentier the Mage and the Battle Arena
+- Meet CHAR. Every 5th level (5, 10, 15 ...) in both STORY and ENDLESS
+  there is a shop: one door, a counter across the middle, and behind it
+  Charpentier the mage, his two chests and his shelf of 1-3 healing
+  draughts. Walk in and he greets you; SPACE (or R) anywhere in the room,
+  or bumping the counter, talks to him again.
+- His shop has its own screen: the chest, draught, counter and CHAR
+  himself drawn large on the left, pacing and fidgeting while you shop.
+  Press 1-6 to buy, RETURN to leave.
+    1, 2  two weapons (never cursed), 15 coins per point of attack
+    3     a shield: takes 1-3 off every hit (never below 1), 40/80/120
+    4     a draught from his shelf: full health, 5 coins per level
+    5     lift a curse, 10 coins per level
+    6     sell your weapon for half (a cursed one is worth nothing)
+  He won't trade weapons while a curse still binds you: LIFT THAT CURSE!
+- Shields show on the character sheet (SHIELD: -2 DMG TAKEN) and are lost
+  when you die, like a curse.
+- No monsters, items or ambushes in the shop. Once you have found it,
+  BACKTRACK (T) can take you back to it.
+- The demo meets CHAR too: the AI visits his shop like any other room,
+  and buys a draught if it's below half health and can pay.
+- CHAR's shop has its own music, BARTERING: a short 3/4 loop (under 5
+  seconds) of plucked, harpsichord-like broken chords over a walking
+  bass, with a little tune on top. It plays on his shop screen and the
+  game's music picks up where it left off when you leave. Its notes live
+  under the BASIC ROM with the text bank, so the music player stays the
+  same size. The PETSCII Pit .sid files now hold all four songs, and
+  BARTERING has its own .sid too (PAL and NTSC, also on m0n.de's WebSid
+  and SIDlab).
+- New looks for CHAR (now with feet) and the player (walking and
+  fighting), on the map, in fights, in the shop, in the title animation
+  and in the glyph showcase. The shop drew the counter after CHAR,
+  and its blank top row cut off his feet until he moved; CHAR is now drawn
+  last.
+- Weapons have their own glyphs: dagger, sword, blade, mace and flail on
+  the map where they lie, next to CHAR's stock, and on the character
+  sheet, plus a shield glyph in the shop and on the sheet, and the potion
+  glyph next to the draught in the shop. Until now they
+  were the ROM characters / = < * %, which broke the rule of never using
+  screen codes 0-63 as glyphs.
+- The shop calls him CHARPENTIER "CHAR" THE MAGE, and under the counter
+  it shows I - INSTRUCTIONS and C - CHARACTER SHEET, so you can check your
+  health before buying a draught (STORY, ENDLESS and the arena).
+- Title menu wording: E - THE ENDLESS PIT and R - RESUME YOUR DESCENT; the
+  rune screen's heading matches (RESUME YOUR DESCENT).
+- Under the hood: room numbers moved into the fog map, the monster and
+  weapon tables and all of the game's fixed text (character sheet, status
+  messages, CHAR's lines) moved out of the games into memory under the
+  BASIC ROM, freeing room for the shop.
+- Bug fix: quitting to the title and then starting a game could crash to
+  a garbled blue screen (also in V27). Coming back from a game now sets up
+  the loader the same way as a fresh start.
+
+### The Battle Arena
+- New on the title: A - ENTER THE ARENA. No exploring, just fights, one
+  after another on the battle screen, against harder and harder monsters.
+- You start as a level 5 thief would: 150 XP (BASIC BURGLAR), 25 health,
+  100 coins, in CHAR's shop. Buying is up to you. On that first visit he
+  only stocks a dagger (65), blade (80) or sword (95) at their weakest, so
+  100 coins always buys a weapon or the shield (40), never both.
+- The fights are LEVEL 1, 2, 3 ... on screen; every 3 fights the monsters
+  are one pit level deeper. Groups count as one fight and pay for every
+  monster. Each win heals you a little, as going down stairs does.
+- Win with nothing equipped: double coins and XP (BARE-HANDED!). Win with
+  a cursed weapon in hand: +50% (CURSED AND VICTORIOUS!).
+- Monsters sometimes drop a weapon (1 in 4), always weaker than the same
+  weapon in CHAR's shop. About 1 in 8 is cursed, but arena curses are
+  milder: -1 attack, the special turned against you at half strength, no
+  health drain, and a binding curse only holds for the next fight.
+- Every 3 fights: VISIT CHAR'S SHOP? His stock grows with you: two
+  weapons, a shield, 1-3 draughts, and he buys your weapon. Each visit he
+  shows you a rune; R on the title brings you back to that shop with
+  everything you had.
+- F flees a fight: no reward, and you drop a tenth of your coins.
+- Music in the arena: BARTERING in CHAR's shop, silence between fights,
+  ASSAILING from the first blow of each fight, and LAMENTING when your
+  health drops below a quarter. The instructions screen and the
+  character sheet are silent.
+- When the arena claims you, you see how far you got and your last rune.
+- The arena has its own instructions screen: it shows when you first walk
+  in, and I brings it back in a fight or in CHAR's shop. The game's I
+  screen points you there.
+- Fix: the character sheet put the shield on the weapon's line when you
+  had a shield but no weapon (STORY and ENDLESS too).

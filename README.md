@@ -1,19 +1,21 @@
 # PETSCII-Pit & Self-Playing Demo
 ## [https://m0nde.itch.io/petscii-pit](https://m0nde.itch.io/petscii-pit)
-A C64 BASIC roguelike - Version 27
+A C64 BASIC roguelike - Version 28
 
-Two ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending) and **ENDLESS** (a new random pit every level). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
+Three ways to play: **STORY** (100 hand-made levels, starting with a tutorial, with notes, runes and an ending), **ENDLESS** (a new random pit every level) and the **ARENA** (fights only, harder and harder monsters). Fights happen on their own battle screen with Hit, Jab, Heavy and Guard. Weapons roll their stats and some are cursed. Every 5th level, Charpentier the mage (CHAR) runs a shop to his own music: weapons, shields, draughts, curse lifting, with your character sheet a key away. In the arena CHAR opens his shop every 3 fights. Each weapon has its own glyph. Thief titles unlock skills such as Keen Eyes, Deep Sleep (R) and Backtrack (T), and runes save your progress.
 
 ## Disk Image
 The game must be launched from disk (LOAD"*",8 and RUN) because the games, music and story levels are loaded separately
 
 [PETSCIIPIT.D64](petsciipit.d64) - Game disk image.
 
-&nbsp;&nbsp;&nbsp;|-- [PETSCIIPIT](prg/petsciipitloader.prg) - Loader: title screen, menu, instructions, SID setup, runes
+&nbsp;&nbsp;&nbsp;|-- [PETSCIIPIT](prg/petsciipitloader.prg) - Loader: title screen, menu, instructions, SID setup, runes; it also carries the game text and the notes of CHAR's shop music ([musicshop.bin](prg/musicshop.bin))
 
 &nbsp;&nbsp;&nbsp;|-- [STORY](prg/petsciipitstory.prg) - The STORY game
 
 &nbsp;&nbsp;&nbsp;|-- [ENDLESS](prg/petsciipitendless.prg) - The ENDLESS game
+
+&nbsp;&nbsp;&nbsp;|-- [ARENA](prg/petsciipitarena.prg) - The Battle Arena: fights only, CHAR's shop every 3 fights
 
 &nbsp;&nbsp;&nbsp;|-- [DEMO](prg/petsciipitdemo.prg) - Self-playing demo
 
@@ -35,15 +37,19 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 [PETSCIIPITENDLESS.BAS](src/petsciipitendless.bas) - ENDLESS game source code
 
+[PETSCIIPITARENA.BAS](src/petsciipitarena.bas) - Battle Arena source code
+
 [PETSCIIPITDEMO.BAS](src/petsciipitdemo.bas) - Self-playing demo source code
 
 [GLYPHSHOWCASE.BAS](src/glyphshowcase.bas) - Custom characters showcase source code
 
 [LEVELS.TXT](src/levels.txt) - The STORY levels as text, built by [pitlevels.py](tools/pitlevels.py)
 
+[TEXTS.TXT](src/texts.txt) - The games' fixed text (status messages, character sheet, CHAR's lines), built into the loader by [textbank.py](tools/textbank.py)
+
 [PETSCII-PIT.PF](src/petscii-pit.pf) - The custom character set
 
-[ASM](src/asm) - Machine code the loader installs: [screen wipes](src/asm/wipe.asm), [room reveal and level fill](src/asm/gfx.asm), [STORY level reading](src/asm/story.asm), [SID model check](src/asm/model.asm)
+[ASM](src/asm) - Machine code the loader installs: [screen wipes](src/asm/wipe.asm), [room reveal and level fill](src/asm/gfx.asm), [STORY level reading](src/asm/story.asm), [SID model check](src/asm/model.asm), [game text printing](src/asm/text.asm)
 
 ## Tools
 
@@ -55,7 +61,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 [tools/buildprgs.sh](tools/buildprgs.sh) - Builds the programs in prg/ from the listings in src/
 
-[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 27`
+[tools/build_d64.sh](tools/build_d64.sh) - Builds the disk (with the story levels and the directory art): `tools/build_d64.sh 28`
 
 [tools/levelspage.py](tools/levelspage.py) - Makes the story levels page ([m0n.de/story-levels](https://m0n.de/story-levels))
 
@@ -63,7 +69,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 ## Music
 
-[PETSCII-PIT-PAL.SID](sid/petscii-pit-pal.sid) - PAL version of single .SID file with all three songs
+[PETSCII-PIT-PAL.SID](sid/petscii-pit-pal.sid) - PAL version of single .SID file with all four songs
 
 &nbsp;&nbsp;&nbsp;|-- [DUNGEONEERING-PAL.SID](sid/dungeoneering-pal.sid) - PAL version of exploration .SID music
 
@@ -71,7 +77,9 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 &nbsp;&nbsp;&nbsp;|__ [LAMENTING-PAL.SID](sid/lamenting-pal.sid) - PAL version of gloomy .SID music
 
-[PETSCII-PIT-NTSC.SID](sid/petscii-pit-ntsc.sid) - NTSC version of single .SID file with all three songs
+&nbsp;&nbsp;&nbsp;|__ [BARTERING-PAL.SID](sid/bartering-pal.sid) - PAL version of CHAR's shop .SID music
+
+[PETSCII-PIT-NTSC.SID](sid/petscii-pit-ntsc.sid) - NTSC version of single .SID file with all four songs
 
 &nbsp;&nbsp;&nbsp;|-- [DUNGEONEERING-NTSC.SID](sid/dungeoneering-ntsc.sid) - NTSC version of exploration .SID music
 
@@ -79,11 +87,13 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 &nbsp;&nbsp;&nbsp;|__ [LAMENTING-NTSC.SID](sid/lamenting-ntsc.sid) - NTSC version of gloomy .SID music
 
+&nbsp;&nbsp;&nbsp;|__ [BARTERING-NTSC.SID](sid/bartering-ntsc.sid) - NTSC version of CHAR's shop .SID music
+
 [GRAND-MEDLEY](grand-medley) - The music medley disk ([pitmedley.d64](grand-medley/pitmedley.d64)) and the files that build it
 
 ## Screenshots
 
-[ASSETS](assets) - V27 screenshots: the title, STORY and ENDLESS, battles and ambushes, skills, weapons, game over, the demo and the [disk directory](assets/18-disk-directory.png)
+[ASSETS](assets) - Screenshots: the V28 title and instructions, STORY and ENDLESS, battles and ambushes, skills, weapons, game over, the demo, the [disk directory](assets/18-disk-directory.png), CHAR's shop ([room](assets/19-char-shop-room.png), [screen](assets/20-char-shop.png)) and the [Battle Arena](assets/24-arena-start-shop.png)
 
 ## Development Logs
 
