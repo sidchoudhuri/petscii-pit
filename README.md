@@ -17,9 +17,7 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 
 &nbsp;&nbsp;&nbsp;|-- [ARENA](prg/petsciipitarena.prg) - The Battle Arena: fights only, CHAR's shop every 3 fights
 
-&nbsp;&nbsp;&nbsp;|-- [DEMO](prg/petsciipitdemo.prg) - Self-playing demo
-
-&nbsp;&nbsp;&nbsp;|-- [SHOWCASE](prg/glyphshowcase.prg) - Custom characters showcase
+&nbsp;&nbsp;&nbsp;|-- [ENDING](prg/petsciipitending.prg) - The way out of the pit (STORY)
 
 &nbsp;&nbsp;&nbsp;|-- [MUSICPAL](prg/musicpal.prg) - PAL version of game music
 
@@ -28,6 +26,8 @@ The game must be launched from disk (LOAD"*",8 and RUN) because the games, music
 &nbsp;&nbsp;&nbsp;|-- [LEVELS](prg/levels.prg) - The 100 STORY levels and the ending
 
 &nbsp;&nbsp;&nbsp;|__ [LEVELIDX](prg/levelidx.prg) - Where each STORY level sits on the disk
+
+[PETSCIIPIT-DISK2.D64](petsciipit-disk2.d64) - Extras disk, works on its own: the loader (D demo, G glyph showcase, M Grand Medley), the music, the [DEMO](prg/petsciipitdemo.prg), the [SHOWCASE](prg/glyphshowcase.prg) and the Grand Medley (machine code and BASIC versions)
 
 ## Source
 

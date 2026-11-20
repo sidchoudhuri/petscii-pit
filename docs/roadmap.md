@@ -322,7 +322,7 @@ each piece.
   this doesn't interfere with the existing Grand Hallway text-detection
   logic, which only ever looks at corridor floor cells and never at
   void or wall cells.
-## Win Condition — IDEA (not done; STORY has its own ending at level 100)
+## Win Condition — BUILT IN V29 (STORY, level 100)
 - Reaching Shadow Hand is required to win the game.
 - A specific dungeon level (not yet decided which) requires the player to
   modify the game itself in order to exit — a meta win condition.

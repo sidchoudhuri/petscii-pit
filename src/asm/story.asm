@@ -1,24 +1,26 @@
-; PETSCII Pit STORY: level reading and unpacking, at $9334 (top of BASIC is
-; lowered to $9200 by the STORY game; $9200-$9331 LEVELIDX, $942A-$9431 the
-; name "LEVELIDX"). The level is read into the fog map at $C400 (up to 4
+; PETSCII Pit STORY: level reading and unpacking, at $9400 (top of BASIC is
+; lowered to $934C by the STORY game; $934C-$93FF the bleed routine,
+; bleed.asm; $94F6-$94FD the name "LEVELIDX"; the level index LEVELIDX is
+; kept at $BC00-$BD31, under the BASIC ROM, and
+; copied to $C400 just before each level is read). The level is read into the fog map at $C400 (up to 4
 ; blocks, ending at $C7F7), which the game clears again after unpacking.
 ; Installed by the loader just before it loads STORY.
 ; Zero page $57-$5A during a SYS only (the music IRQ uses $FB/$FC).
 ;
-; SYS 37684 READ BLOCK: logical file 2 is open on the drive's buffer and a
+; SYS 37888 READ BLOCK: logical file 2 is open on the drive's buffer and a
 ;   U1 command has read a block into it. Reads the 256 bytes: the link
 ;   (next track, sector) goes to lnkt/lnks, the 254 data bytes go to the
 ;   buffer at bp, and bp moves on by 254. BASIC sets bp to $C400 first.
-; SYS 37687 UNPACK: finds MA% and unpacks the map runs starting at src into
+; SYS 37891 UNPACK: finds MA% and unpacks the map runs starting at src into
 ;   MA%(120)-MA%(999) (high byte 0, low byte = cell type).
 
-        * = $9334
+        * = $9400
         jmp rdblk
         jmp unpack
-bp      !word $c400     ; 37690/37691: where the next block goes
-lnkt    !byte 0         ; 37692: next track
-lnks    !byte 0         ; 37693: next sector
-src     !word 0         ; 37694/37695: first map byte (set by BASIC)
+bp      !word $c400     ; 37894/37895: where the next block goes
+lnkt    !byte 0         ; 37896: next track
+lnks    !byte 0         ; 37897: next sector
+src     !word 0         ; 37898/37899: first map byte (set by BASIC)
 cnt     !byte 0
 run     !byte 0
 typ     !byte 0

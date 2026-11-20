@@ -6,7 +6,7 @@
 # (prg/musicshop.bin) to the loader.
 set -e
 T="$(dirname "$0")"
-for f in petsciipitloader petsciipitstory petsciipitendless petsciipitarena petsciipitdemo glyphshowcase; do
+for f in petsciipitloader petsciipitstory petsciipitendless petsciipitarena petsciipitdemo glyphshowcase petsciipitending; do
   python3 "$T/crunch.py" src/$f.bas prg/$f.prg
 done
 python3 "$T/textbank.py" attach src/texts.txt prg/petsciipitloader.prg prg/musicshop.bin

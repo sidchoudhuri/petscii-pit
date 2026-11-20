@@ -10,9 +10,14 @@ petcat, and every line must give the same bytes once the original's spaces
 (outside quotes) and REM texts are taken out. If a removed space would have
 joined a variable name and a keyword into a different token, the build stops.
 
+Lines 64-66 are kept exactly as written: in STORY they are the line the
+player LISTs and edits to escape the pit (V29), so they must read cleanly.
+
 usage: crunch.py <in.bas> <out.prg>
 """
 import subprocess, sys, tempfile, os
+
+KEEP = {"64", "65", "66"}      # STORY's escape lines, listed by the player
 
 
 def crunch_line(text):
@@ -42,7 +47,7 @@ def crunch(src):
         if not l.strip():
             continue
         n, t = l.split(" ", 1)
-        c = crunch_line(t)
+        c = t if n in KEEP else crunch_line(t)
         if c == "":
             c = "REM"
         lines.append(n + " " + c)
@@ -100,7 +105,8 @@ def main():
     b_prg = tokenize(cr)
     b = lines_of(b_prg)
     assert a.keys() == b.keys(), "line numbers differ"
-    bad = [n for n in a if stripped(a[n]) != b[n]]
+    bad = [n for n in a if str(n) not in KEEP and stripped(a[n]) != b[n]]
+    bad += [n for n in a if str(n) in KEEP and a[n] != b[n]]
     if bad:
         raise SystemExit("crunch changed the meaning of lines: %s" % bad[:10])
     longest = max(len(v) for v in b.values()) + 5

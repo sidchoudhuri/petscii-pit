@@ -684,3 +684,19 @@
   screen points you there.
 - Fix: the character sheet put the shield on the weapon's line when you
   had a shield but no weapon (STORY and ENDLESS too).
+
+## Version 29: The Way Out
+- STORY has a story now. Notes on the levels tell the pit's history, the
+  thieves who came before you and what lives down here, with tips along
+  the way.
+- From level 30, every 10 levels, a note hides a clue to getting out.
+  Only Glyph Lore can read them.
+- CHAR has something to say on every visit to his shop, and his replies
+  take the place of his lines until you leave.
+- From level 60 the pit starts turning back into plain PETSCII, a little
+  more every few levels, until even you are plain PETSCII on level 100.
+  Dying, restarting or quitting puts everything back.
+- Level 100 hides the way out. Finishing it the usual way still shows the
+  old ending.
+- Two disks: disk 1 is the game (STORY, ENDLESS, ARENA). Disk 2 holds the
+  demo, the glyph showcase and the Grand Medley, with its own menu.

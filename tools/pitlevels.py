@@ -35,7 +35,8 @@ Files:
                 whole 254-byte blocks (level 0 = the tutorial, then levels
                 1-100), then the ending (line count, then per line a length
                 and the text)
-  levelidx.prg  load address $9200: per record (102) track, sector, block
+  levelidx.prg  load address $BC00 (STORY keeps it under the BASIC ROM and
+                copies it to $C400 to read it): per record (102) track, sector, block
                 count (made by reading the finished d64 back)
 
 levels.txt (src/levels.txt in the repo, or next to the tool), one change per line, # = comment:
@@ -602,7 +603,7 @@ def main():
         d = open(sys.argv[2], "rb").read()
         chain = d64_chain(d, "levels")
         _, where = levels_prg(all_levels(opts), opts)
-        idx = bytearray([0x00, 0x92])
+        idx = bytearray([0x00, 0xbc])
         for first, n in where:
             t, s_ = chain[first]
             idx += bytes([t, s_, n])
