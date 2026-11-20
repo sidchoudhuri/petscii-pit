@@ -16,6 +16,8 @@ ending BUT THERE'S MORE TO COME!
 # Eight rooms: top row left to right, bottom row right to left. The rune in the
 # GLYPH LORE CHAMBER always gives the code for level 1 (skip the tutorial).
 # Secret: a passage north out of the stairs room ends in a hidden hole to level 1.
+# Rooms 9 and 10, inside the ring, are reached only by the circle on level 100
+# (V29 ending): room 10 holds the light (*), the blinking cursor, with its halo (:).
 0 room 2 4 7 5
 0 room 12 4 7 5
 0 room 22 4 7 5
@@ -24,6 +26,8 @@ ending BUT THERE'S MORE TO COME!
 0 room 22 15 7 5
 0 room 12 15 7 5
 0 room 2 15 7 5
+0 room 10 9 9 6
+0 room 22 9 9 6
 0 name 1 ENTRY WAY
 0 name 2 APOTHECARY
 0 name 3 TREASURY
@@ -32,6 +36,8 @@ ending BUT THERE'S MORE TO COME!
 0 name 6 STUDY
 0 name 7 GLYPH LORE CHAMBER
 0 name 8 STAIRWAY TO LEVEL 1
+0 name 9 BEHIND THE SCREEN
+0 name 10 READY.
 0 note WASD OR CURSOR KEYS TO MOVE | WALK OVER THINGS TO USE THEM
 0 note WALK INTO A POTION TO HEAL
 0 note TREASURE IS WORTH 5-20 COINS
@@ -47,12 +53,12 @@ ending BUT THERE'S MORE TO COME!
   #...N......N.........N.........N....#
   #.....#+++#.....#+++#.....#+++#.....#
   #######   #######   #######   ###.###
-    +++                           +.+
-    +O+                           +.+
-    +.+                           +.+
-    +.+                           +N+
-    +.+                           +.+
-    +.+                           +.+
+    +++   #########   #########   +.+
+    +O+   #.......#+++#.......#   +.+
+    +.+   #..............:::..#   +.+
+    +.+   #.......#+++#..:*:..#   +N+
+    +.+   #.......#   #..:::..#   +.+
+    +.+   #########   #########   +.+
   ###.###   #######   #######   ###.###
   #.....#+++#.....#+++#.....#+++#.....#
   #..S.N......R..N.........N.......G..#
@@ -64,3 +70,64 @@ ending BUT THERE'S MORE TO COME!
 
 
 end
+
+# ---- V29: the story ----
+# Notes on the floor tell the pit's history, the thieves who came before (Rosa),
+# the monsters, and tips. "lore" notes can only be read with Glyph Lore
+# (300 XP): they are the puzzle's hints, every 10 levels from 30.
+2 note SPACE TO REST | R SLEEPS DEEP ONCE YOU LEARN HOW
+3 note RUNES ON THE FLOOR SAVE YOUR DESCENT | COPY THEM DOWN BEFORE YOU DIE
+4 note THE CORRIDORS ARE NOT SAFE | MONSTERS ROAM WHERE YOU REST
+6 note CURSED BLADES CLING TO THE HAND | CHAR CAN LIFT THE CURSE, FOR A PRICE
+7 note THIS PIT WAS HERE BEFORE THE TOWN | THE TOWN WAS BUILT TO KEEP IT SHUT
+8 note T RUNS BACK TO A ROOM YOU FOUND | ONCE YOUR FEET KNOW THE WAY
+12 note THE FIRST THIEF CAME FOR GOLD | THE PIT KEPT HIM. IT KEEPS EVERYONE
+14 note LEECHES CANNOT SEE YOU | THEY SMELL YOUR HEALTH
+17 note GOBLINS NEVER FIGHT ALONE | COUNT THEM BEFORE YOU SWING
+21 note A THIEF NAMED ROSA REACHED 21 | SHE LEFT THIS NOTE AND KEPT GOING
+23 note IMPS LAUGH WHEN THEY MISS | THEY MISS LESS THAN THEY LAUGH
+27 note THE WALLS HERE ARE ALL THE SAME | AS IF SOMEONE COPIED THEM
+30 lore THE PIT IS WRITTEN, NOT DUG | EVERY WALL IS A LINE SOMEONE TYPED
+33 note THE SERPENT WAITS IN THE DARK | AND STRIKES FIRST IF IT CAN
+37 note ROSA AGAIN. LEVEL 37 | THE STAIRS GO DOWN. ALWAYS DOWN
+40 lore THE MACHINE COUNTS IN LINES | AND IT KNOWS ITS OWN NUMBER
+43 note GUARDS WERE THIEVES ONCE | THE PIT GAVE THEM ARMOUR AND A WALL
+47 note EVERY LEVEL HAS A NUMBER | WHO IS COUNTING?
+50 lore RUN/STOP HALTS THE WORLD | LIST SHOWS WHAT HOLDS YOU
+53 note THE CULTISTS PRAY TO A PROMPT | THEY SAY IT IS ALWAYS READY
+57 note ROSA. 57. I SAW THE WALLS BLINK | I THINK I AM NOT REAL
+60 lore THE WAY OUT HIDES AT LINE 64 | BUT IT POINTS TO A DEAD END
+63 note THE CHEST WAS JUST A SHAPE | A SQUARE THAT SOMEONE NAMED GOLD
+67 note THE GOLEM IS MADE OF LETTERS | HIT IT AND IT SPELLS ITS NAME
+70 lore A GOTO DECIDES WHERE YOU GO | AND 66 GOES NOWHERE
+73 note ROSA. 73. I FOUND THE SKIN OF IT | UNDER IT ARE ONLY CHARACTERS
+77 note THE FLOOR IS GONE | NOW YOU WALK ON SYMBOLS
+80 lore ONE LINE SOONER THERE IS A DOOR | CHANGE 66 TO 65
+83 note NOTHING HERE IS HURT | IT IS ONLY REDRAWN
+87 note ROSA. 87. I AM AN @ TOO | I THINK WE ALL WERE
+90 lore EDIT THE LINE, THEN TYPE RUN | THE PIT WILL REMEMBER YOU
+93 note THE PIT HAS NO BOTTOM | ONLY A LAST LINE
+97 note ROSA. 97. I COULD NOT FIND THE LINE | IF YOU CAN, GO FOR BOTH OF US
+100 lore THE CIRCLE OPENS ONLY HERE | WHEN LINE 64 SAYS GOTO 65
+
+# What CHAR says in his shop (two lines of up to 19 characters)
+5 char WELCOME, LITTLE | THIEF. COIN FIRST.
+10 char STILL ALIVE? | GOOD FOR BUSINESS.
+15 char THE DEEP ONES | PAY BETTER.
+20 char MIND THE CORRIDORS. | THEY WAIT.
+25 char YOU CLIMB LIKE YOU | WERE BUILT FOR IT.
+30 char DID THAT WALL JUST | FLICKER?
+35 char MY SHELVES LOOK... | SQUARER.
+40 char THE RUNES ARE NOT | JUST FOR SAVING.
+45 char SOMETHING COUNTS US | LINE BY LINE.
+50 char READ THE NOTES. | ALL OF THEM.
+55 char MY HAT IS TURNING | INTO A LETTER.
+60 char THE SKIN OF THE | WORLD IS PEELING.
+65 char YOU'RE NO THIEF. | YOU ARE A SYMBOL.
+70 char I HAVE SEEN WHAT IS | UNDER THE GLYPHS.
+75 char A GOTO HOLDS EVERY | DOOR SHUT.
+80 char I COULD NOT CHANGE | IT. I AM ONLY A Y.
+85 char SO I NEEDED HANDS | LIKE YOURS.
+90 char FORGIVE ME. | I BROUGHT YOU HERE.
+95 char ONLY A THIEF CAN | STEAL A WAY OUT.
+100 char GO. CHANGE THE LINE | TAKE ME WITH YOU?

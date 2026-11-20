@@ -15,17 +15,20 @@ Packed level record (padded to whole 254-byte blocks):
   ..     2 bytes: hidden hole cell (lo, hi), $FFFF = none
   ..     CHAR's shop: side (0 = none; 1 top, 2 bottom, 3 left, 4 right), then
          if there is one its x, y (a 9x7 room, levels 5, 10 ... 100; the
-         game furnishes it, the map holds its walls, door and corridor)
+         game furnishes it, the map holds its walls, door and corridor) and
+         what CHAR says: length 1, line 1, length 2, line 2 (up to 19 each)
   ..     notes: count, then per note: cell lo, cell hi, length 1, line 1,
-         length 2, line 2 (screen codes, up to 39 characters a line)
+         length 2, line 2 (screen codes, up to 39 characters a line); bit 7
+         of length 1 set = only readable with Glyph Lore
   ..     fixed monsters: count, then per monster: cell lo, cell hi, type
          (1 leech 2 goblin 3 imp 4 serpent 5 guard 6 cultist 7 golem), group size.
          0 = monsters are placed at random by the game.
   ..     room names: per room a length and the text (screen codes);
          length 0 = the game names the room itself
   ..     map, rows 3-24 (880 cells) as runs: one byte = type*16 + (run-1)
-Map cell types: 0 blank, 1 floor, 2 room wall, 5 potion, 6 chest, 7 rune,
-8 note (scroll, screen code 167), 9 stairs, 10 corridor wall.
+Map cell types: 0 blank, 1 floor, 2 room wall, 3 the light (the ending's
+cursor), 4 its halo, 5 potion, 6 chest, 7 rune, 8 note (scroll, screen code
+167), 9 stairs, 10 corridor wall.
 
 Files:
   levels.prg    block 0 = "PIT LEVELS" header, then each level padded to
@@ -39,6 +42,8 @@ levels.txt (src/levels.txt in the repo, or next to the tool), one change per lin
   12 seed 5123                     regenerate level 12 from another seed
   30 rune off                      no floor rune on level 30
   45 note LINE ONE | LINE TWO      a note, placed in a random room
+  30 lore LINE ONE | LINE TWO      a note only Glyph Lore can read
+  5 char LINE ONE | LINE TWO       what CHAR says in his shop (19 a line)
   1 room 2 4 7 5                   hand-made level: rooms in order (x y w h)
   1 name 4 DORMITORY               a room's name (any level)
   ending THE TEXT OF ONE LINE      the ending, up to 10 lines of 39
@@ -46,6 +51,7 @@ levels.txt (src/levels.txt in the repo, or next to the tool), one change per lin
                                    rows 3-24, 40 characters each, then "end"
      map characters: space blank, . floor, # room wall, + corridor wall,
      P potion, C chest, S stairs, R rune, N note, O hidden hole,
+     * the light, : its halo,
      L G I E U T M monster (leech goblin imp serpent guard cultist golem)
      on floor.
      Notes on a hand-made map take the "note" lines in reading order.
@@ -60,6 +66,7 @@ import random, sys, os
 
 W, ROW0, ROW1 = 40, 3, 24
 BLANK, FLOOR, WALL, POTION, CHEST, RUNE, NOTE, STAIRS, CWALL = 0, 1, 2, 5, 6, 7, 8, 9, 10
+LIGHT, HALO = 3, 4
 MONSTERS = "LGIEUTM"
 
 
@@ -258,7 +265,7 @@ def hand_level(lv, o):
         raise SystemExit("level %d map: give at least 2 rooms (start and stairs)" % lv)
     ma, hole, mons, notepos = [0] * 1000, -1, [], []
     code = {" ": BLANK, ".": FLOOR, "#": WALL, "+": CWALL, "P": POTION, "C": CHEST,
-            "S": STAIRS, "R": RUNE, "N": NOTE, "O": FLOOR}
+            "S": STAIRS, "R": RUNE, "N": NOTE, "O": FLOOR, "*": LIGHT, ":": HALO}
     for y, row in enumerate(rows, ROW0):
         row = row.ljust(40)[:40]
         for x, ch in enumerate(row):
@@ -284,7 +291,10 @@ def hand_level(lv, o):
             rt[i] = 5
         if CHEST in cells:
             rt[i] = 3
-    rt[0], rt[-1] = 1, 2
+    rt[0] = 1
+    st = [i for i, (rx, ry, rw, rh) in enumerate(rooms)
+          if STAIRS in [ma[y * W + x] for y in range(ry, ry + rh) for x in range(rx, rx + rw)]]
+    rt[st[0] if st else -1] = 2               # the stairs room (hidden rooms may follow it)
     l = dict(lv=lv, nr=len(rooms), rooms=rooms, rt=rt, hole=hole, notes=list(zip(notepos, texts)),
              monsters=mons, names={}, ma=ma, seed=0, made="hand-made")
     if not reachable(l):
@@ -328,11 +338,16 @@ def read_options(path):
             o["seed"] = int(parts[2])
         elif cmd == "rune":
             o["rune"] = parts[2].strip().lower() != "off"
-        elif cmd == "note":
+        elif cmd in ("note", "lore"):
             two = [t.strip() for t in parts[2].split("|")] + [""]
             if len(two) > 3 or max(len(two[0]), len(two[1])) > 39:
                 raise SystemExit("levels.txt line %d: a note is up to 2 lines of 39 characters" % n)
-            o.setdefault("notes", []).append((screen_codes(two[0]), screen_codes(two[1])))
+            o.setdefault("notes", []).append((screen_codes(two[0]), screen_codes(two[1]), cmd == "lore"))
+        elif cmd == "char":
+            two = [t.strip() for t in parts[2].split("|")] + [""]
+            if len(two) > 3 or max(len(two[0]), len(two[1])) > 19:
+                raise SystemExit("levels.txt line %d: CHAR says up to 2 lines of 19 characters" % n)
+            o["char"] = (screen_codes(two[0]), screen_codes(two[1]))
         elif cmd == "name":
             k, t = parts[2].split(None, 1)
             if len(t.strip()) > 30:
@@ -364,6 +379,9 @@ def all_levels(opts):
             if not 1 <= k <= l["nr"]:
                 raise SystemExit("level %d: no room %d to name" % (lv, k))
         l["names"] = o.get("names", {})
+        if "char" in o and not l.get("shop"):
+            raise SystemExit("level %d: CHAR has no shop on this level" % lv)
+        l["char"] = o.get("char", (b"", b""))
         out.append(l)
     return out
 
@@ -377,9 +395,13 @@ def pack(l):
     out += bytes([h & 255, h >> 8])
     sh = l.get("shop")
     out += bytes(sh) if sh else b"\0"
+    if sh:
+        a, b = l.get("char", (b"", b""))
+        out += bytes([len(a)]) + a + bytes([len(b)]) + b
     out.append(len(l["notes"]))
-    for ix, (a, b) in l["notes"]:
-        out += bytes([ix & 255, ix >> 8, len(a)]) + a + bytes([len(b)]) + b
+    for ix, nt in l["notes"]:
+        a, b, lore = nt[0], nt[1], len(nt) > 2 and nt[2]
+        out += bytes([ix & 255, ix >> 8, len(a) | 128 * lore]) + a + bytes([len(b)]) + b
     out.append(len(l["monsters"]))
     for ix, t, g in l["monsters"]:
         out += bytes([ix & 255, ix >> 8, t, g])
@@ -405,18 +427,22 @@ def unpack(b):
     p += 4 * nr
     rt = list(b[p:p + nr]); p += nr
     h = b[p] | b[p + 1] << 8; p += 2
-    shop = None
+    shop, char = None, (b"", b"")
     if b[p]:
         shop = tuple(b[p:p + 3]); p += 3
+        a = bytes(b[p + 1:p + 1 + b[p]]); p += 1 + b[p]
+        c = bytes(b[p + 1:p + 1 + b[p]]); p += 1 + b[p]
+        char = (a, c)
     else:
         p += 1
     notes = []
     k = b[p]; p += 1
     for _ in range(k):
         ix = b[p] | b[p + 1] << 8; p += 2
-        a = b[p + 1:p + 1 + b[p]]; p += 1 + b[p]
+        lore, ln = b[p] >= 128, b[p] & 127
+        a = b[p + 1:p + 1 + ln]; p += 1 + ln
         c = b[p + 1:p + 1 + b[p]]; p += 1 + b[p]
-        notes.append((ix, (bytes(a), bytes(c))))
+        notes.append((ix, (bytes(a), bytes(c), lore)))
     m = b[p]; p += 1
     mons = [(b[p + 4 * j] | b[p + 4 * j + 1] << 8, b[p + 4 * j + 2], b[p + 4 * j + 3]) for j in range(m)]
     p += 4 * m
@@ -429,7 +455,7 @@ def unpack(b):
     while len(cells) < 880:
         cells += [b[p] >> 4] * ((b[p] & 15) + 1)
         p += 1
-    return dict(nr=nr, rooms=rooms, rt=rt, hole=-1 if h == 0xFFFF else h, shop=shop,
+    return dict(nr=nr, rooms=rooms, rt=rt, hole=-1 if h == 0xFFFF else h, shop=shop, char=char,
                 notes=notes, monsters=mons, names=names, ma=[0] * 120 + cells)
 
 
@@ -454,8 +480,8 @@ def levels_prg(levels, opts):
     where = []
     for b in [pack(l) for l in levels] + [ending_record(opts)]:
         n = -(-len(b) // 254)
-        if n > 3:
-            raise SystemExit("a level packs to %d bytes; the game reads up to 3 blocks (762)" % len(b))
+        if n > 4:   # read into the fog map at $C400; 4 blocks end at $C7F7, before the font
+            raise SystemExit("a level packs to %d bytes; the game reads up to 4 blocks (1016)" % len(b))
         where.append(((len(data) + 2) // 254, n))
         data += b + bytes(n * 254 - len(b))
     return bytes([0x00, 0xB0]) + bytes(data), where
@@ -491,7 +517,8 @@ PAL = [(0, 0, 0), (255, 255, 255), (136, 57, 50), (103, 182, 189), (139, 63, 150
        (159, 159, 159)]
 # after Keen Eyes (50 XP): screen code and colour for each cell type
 LOOK = {BLANK: (32, 0), FLOOR: (159, 11), WALL: (102, 12), POTION: (158, 5), CHEST: (132, 8),
-        RUNE: (166, 13), NOTE: (167, 14), STAIRS: (190, 7), CWALL: (102, 11)}
+        RUNE: (166, 13), NOTE: (167, 14), STAIRS: (190, 7), CWALL: (102, 11),
+        LIGHT: (160, 14), HALO: (102, 14)}
 # CHAR's shop room (petsciipitendless 7410): chests, draughts (two shown), counter, CHAR
 SHOP = "$$BB321BBBMBBBCCCCCCC..............$BBV...$BBV...1BMV...2BBV...3BBV..."
 SHOPLOOK = {"$": (132, 8), "1": (158, 5), "2": (158, 5), "C": (85, 9), "V": (213, 9), "M": (89, 4)}
@@ -547,7 +574,9 @@ def charset(here):
 def check(l):
     u = unpack(pack(l))
     assert u["ma"][120:] == l["ma"][120:] and u["hole"] == l["hole"]
-    assert u["notes"] == [(ix, (bytes(a), bytes(b))) for ix, (a, b) in l["notes"]]
+    assert u["notes"] == [(ix, (bytes(nt[0]), bytes(nt[1]), len(nt) > 2 and nt[2])) for ix, nt in l["notes"]]
+    if l.get("shop"):
+        assert u["char"] == tuple(bytes(x) for x in l.get("char", (b"", b"")))
     assert u["monsters"] == l["monsters"]
     assert u["names"] == l["names"]
     assert u["shop"] == l.get("shop")

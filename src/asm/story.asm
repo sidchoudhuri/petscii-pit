@@ -1,7 +1,7 @@
 ; PETSCII Pit STORY: level reading and unpacking, at $9334 (top of BASIC is
 ; lowered to $9200 by the STORY game; $9200-$9331 LEVELIDX, $942A-$9431 the
-; name "LEVELIDX"). The level is read into the fog map at $C400 (up to 3
-; blocks), which the game clears again after unpacking.
+; name "LEVELIDX"). The level is read into the fog map at $C400 (up to 4
+; blocks, ending at $C7F7), which the game clears again after unpacking.
 ; Installed by the loader just before it loads STORY.
 ; Zero page $57-$5A during a SYS only (the music IRQ uses $FB/$FC).
 ;
